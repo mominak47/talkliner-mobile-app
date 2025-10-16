@@ -65,7 +65,7 @@ dependencies:
   torch_light: ^1.1.0
   flutter_blue_plus: ^2.0.0
   get: ^4.7.2
-  get_storage: ^2.1.1sad
+  get_storage: ^2.1.1
   ms_undraw: ^4.1.1
 
 dev_dependencies:
