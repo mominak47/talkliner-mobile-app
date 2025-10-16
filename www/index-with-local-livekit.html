@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talkliner Web - LiveKit Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 5px;
+            min-width: 120px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .status.connecting {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.disconnected {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .participants {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .participants h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .participant {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .participant.speaking {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+
+        .participant-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .participant-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+        }
+
+        .participant-status.muted {
+            background: #dc3545;
+        }
+
+        .audio-visualizer {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 20px;
+        }
+
+        .audio-bar {
+            width: 3px;
+            background: #667eea;
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+
+        .ptt-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 20px auto;
+            display: block;
+            width: 80px;
+            height: 80px;
+        }
+
+        .ptt-button:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .ptt-button:active,
+        .ptt-button.active {
+            background: #dc3545;
+            transform: scale(0.95);
+        }
+
+        .logs {
+            margin-top: 30px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .log-timestamp {
+            color: #666;
+            margin-right: 10px;
+        }
+
+        .server-config {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .server-config strong {
+            color: #495057;
+        }
+
+        .loading-indicator {
+            display: none;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎙️ Talkliner Web</div>
+        <div class="subtitle">LiveKit Web Client</div>
+
+        <div class="loading-indicator" id="loadingIndicator">
+            Loading LiveKit SDK...
+        </div>
+
+        <div class="server-config">
+            <strong>LiveKit Server:</strong> wss://talkliner-nh2ljes1.livekit.cloud<br>
+            <strong>API Server:</strong> https://api.talkliner.com/
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your username" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password" />
+        </div>
+
+        <div class="form-group">
+            <label for="chatId">Chat/Room ID:</label>
+            <input type="text" id="chatId" placeholder="Enter chat room ID" value="test-room" />
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="loginBtn">Login</button>
+            <button class="btn" id="connectBtn" disabled>Connect to Room</button>
+            <button class="btn" id="disconnectBtn" disabled>Disconnect</button>
+        </div>
+
+        <div class="status disconnected" id="status">
+            Disconnected - Please login and connect to a room
+        </div>
+
+        <button class="ptt-button" id="pttButton" disabled>
+            PTT
+        </button>
+
+        <div class="controls">
+            <button class="btn" id="toggleMicBtn" disabled>🎤 Toggle Mic</button>
+            <button class="btn" id="toggleCameraBtn" disabled>📷 Toggle Camera</button>
+        </div>
+
+        <div class="participants">
+            <h3>Participants (<span id="participantCount">0</span>)</h3>
+            <div id="participantsList"></div>
+        </div>
+
+        <div class="logs">
+            <div class="log-entry">
+                <span class="log-timestamp">[Ready]</span>
+                <span>Talkliner Web Client initialized</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multiple CDN options for LiveKit JavaScript SDK -->
+    <script>
+        // Show loading indicator
+        document.getElementById('loadingIndicator').style.display = 'block';
+
+        // Try multiple CDN sources for LiveKit
+        const cdnSources = [
+            'https://cdn.jsdelivr.net/npm/livekit-client@2.1.3/dist/livekit-client.umd.js',
+            'https://unpkg.com/livekit-client@2.1.3/dist/livekit-client.umd.js',
+            'https://cdn.skypack.dev/livekit-client@2.1.3',
+        ];
+
+        let currentCdnIndex = 0;
+
+        function loadLiveKitSDK() {
+            if (currentCdnIndex >= cdnSources.length) {
+                console.error('Failed to load LiveKit SDK from all CDN sources');
+                document.getElementById('loadingIndicator').innerHTML = '❌ Failed to load LiveKit SDK. Please check your internet connection.';
+                document.getElementById('loadingIndicator').style.background = '#f8d7da';
+                document.getElementById('loadingIndicator').style.color = '#721c24';
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = cdnSources[currentCdnIndex];
+            
+            script.onload = function() {
+                // Give a moment for the global to be available
+                setTimeout(() => {
+                    if (typeof LiveKit !== 'undefined' || typeof window.LiveKit !== 'undefined') {
+                        console.log(`LiveKit loaded successfully from: ${cdnSources[currentCdnIndex]}`);
+                        document.getElementById('loadingIndicator').style.display = 'none';
+                        
+                        // Make sure LiveKit is globally available
+                        if (typeof LiveKit === 'undefined' && typeof window.LiveKit !== 'undefined') {
+                            window.LiveKit = window.LiveKit;
+                        }
+                        
+                        initializeTalkliner();
+                    } else {
+                        console.log(`LiveKit not available after loading from: ${cdnSources[currentCdnIndex]}`);
+                        currentCdnIndex++;
+                        loadLiveKitSDK();
+                    }
+                }, 100);
+            };
+            
+            script.onerror = function() {
+                console.log(`Failed to load LiveKit from: ${cdnSources[currentCdnIndex]}`);
+                currentCdnIndex++;
+                loadLiveKitSDK();
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        function initializeTalkliner() {
+            try {
+                new TalklinerWebClient();
+            } catch (error) {
+                console.error('Error initializing Talkliner client:', error);
+                document.getElementById('loadingIndicator').innerHTML = `❌ Error initializing client: ${error.message}`;
+                document.getElementById('loadingIndicator').style.display = 'block';
+                document.getElementById('loadingIndicator').style.background = '#f8d7da';
+                document.getElementById('loadingIndicator').style.color = '#721c24';
+            }
+        }
+
+        class TalklinerWebClient {
+            constructor() {
+                // Check if LiveKit is available
+                const LK = window.LiveKit || window.livekit || LiveKit;
+                if (!LK) {
+                    throw new Error('LiveKit SDK is not available');
+                }
+                this.LiveKit = LK;
+
+                this.room = null;
+                this.token = null;
+                this.authToken = null;
+                this.isConnected = false;
+                this.isPTTActive = false;
+                this.localAudioTrack = null;
+                this.participants = new Map();
+                
+                this.LIVEKIT_URL = 'wss://talkliner-nh2ljes1.livekit.cloud';
+                this.API_BASE_URL = 'https://api.talkliner.com';
+                
+                this.initializeUI();
+                this.setupEventListeners();
+                
+                this.log('Talkliner Web Client initialized with LiveKit SDK');
+            }
+
+            initializeUI() {
+                this.statusEl = document.getElementById('status');
+                this.loginBtn = document.getElementById('loginBtn');
+                this.connectBtn = document.getElementById('connectBtn');
+                this.disconnectBtn = document.getElementById('disconnectBtn');
+                this.pttButton = document.getElementById('pttButton');
+                this.toggleMicBtn = document.getElementById('toggleMicBtn');
+                this.toggleCameraBtn = document.getElementById('toggleCameraBtn');
+                this.participantsList = document.getElementById('participantsList');
+                this.participantCount = document.getElementById('participantCount');
+                this.logsEl = document.querySelector('.logs');
+            }
+
+            setupEventListeners() {
+                this.loginBtn.addEventListener('click', () => this.login());
+                this.connectBtn.addEventListener('click', () => this.connectToRoom());
+                this.disconnectBtn.addEventListener('click', () => this.disconnect());
+                this.toggleMicBtn.addEventListener('click', () => this.toggleMicrophone());
+                this.toggleCameraBtn.addEventListener('click', () => this.toggleCamera());
+                
+                // PTT functionality
+                this.pttButton.addEventListener('mousedown', () => this.startPTT());
+                this.pttButton.addEventListener('mouseup', () => this.stopPTT());
+                this.pttButton.addEventListener('mouseleave', () => this.stopPTT());
+                
+                // Keyboard PTT (Space bar)
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space' && !e.repeat && this.isConnected) {
+                        e.preventDefault();
+                        this.startPTT();
+                    }
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    if (e.code === 'Space' && this.isConnected) {
+                        e.preventDefault();
+                        this.stopPTT();
+                    }
+                });
+            }
+
+            log(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <span class="log-timestamp">[${timestamp}]</span>
+                    <span>${message}</span>
+                `;
+                this.logsEl.appendChild(logEntry);
+                this.logsEl.scrollTop = this.logsEl.scrollHeight;
+            }
+
+            updateStatus(message, type = 'disconnected') {
+                this.statusEl.textContent = message;
+                this.statusEl.className = `status ${type}`;
+            }
+
+            async login() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    alert('Please enter both username and password');
+                    return;
+                }
+
+                try {
+                    this.updateStatus('Logging in...', 'connecting');
+                    this.log('Attempting to login...');
+                    
+                    const response = await fetch(`${this.API_BASE_URL}/api/domains/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok && data.token) {
+                        this.authToken = data.token;
+                        this.updateStatus('Logged in successfully', 'connected');
+                        this.log(`Login successful for user: ${username}`);
+                        
+                        this.loginBtn.disabled = true;
+                        this.connectBtn.disabled = false;
+                    } else {
+                        throw new Error(data.message || 'Login failed');
+                    }
+                } catch (error) {
+                    this.log(`Login error: ${error.message}`);
+                    this.updateStatus('Login failed', 'error');
+                    alert('Login failed: ' + error.message);
+                }
+            }
+
+            async getLivekitToken(chatId) {
+                if (!this.authToken) {
+                    throw new Error('Not authenticated');
+                }
+
+                try {
+                    const response = await fetch(`${this.API_BASE_URL}/api/livekit`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${this.authToken}`
+                        },
+                        body: JSON.stringify({
+                            chatId: chatId
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok && data.token && data.token.token) {
+                        return data.token.token;
+                    } else {
+                        throw new Error(data.message || 'Failed to get LiveKit token');
+                    }
+                } catch (error) {
+                    this.log(`Token error: ${error.message}`);
+                    throw error;
+                }
+            }
+
+            async connectToRoom() {
+                const chatId = document.getElementById('chatId').value;
+                
+                if (!chatId) {
+                    alert('Please enter a chat/room ID');
+                    return;
+                }
+
+                try {
+                    this.updateStatus('Getting LiveKit token...', 'connecting');
+                    this.log(`Getting LiveKit token for chat: ${chatId}`);
+                    
+                    const token = await this.getLivekitToken(chatId);
+                    this.token = token;
+                    
+                    this.log('LiveKit token received, connecting to room...');
+                    this.updateStatus('Connecting to LiveKit room...', 'connecting');
+
+                    // Create room instance using the loaded LiveKit
+                    this.room = new this.LiveKit.Room({
+                        adaptiveStream: true,
+                        dynacast: true,
+                        publishDefaults: {
+                            audioPreset: this.LiveKit.AudioPresets.music,
+                        },
+                    });
+
+                    this.setupRoomEventListeners();
+
+                    // Connect to room
+                    await this.room.connect(this.LIVEKIT_URL, token);
+                    
+                    this.isConnected = true;
+                    this.updateStatus(`Connected to room: ${chatId}`, 'connected');
+                    this.log(`Successfully connected to room: ${chatId}`);
+                    
+                    // Update UI
+                    this.connectBtn.disabled = true;
+                    this.disconnectBtn.disabled = false;
+                    this.pttButton.disabled = false;
+                    this.toggleMicBtn.disabled = false;
+                    this.toggleCameraBtn.disabled = false;
+                    
+                    // Enable microphone by default (but muted)
+                    await this.enableAudio();
+                    
+                } catch (error) {
+                    this.log(`Connection error: ${error.message}`);
+                    this.updateStatus('Connection failed', 'error');
+                    alert('Failed to connect: ' + error.message);
+                }
+            }
+
+            setupRoomEventListeners() {
+                this.room.on(this.LiveKit.RoomEvent.Connected, () => {
+                    this.log('Room connected event received');
+                    this.updateParticipantsList();
+                });
+
+                this.room.on(this.LiveKit.RoomEvent.Disconnected, (reason) => {
+                    this.log(`Room disconnected: ${reason}`);
+                    this.handleDisconnection();
+                });
+
+                this.room.on(this.LiveKit.RoomEvent.ParticipantConnected, (participant) => {
+                    this.log(`Participant joined: ${participant.identity}`);
+                    this.updateParticipantsList();
+                });
+
+                this.room.on(this.LiveKit.RoomEvent.ParticipantDisconnected, (participant) => {
+                    this.log(`Participant left: ${participant.identity}`);
+                    this.updateParticipantsList();
+                });
+
+                this.room.on(this.LiveKit.RoomEvent.TrackSubscribed, (track, publication, participant) => {
+                    this.log(`Track subscribed: ${track.kind} from ${participant.identity}`);
+                    
+                    if (track.kind === 'audio') {
+                        const audioElement = track.attach();
+                        document.body.appendChild(audioElement);
+                    }
+                    
+                    this.updateParticipantsList();
+                });
+
+                this.room.on(this.LiveKit.RoomEvent.TrackUnsubscribed, (track, publication, participant) => {
+                    this.log(`Track unsubscribed: ${track.kind} from ${participant.identity}`);
+                    track.detach();
+                    this.updateParticipantsList();
+                });
+
+                this.room.on(this.LiveKit.RoomEvent.ActiveSpeakersChanged, (speakers) => {
+                    this.log(`Active speakers: ${speakers.map(s => s.identity).join(', ')}`);
+                    this.updateSpeakingIndicators(speakers);
+                });
+
+                this.room.on(this.LiveKit.RoomEvent.DataReceived, (payload, participant) => {
+                    try {
+                        const data = JSON.parse(new TextDecoder().decode(payload));
+                        this.log(`Data received from ${participant?.identity}: ${JSON.stringify(data)}`);
+                        
+                        if (data.type === 'ptt-speaking-start') {
+                            this.handlePTTSpeakingStart(data.event);
+                        } else if (data.type === 'ptt-speaking-end') {
+                            this.handlePTTSpeakingEnd();
+                        }
+                    } catch (error) {
+                        this.log(`Error parsing received data: ${error.message}`);
+                    }
+                });
+            }
+
+            handlePTTSpeakingStart(event) {
+                this.log(`PTT speaking started by: ${event.from}`);
+                this.updateSpeakingIndicator(event.from, true);
+            }
+
+            handlePTTSpeakingEnd() {
+                this.log('PTT speaking ended');
+                this.clearSpeakingIndicators();
+            }
+
+            updateSpeakingIndicators(speakers) {
+                document.querySelectorAll('.participant').forEach(el => {
+                    el.classList.remove('speaking');
+                });
+                
+                speakers.forEach(speaker => {
+                    const participantEl = document.querySelector(`[data-participant="${speaker.identity}"]`);
+                    if (participantEl) {
+                        participantEl.classList.add('speaking');
+                    }
+                });
+            }
+
+            updateSpeakingIndicator(participantId, isSpeaking) {
+                const participantEl = document.querySelector(`[data-participant="${participantId}"]`);
+                if (participantEl) {
+                    if (isSpeaking) {
+                        participantEl.classList.add('speaking');
+                    } else {
+                        participantEl.classList.remove('speaking');
+                    }
+                }
+            }
+
+            clearSpeakingIndicators() {
+                document.querySelectorAll('.participant').forEach(el => {
+                    el.classList.remove('speaking');
+                });
+            }
+
+            updateParticipantsList() {
+                if (!this.room) return;
+
+                const participants = Array.from(this.room.participants.values());
+                participants.push(this.room.localParticipant);
+
+                this.participantCount.textContent = participants.length;
+                
+                this.participantsList.innerHTML = '';
+                
+                participants.forEach(participant => {
+                    const participantEl = document.createElement('div');
+                    participantEl.className = 'participant';
+                    participantEl.setAttribute('data-participant', participant.identity);
+                    
+                    const isLocal = participant === this.room.localParticipant;
+                    const hasAudio = participant.audioTracks.size > 0;
+                    const isAudioEnabled = Array.from(participant.audioTracks.values()).some(pub => !pub.isMuted);
+                    
+                    participantEl.innerHTML = `
+                        <div class="participant-info">
+                            <div class="participant-status ${!isAudioEnabled ? 'muted' : ''}"></div>
+                            <span>${participant.identity}${isLocal ? ' (You)' : ''}</span>
+                        </div>
+                        <div class="audio-visualizer">
+                            ${Array(5).fill().map((_, i) => `<div class="audio-bar" style="height: ${Math.random() * 15 + 3}px;"></div>`).join('')}
+                        </div>
+                    `;
+                    
+                    this.participantsList.appendChild(participantEl);
+                });
+            }
+
+            async enableAudio() {
+                try {
+                    this.localAudioTrack = await this.LiveKit.createLocalAudioTrack({
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                    });
+                    
+                    await this.localAudioTrack.mute();
+                    this.log('Audio track created and muted');
+                } catch (error) {
+                    this.log(`Error enabling audio: ${error.message}`);
+                    throw error;
+                }
+            }
+
+            async startPTT() {
+                if (!this.isConnected || this.isPTTActive) return;
+                
+                try {
+                    this.isPTTActive = true;
+                    this.pttButton.classList.add('active');
+                    this.log('PTT started');
+                    
+                    if (this.localAudioTrack && !this.room.localParticipant.getTrack(this.LiveKit.Track.Source.Microphone)) {
+                        await this.room.localParticipant.publishTrack(this.localAudioTrack, {
+                            name: 'PTT',
+                            source: this.LiveKit.Track.Source.Microphone,
+                        });
+                    }
+                    
+                    if (this.localAudioTrack) {
+                        await this.localAudioTrack.unmute();
+                    }
+                    
+                    const message = {
+                        type: 'ptt-speaking-start',
+                        event: JSON.stringify({
+                            from: this.room.localParticipant.identity,
+                            timestamp: Date.now()
+                        })
+                    };
+                    
+                    await this.room.localParticipant.publishData(
+                        new TextEncoder().encode(JSON.stringify(message)),
+                        this.LiveKit.DataPacket_Kind.RELIABLE
+                    );
+                    
+                } catch (error) {
+                    this.log(`Error starting PTT: ${error.message}`);
+                    this.isPTTActive = false;
+                    this.pttButton.classList.remove('active');
+                }
+            }
+
+            async stopPTT() {
+                if (!this.isConnected || !this.isPTTActive) return;
+                
+                try {
+                    this.isPTTActive = false;
+                    this.pttButton.classList.remove('active');
+                    this.log('PTT stopped');
+                    
+                    if (this.localAudioTrack) {
+                        await this.localAudioTrack.mute();
+                    }
+                    
+                    const message = {
+                        type: 'ptt-speaking-end',
+                        event: JSON.stringify({
+                            from: this.room.localParticipant.identity,
+                            timestamp: Date.now()
+                        })
+                    };
+                    
+                    await this.room.localParticipant.publishData(
+                        new TextEncoder().encode(JSON.stringify(message)),
+                        this.LiveKit.DataPacket_Kind.RELIABLE
+                    );
+                    
+                } catch (error) {
+                    this.log(`Error stopping PTT: ${error.message}`);
+                }
+            }
+
+            async toggleMicrophone() {
+                if (!this.isConnected || !this.localAudioTrack) return;
+                
+                try {
+                    const isMuted = this.localAudioTrack.isMuted;
+                    if (isMuted) {
+                        await this.localAudioTrack.unmute();
+                        this.log('Microphone unmuted');
+                        this.toggleMicBtn.textContent = '🎤 Mute Mic';
+                    } else {
+                        await this.localAudioTrack.mute();
+                        this.log('Microphone muted');
+                        this.toggleMicBtn.textContent = '🎤 Unmute Mic';
+                    }
+                    
+                    this.updateParticipantsList();
+                } catch (error) {
+                    this.log(`Error toggling microphone: ${error.message}`);
+                }
+            }
+
+            async toggleCamera() {
+                if (!this.isConnected) return;
+                
+                try {
+                    const videoTrack = this.room.localParticipant.getTrack(this.LiveKit.Track.Source.Camera);
+                    
+                    if (videoTrack) {
+                        await this.room.localParticipant.unpublishTrack(videoTrack.track);
+                        this.log('Camera disabled');
+                        this.toggleCameraBtn.textContent = '📷 Enable Camera';
+                    } else {
+                        const track = await this.LiveKit.createLocalVideoTrack();
+                        await this.room.localParticipant.publishTrack(track);
+                        this.log('Camera enabled');
+                        this.toggleCameraBtn.textContent = '📷 Disable Camera';
+                    }
+                } catch (error) {
+                    this.log(`Error toggling camera: ${error.message}`);
+                }
+            }
+
+            async disconnect() {
+                try {
+                    if (this.room) {
+                        await this.room.disconnect();
+                    }
+                    this.handleDisconnection();
+                    this.log('Disconnected from room');
+                } catch (error) {
+                    this.log(`Error disconnecting: ${error.message}`);
+                }
+            }
+
+            handleDisconnection() {
+                this.isConnected = false;
+                this.isPTTActive = false;
+                this.room = null;
+                this.localAudioTrack = null;
+                
+                this.updateStatus('Disconnected', 'disconnected');
+                
+                this.connectBtn.disabled = false;
+                this.disconnectBtn.disabled = true;
+                this.pttButton.disabled = true;
+                this.pttButton.classList.remove('active');
+                this.toggleMicBtn.disabled = true;
+                this.toggleCameraBtn.disabled = true;
+                this.toggleMicBtn.textContent = '🎤 Toggle Mic';
+                this.toggleCameraBtn.textContent = '📷 Toggle Camera';
+                
+                this.participantsList.innerHTML = '';
+                this.participantCount.textContent = '0';
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLiveKitSDK();
+        });
+    </script>
+</body>
+</html>

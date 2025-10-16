@@ -1,0 +1,11 @@
+framework module flutter_ble_peripheral {
+  umbrella header "flutter_ble_peripheral-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module flutter_ble_peripheral.Swift {
+  header "flutter_ble_peripheral-Swift.h"
+  requires objc
+}
