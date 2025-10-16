@@ -19,6 +19,8 @@ class SelectedUser extends StatelessWidget {
         padding: EdgeInsets.all(16),
         child: Container(
           width: double.infinity,
+          height: 100,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(

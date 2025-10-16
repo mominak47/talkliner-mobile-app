@@ -22,6 +22,7 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Obx(
         () => Column(
@@ -39,12 +40,12 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
                       // Volume control button
                       IconButton(
                         style: IconButton.styleFrom(
-                          backgroundColor: TalklinerThemeColors.gray020,
+                          backgroundColor: isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray020,
                           shape: const CircleBorder(),
                         ),
-                        icon: const Icon(
+                        icon: Icon(
                           LucideIcons.volume2,
-                          color: TalklinerThemeColors.gray700,
+                          color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray700,
                           size: 24,
                         ),
                         onPressed: () {

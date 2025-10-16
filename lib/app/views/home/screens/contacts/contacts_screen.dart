@@ -186,18 +186,21 @@ class ContactsScreen extends StatelessWidget {
                   onPressed: () {
                     homeController.createAppBar(
                       AppBar(
-                        title: TextField(
-                          autofocus: true,
-                          decoration: InputDecoration(
-                            hintText: "Search",
-                            border: InputBorder.none,
-                            prefixIcon: Icon(LucideIcons.search),
-                            suffixIcon: IconButton(
-                              icon: Icon(LucideIcons.xCircle),
-                              onPressed: contactsController.clearSearch,
+                        title: SizedBox(
+                          height: 48, // Fixed height for the search field
+                          child: TextField(
+                            autofocus: true,
+                            decoration: InputDecoration(
+                              hintText: "Search",
+                              border: InputBorder.none,
+                              prefixIcon: Icon(LucideIcons.search),
+                              suffixIcon: IconButton(
+                                icon: Icon(LucideIcons.xCircle),
+                                onPressed: contactsController.clearSearch,
+                              ),
                             ),
-                          ),
                             textInputAction: TextInputAction.search,
+                          ),
                         ),
 
                         actions: [
