@@ -1,4 +1,0 @@
-framework module OSMFlutterFramework {
-  header "OSMFlutterFramework-Swift.h"
-  requires objc
-}

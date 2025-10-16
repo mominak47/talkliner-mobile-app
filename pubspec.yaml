@@ -54,8 +54,6 @@ dependencies:
   battery_plus: ^6.2.2
   connectivity_plus: ^6.1.4
   shared_preferences: ^2.5.3
-  flutter_osm_plugin: ^1.4.1
-  flutter_map: ^8.1.1
   flutter_local_notifications: ^18.0.1
   timezone: ^0.9.4
   flutter_launcher_icons: ^0.14.4
@@ -67,9 +65,8 @@ dependencies:
   torch_light: ^1.1.0
   flutter_blue_plus: ^2.0.0
   get: ^4.7.2
-  get_storage: ^2.1.1
+  get_storage: ^2.1.1sad
   ms_undraw: ^4.1.1
-  flutter_ble_peripheral: ^1.2.6
 
 dev_dependencies:
   flutter_test:

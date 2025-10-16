@@ -14,14 +14,11 @@
         "firebase_core",
         "firebase_messaging",
         "flutter",
-        "flutter_ble_peripheral",
         "flutter_blue_plus",
         "flutter_callkit_incoming",
         "flutter_compass",
         "flutter_launcher_icons",
         "flutter_local_notifications",
-        "flutter_map",
-        "flutter_osm_plugin",
         "flutter_secure_storage",
         "flutter_svg",
         "flutter_webrtc",
@@ -74,14 +71,6 @@
         "stream_channel",
         "test_api",
         "vector_math"
-      ]
-    },
-    {
-      "name": "flutter_ble_peripheral",
-      "version": "1.2.6",
-      "dependencies": [
-        "flutter",
-        "json_annotation"
       ]
     },
     {
@@ -215,43 +204,6 @@
         "flutter_local_notifications_linux",
         "flutter_local_notifications_platform_interface",
         "timezone"
-      ]
-    },
-    {
-      "name": "flutter_map",
-      "version": "8.2.2",
-      "dependencies": [
-        "async",
-        "collection",
-        "dart_earcut",
-        "dart_polylabel2",
-        "flutter",
-        "http",
-        "latlong2",
-        "logger",
-        "meta",
-        "path",
-        "path_provider",
-        "proj4dart",
-        "uuid"
-      ]
-    },
-    {
-      "name": "flutter_osm_plugin",
-      "version": "1.4.2",
-      "dependencies": [
-        "dio",
-        "flutter",
-        "flutter_osm_interface",
-        "flutter_osm_web",
-        "flutter_plugin_android_lifecycle",
-        "flutter_web_plugins",
-        "google_polyline_algorithm",
-        "permission_handler",
-        "plugin_platform_interface",
-        "routing_client_dart",
-        "url_launcher",
-        "uuid"
       ]
     },
     {
@@ -591,13 +543,6 @@
       ]
     },
     {
-      "name": "json_annotation",
-      "version": "4.9.0",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
       "name": "web",
       "version": "1.1.1",
       "dependencies": []
@@ -688,6 +633,13 @@
       "version": "3.0.6",
       "dependencies": [
         "typed_data"
+      ]
+    },
+    {
+      "name": "json_annotation",
+      "version": "4.9.0",
+      "dependencies": [
+        "meta"
       ]
     },
     {
@@ -795,121 +747,6 @@
         "flutter_local_notifications_platform_interface",
         "path",
         "xdg_directories"
-      ]
-    },
-    {
-      "name": "proj4dart",
-      "version": "2.1.0",
-      "dependencies": [
-        "meta",
-        "mgrs_dart",
-        "wkt_parser"
-      ]
-    },
-    {
-      "name": "logger",
-      "version": "2.6.2",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "dart_polylabel2",
-      "version": "1.0.0",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
-    },
-    {
-      "name": "dart_earcut",
-      "version": "1.2.0",
-      "dependencies": []
-    },
-    {
-      "name": "async",
-      "version": "2.13.0",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
-    },
-    {
-      "name": "flutter_osm_web",
-      "version": "1.4.1",
-      "dependencies": [
-        "flutter",
-        "flutter_osm_interface",
-        "flutter_web_plugins",
-        "routing_client_dart",
-        "stream_transform",
-        "web"
-      ]
-    },
-    {
-      "name": "flutter_osm_interface",
-      "version": "1.4.0",
-      "dependencies": [
-        "dio",
-        "flutter",
-        "google_polyline_algorithm",
-        "plugin_platform_interface",
-        "stream_transform"
-      ]
-    },
-    {
-      "name": "google_polyline_algorithm",
-      "version": "3.1.0",
-      "dependencies": []
-    },
-    {
-      "name": "routing_client_dart",
-      "version": "0.5.5",
-      "dependencies": [
-        "dio",
-        "fixnum",
-        "flutter"
-      ]
-    },
-    {
-      "name": "dio",
-      "version": "5.9.0",
-      "dependencies": [
-        "async",
-        "collection",
-        "dio_web_adapter",
-        "http_parser",
-        "meta",
-        "mime",
-        "path"
-      ]
-    },
-    {
-      "name": "url_launcher",
-      "version": "6.3.2",
-      "dependencies": [
-        "flutter",
-        "url_launcher_android",
-        "url_launcher_ios",
-        "url_launcher_linux",
-        "url_launcher_macos",
-        "url_launcher_platform_interface",
-        "url_launcher_web",
-        "url_launcher_windows"
-      ]
-    },
-    {
-      "name": "flutter_plugin_android_lifecycle",
-      "version": "2.0.32",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
-      "name": "plugin_platform_interface",
-      "version": "2.1.8",
-      "dependencies": [
-        "meta"
       ]
     },
     {
@@ -1053,6 +890,14 @@
       "name": "logging",
       "version": "1.3.0",
       "dependencies": []
+    },
+    {
+      "name": "async",
+      "version": "2.13.0",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
     },
     {
       "name": "webrtc_interface",
@@ -1425,6 +1270,13 @@
       ]
     },
     {
+      "name": "plugin_platform_interface",
+      "version": "2.1.8",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
       "name": "typed_data",
       "version": "1.4.0",
       "dependencies": [
@@ -1479,96 +1331,6 @@
       ]
     },
     {
-      "name": "wkt_parser",
-      "version": "2.0.0",
-      "dependencies": []
-    },
-    {
-      "name": "mgrs_dart",
-      "version": "2.0.0",
-      "dependencies": [
-        "unicode"
-      ]
-    },
-    {
-      "name": "stream_transform",
-      "version": "2.1.1",
-      "dependencies": []
-    },
-    {
-      "name": "dio_web_adapter",
-      "version": "2.1.1",
-      "dependencies": [
-        "dio",
-        "http_parser",
-        "meta",
-        "web"
-      ]
-    },
-    {
-      "name": "mime",
-      "version": "2.0.0",
-      "dependencies": []
-    },
-    {
-      "name": "url_launcher_windows",
-      "version": "3.1.4",
-      "dependencies": [
-        "flutter",
-        "url_launcher_platform_interface"
-      ]
-    },
-    {
-      "name": "url_launcher_web",
-      "version": "2.4.1",
-      "dependencies": [
-        "flutter",
-        "flutter_web_plugins",
-        "url_launcher_platform_interface",
-        "web"
-      ]
-    },
-    {
-      "name": "url_launcher_platform_interface",
-      "version": "2.3.2",
-      "dependencies": [
-        "flutter",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "url_launcher_macos",
-      "version": "3.2.3",
-      "dependencies": [
-        "flutter",
-        "url_launcher_platform_interface"
-      ]
-    },
-    {
-      "name": "url_launcher_linux",
-      "version": "3.2.1",
-      "dependencies": [
-        "flutter",
-        "url_launcher_platform_interface"
-      ]
-    },
-    {
-      "name": "url_launcher_ios",
-      "version": "6.3.4",
-      "dependencies": [
-        "flutter",
-        "url_launcher_platform_interface"
-      ]
-    },
-    {
-      "name": "url_launcher_android",
-      "version": "6.3.24",
-      "dependencies": [
-        "flutter",
-        "url_launcher_platform_interface"
-      ]
-    },
-    {
       "name": "js",
       "version": "0.6.7",
       "dependencies": [
@@ -1599,6 +1361,11 @@
       "dependencies": []
     },
     {
+      "name": "stream_transform",
+      "version": "2.1.1",
+      "dependencies": []
+    },
+    {
       "name": "cross_file",
       "version": "0.3.4+2",
       "dependencies": [
@@ -1610,6 +1377,13 @@
       "name": "charset",
       "version": "2.0.1",
       "dependencies": []
+    },
+    {
+      "name": "flutter_plugin_android_lifecycle",
+      "version": "2.0.32",
+      "dependencies": [
+        "flutter"
+      ]
     },
     {
       "name": "camera_web",
@@ -1659,20 +1433,6 @@
         "ffi",
         "meta",
         "path"
-      ]
-    },
-    {
-      "name": "unicode",
-      "version": "0.3.1",
-      "dependencies": [
-        "lists"
-      ]
-    },
-    {
-      "name": "lists",
-      "version": "1.0.1",
-      "dependencies": [
-        "meta"
       ]
     }
   ],
