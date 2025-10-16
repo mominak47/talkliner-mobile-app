@@ -10,8 +10,19 @@ class HomeController extends GetxController {
   RxInt currentIndex = 0.obs;
   RxBool showAppBar = true.obs;
 
-  final AppBar _appbar = AppBar(
-    title:  SvgPicture.asset('assets/logos/talkliner.svg', height: 36),
+  // Get logo
+
+  SvgPicture getLogo() {
+    bool isDarkMode = Theme.of(Get.context!).brightness == Brightness.dark;
+    if (isDarkMode) {
+      return SvgPicture.asset('assets/logos/white_logo.svg', height: 36);
+    } else {
+      return SvgPicture.asset('assets/logos/talkliner.svg', height: 36);
+    }
+  }
+
+  AppBar get _appbar => AppBar(
+    title: getLogo(),
     actions: [
       SignalBarsWidget(),
       IconButton(

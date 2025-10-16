@@ -14,10 +14,11 @@ class SettingsSectionContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        border: border ? Border.all(color: TalklinerThemeColors.gray030) : null,
+        border: border ? Border.all(color: isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray030) : null,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -31,7 +32,7 @@ class SettingsSectionContainer extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: TalklinerThemeColors.gray700,
+                  color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800,
                 ),
               ),
             ),

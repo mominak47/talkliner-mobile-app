@@ -45,5 +45,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Camera permission usage description -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires camera access to take photos and videos.</string>
 </dict>
 </plist>

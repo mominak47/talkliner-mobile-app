@@ -12,13 +12,14 @@ class NewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       width: double.infinity,
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: TalklinerThemeColors.gray030)),
-        color: Colors.white,
+        color: isDarkMode ? TalklinerThemeColors.gray900 : Colors.white,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +45,7 @@ class NewScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: TalklinerThemeColors.gray800,
+              color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800,
             ),
           ),
           Text(
@@ -52,7 +53,7 @@ class NewScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: TalklinerThemeColors.gray500,
+              color: isDarkMode ? TalklinerThemeColors.gray400 : TalklinerThemeColors.gray500,
             ),
           ),
           SizedBox(height: 16),

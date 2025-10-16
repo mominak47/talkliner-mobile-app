@@ -23,6 +23,7 @@ class RadioItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ElevatedButton(
       onPressed: () => onChanged(!value),
       style: ElevatedButton.styleFrom(
@@ -37,7 +38,7 @@ class RadioItem extends StatelessWidget {
         children: [
           svgIconPath != null
               ? SvgPicture.asset(svgIconPath!, width: 24, height: 24)
-              : Icon(icon, color: TalklinerThemeColors.gray900),
+              : Icon(icon, color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800),
           SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -48,7 +49,7 @@ class RadioItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: TalklinerThemeColors.gray900,
+                    color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800,
                   ),
                 ),
                 if (description != null)
@@ -57,7 +58,7 @@ class RadioItem extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: TalklinerThemeColors.gray500,
+                      color: isDarkMode ? TalklinerThemeColors.gray400 : TalklinerThemeColors.gray500,
                     ),
                   ),
               ],
@@ -79,7 +80,7 @@ class RadioItem extends StatelessWidget {
                   color:
                       isSelected
                           ? TalklinerThemeColors.primary500
-                          : TalklinerThemeColors.gray050,
+                          : isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray050,
                 );
               }),
               thumbColor: WidgetStateProperty.resolveWith<Color?>(
@@ -90,7 +91,7 @@ class RadioItem extends StatelessWidget {
                 (states) =>
                     states.contains(WidgetState.selected)
                         ? TalklinerThemeColors.primary500
-                        : TalklinerThemeColors.gray050,
+                        : isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray050,
               ),
               trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
             ),

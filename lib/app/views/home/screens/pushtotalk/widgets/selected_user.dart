@@ -33,7 +33,7 @@ class SelectedUser extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: TalklinerThemeColors.gray900,
+                color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800,
                 fontSize: 14,
               ),
             ),
@@ -50,7 +50,7 @@ class SelectedUser extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color:TalklinerThemeColors.gray030,
+            color:isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray030,
             width: 1,
           ),
         ),
@@ -72,7 +72,7 @@ class SelectedUser extends StatelessWidget {
                           Text(
                             pushToTalkController.selectedUser.value.displayName,
                             style: TextStyle(
-                              color: TalklinerThemeColors.gray900,
+                              color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
@@ -80,7 +80,7 @@ class SelectedUser extends StatelessWidget {
                           Text(
                             pushToTalkController.selectedUser.value.status,
                             style: TextStyle(
-                              color:TalklinerThemeColors.gray500,
+                              color: isDarkMode ? TalklinerThemeColors.gray400 : TalklinerThemeColors.gray500,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                             ),
