@@ -25,8 +25,10 @@ class SplashController extends GetxController {
             transition: Transition.fadeIn,
             duration: Duration.zero,
           );
+          debugPrint("User logged in");
         } else {
           Get.offAllNamed(Routes.login);
+          debugPrint("User not logged in");
         }
       } catch (e) {
         debugPrint('[SplashController] Navigation error: $e');

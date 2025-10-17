@@ -11,7 +11,6 @@ class AuthService extends ApiService {
 
     if (response.statusCode == 200 && response.body['token'] != null) {
       return response.body['token'];
-      // return UserModel.fromJson(response.body['data']['domainUser']);
     }
 
     return throw Exception(response.body);
@@ -19,6 +18,7 @@ class AuthService extends ApiService {
 
   Future<UserModel> getUser() async {
     try {
+      onInit();
       final response = await get('/domains/status');
 
       if (response.statusCode == 200) {

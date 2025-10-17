@@ -32,7 +32,7 @@ class SettingsSectionContainer extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800,
+                  color: isDarkMode ? Colors.white : TalklinerThemeColors.gray800,
                 ),
               ),
             ),

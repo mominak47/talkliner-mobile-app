@@ -34,7 +34,7 @@ class SocketController extends GetxController {
   void onInit() {
     super.onInit();
     authController.isLoggedIn.listen((value) async {
-      if (value) {
+      if (value && !isConnected.value) {
         await connect();
       } else {
         await disconnect();
@@ -175,12 +175,12 @@ class SocketController extends GetxController {
         String networkType = NetworkService().getNetworkType();
 
         // Get FCM token with timeout
-        String? fcmToken;
-        try {
-          fcmToken = await FCMService.getToken();
-        } catch (e) {
-          debugPrint('SocketService: Error getting FCM token: $e');
-        }
+        String? fcmToken = "";
+        // try {
+        //   fcmToken = await FCMService.getToken();
+        // } catch (e) {
+        //   debugPrint('SocketService: Error getting FCM token: $e');
+        // }
 
         Map<String, dynamic> pingData = {
           'time': DateTime.now().millisecondsSinceEpoch,

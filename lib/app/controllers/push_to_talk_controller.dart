@@ -26,7 +26,7 @@ class PushToTalkController extends GetxController {
   void onInit() {
     super.onInit();
     apiService.onInit();
-    
+
     selectedUser.listen((user) {
       livekitRoomController.connectToRoom(user);
     });
@@ -55,7 +55,6 @@ class PushToTalkController extends GetxController {
     super.onClose();
   }
 
-
   void playAudio(String audioPath, {double volume = 1.0}) {
     try {
       if (_audioPlayer.state == PlayerState.playing) {
@@ -80,29 +79,37 @@ class PushToTalkController extends GetxController {
   }
 
   void startPTT() async {
-    if (getPTTButtonState() == PushToTalkButtonState.notSelected) {
-      // Give a toast message that no user is selected
-      Get.snackbar(
-        'No User Selected',
-        'Please select a user to start PTT',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    }
+    try {
+      if (getPTTButtonState() == PushToTalkButtonState.notSelected) {
+        // Give a toast message that no user is selected
+        Get.snackbar(
+          'No User Selected',
+          'Please select a user to start PTT',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
 
-    isPTTActive.value = true;
-    playAudio('audio/connect.mp3', volume: 1.0);
-    livekitRoomController.speak();
-    debugPrint('PTT started successfully');
+      isPTTActive.value = true;
+      playAudio('audio/connect.mp3', volume: 1.0);
+      livekitRoomController.speak();
+      debugPrint('PTT started successfully');
+    } catch (e) {
+      debugPrint("Error starting PTT: $e");
+    }
   }
 
   void stopPTT() async {
-    isPTTActive.value = false;
-    livekitRoomController.stopSpeaking();
-    if (getPTTButtonState() != PushToTalkButtonState.notSelected) {
-      playAudio('audio/disconnect.mp3', volume: 1.0);
+    try {
+      isPTTActive.value = false;
+      livekitRoomController.stopSpeaking();
+      if (getPTTButtonState() != PushToTalkButtonState.notSelected) {
+        playAudio('audio/disconnect.mp3', volume: 1.0);
+      }
+      debugPrint('PTT stopped successfully');
+    } catch (e) {
+      debugPrint("Error stopping PTT: $e");
     }
-    debugPrint('PTT stopped successfully');
   }
 
   PushToTalkButtonState getPTTButtonState() {

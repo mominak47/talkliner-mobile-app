@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/auth_service.dart';
+import 'package:talkliner/app/services/token_manager.dart';
 
 class AuthController extends GetxController {
   final AuthService authService = Get.find<AuthService>();
@@ -15,7 +16,11 @@ class AuthController extends GetxController {
 
   final Rxn<UserModel> user = Rxn<UserModel>();
 
+  // Error
+  final Rxn<String> error = Rxn<String>();
+
   String get token => _token.value ?? '';
+
 
   @override
   void onInit() {
@@ -25,17 +30,20 @@ class AuthController extends GetxController {
 
   void login(String username, String password) async {
     isLoading.value = true;
+    error.value = null;
     try {
       _token.value = await authService.login(username, password);
       // Persist the token in storage
-      _storage.write('authToken', _token.value);
+      await TokenManager.setToken(_token.value ?? '');
       isLoggedIn.value = true;
 
       user.value = await authService.getUser();
-
       Get.offAllNamed(Routes.home);
     } catch (e) {
-      debugPrint(e.toString());
+      // Get Error Message
+      error.value = e.toString().split('message:')[1].trim().replaceAll('}', '');
+      
+      debugPrint("Login error: ${error.value}");
       isLoggedIn.value = false;
     } finally {
       isLoading.value = false;
@@ -44,16 +52,18 @@ class AuthController extends GetxController {
 
   void loginWithToken(String token) async {
     _token.value = token;
-    _storage.write('authToken', _token.value);
-    isLoggedIn.value = true;
-    Get.offAllNamed(Routes.home);
+    await TokenManager.setToken(_token.value ?? '');
+    debugPrint("TOKEN: ${_token.value}");
+    // isLoggedIn.value = true;
+    // user.value = await authService.getUser();
+    // Get.offAllNamed(Routes.home);
   }
 
   // Checks if a token exists in storage to determine the login state.
   void _checkLoginStatus() async {
     try {
-      final storedToken = _storage.read('authToken');
-      if (storedToken != null) {
+      final storedToken = await TokenManager.getToken();
+      if (storedToken.isNotEmpty) {
         _token.value = storedToken;
         isLoggedIn.value = true;
         user.value = await authService.getUser();
@@ -62,7 +72,7 @@ class AuthController extends GetxController {
       debugPrint(e.toString());
 
       // Delete the token from storage
-      _storage.remove('authToken');
+      await TokenManager.removeToken();
 
       // Take user to login screen
       Get.offAllNamed(Routes.login);
@@ -71,12 +81,12 @@ class AuthController extends GetxController {
     debugPrint('Login status: ${isLoggedIn.value}');
   }
 
-  void logout() {
-    _storage.remove('authToken');
+  void logout() async {
+    await TokenManager.removeToken();
     isLoggedIn.value = false;
 
     // Clear GetStorage All
-    _storage.erase();
+    await GetStorage().erase();
 
     Get.offAllNamed(Routes.login);
   }

@@ -18,17 +18,17 @@ NS_ASSUME_NONNULL_BEGIN
 /** The value for this key should be a base64 encoded string containing
  *  the data from the serialized configuration proto.
  */
-RTC_EXTERN NSString *const RTC_CONSTANT_TYPE(RTCMediaConstraintsAudioNetworkAdaptorConfig);
+RTC_EXTERN NSString *const kRTCMediaConstraintsAudioNetworkAdaptorConfig;
 
 /** Constraint keys for generating offers and answers. */
-RTC_EXTERN NSString *const RTC_CONSTANT_TYPE(RTCMediaConstraintsIceRestart);
-RTC_EXTERN NSString *const RTC_CONSTANT_TYPE(RTCMediaConstraintsOfferToReceiveAudio);
-RTC_EXTERN NSString *const RTC_CONSTANT_TYPE(RTCMediaConstraintsOfferToReceiveVideo);
-RTC_EXTERN NSString *const RTC_CONSTANT_TYPE(RTCMediaConstraintsVoiceActivityDetection);
+RTC_EXTERN NSString *const kRTCMediaConstraintsIceRestart;
+RTC_EXTERN NSString *const kRTCMediaConstraintsOfferToReceiveAudio;
+RTC_EXTERN NSString *const kRTCMediaConstraintsOfferToReceiveVideo;
+RTC_EXTERN NSString *const kRTCMediaConstraintsVoiceActivityDetection;
 
 /** Constraint values for Boolean parameters. */
-RTC_EXTERN NSString *const RTC_CONSTANT_TYPE(RTCMediaConstraintsValueTrue);
-RTC_EXTERN NSString *const RTC_CONSTANT_TYPE(RTCMediaConstraintsValueFalse);
+RTC_EXTERN NSString *const kRTCMediaConstraintsValueTrue;
+RTC_EXTERN NSString *const kRTCMediaConstraintsValueFalse;
 
 RTC_OBJC_EXPORT
 @interface RTC_OBJC_TYPE (RTCMediaConstraints) : NSObject
@@ -36,11 +36,10 @@ RTC_OBJC_EXPORT
 - (instancetype)init NS_UNAVAILABLE;
 
 /** Initialize with mandatory and/or optional constraints. */
-- (instancetype)initWithMandatoryConstraints:
-                    (nullable NSDictionary<NSString *, NSString *> *)mandatory
-                         optionalConstraints:
-                             (nullable NSDictionary<NSString *, NSString *> *)
-                                 optional NS_DESIGNATED_INITIALIZER;
+- (instancetype)
+    initWithMandatoryConstraints:(nullable NSDictionary<NSString *, NSString *> *)mandatory
+             optionalConstraints:(nullable NSDictionary<NSString *, NSString *> *)optional
+    NS_DESIGNATED_INITIALIZER;
 
 @end
 

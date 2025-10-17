@@ -29,65 +29,63 @@
 @class RTC_OBJC_TYPE(RTCStatisticsReport);
 @class RTC_OBJC_TYPE(RTCLegacyStatsReport);
 
-typedef NS_ENUM(NSInteger, RTC_OBJC_TYPE(RTCRtpMediaType));
+typedef NS_ENUM(NSInteger, RTCRtpMediaType);
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString *const RTC_CONSTANT_TYPE(RTCPeerConnectionErrorDomain);
-extern int const RTC_CONSTANT_TYPE(RTCSessionDescriptionErrorCode);
+extern NSString *const kRTCPeerConnectionErrorDomain;
+extern int const kRTCSessionDescriptionErrorCode;
 
 /** Represents the signaling state of the peer connection. */
-typedef NS_ENUM(NSInteger, RTC_OBJC_TYPE(RTCSignalingState)) {
-  RTC_OBJC_TYPE(RTCSignalingStateStable),
-  RTC_OBJC_TYPE(RTCSignalingStateHaveLocalOffer),
-  RTC_OBJC_TYPE(RTCSignalingStateHaveLocalPrAnswer),
-  RTC_OBJC_TYPE(RTCSignalingStateHaveRemoteOffer),
-  RTC_OBJC_TYPE(RTCSignalingStateHaveRemotePrAnswer),
+typedef NS_ENUM(NSInteger, RTCSignalingState) {
+  RTCSignalingStateStable,
+  RTCSignalingStateHaveLocalOffer,
+  RTCSignalingStateHaveLocalPrAnswer,
+  RTCSignalingStateHaveRemoteOffer,
+  RTCSignalingStateHaveRemotePrAnswer,
   // Not an actual state, represents the total number of states.
-  RTC_OBJC_TYPE(RTCSignalingStateClosed),
+  RTCSignalingStateClosed,
 };
 
 /** Represents the ice connection state of the peer connection. */
-typedef NS_ENUM(NSInteger, RTC_OBJC_TYPE(RTCIceConnectionState)) {
-  RTC_OBJC_TYPE(RTCIceConnectionStateNew),
-  RTC_OBJC_TYPE(RTCIceConnectionStateChecking),
-  RTC_OBJC_TYPE(RTCIceConnectionStateConnected),
-  RTC_OBJC_TYPE(RTCIceConnectionStateCompleted),
-  RTC_OBJC_TYPE(RTCIceConnectionStateFailed),
-  RTC_OBJC_TYPE(RTCIceConnectionStateDisconnected),
-  RTC_OBJC_TYPE(RTCIceConnectionStateClosed),
-  RTC_OBJC_TYPE(RTCIceConnectionStateCount),
+typedef NS_ENUM(NSInteger, RTCIceConnectionState) {
+  RTCIceConnectionStateNew,
+  RTCIceConnectionStateChecking,
+  RTCIceConnectionStateConnected,
+  RTCIceConnectionStateCompleted,
+  RTCIceConnectionStateFailed,
+  RTCIceConnectionStateDisconnected,
+  RTCIceConnectionStateClosed,
+  RTCIceConnectionStateCount,
 };
 
 /** Represents the combined ice+dtls connection state of the peer connection. */
-typedef NS_ENUM(NSInteger, RTC_OBJC_TYPE(RTCPeerConnectionState)) {
-  RTC_OBJC_TYPE(RTCPeerConnectionStateNew),
-  RTC_OBJC_TYPE(RTCPeerConnectionStateConnecting),
-  RTC_OBJC_TYPE(RTCPeerConnectionStateConnected),
-  RTC_OBJC_TYPE(RTCPeerConnectionStateDisconnected),
-  RTC_OBJC_TYPE(RTCPeerConnectionStateFailed),
-  RTC_OBJC_TYPE(RTCPeerConnectionStateClosed),
+typedef NS_ENUM(NSInteger, RTCPeerConnectionState) {
+  RTCPeerConnectionStateNew,
+  RTCPeerConnectionStateConnecting,
+  RTCPeerConnectionStateConnected,
+  RTCPeerConnectionStateDisconnected,
+  RTCPeerConnectionStateFailed,
+  RTCPeerConnectionStateClosed,
 };
 
 /** Represents the ice gathering state of the peer connection. */
-typedef NS_ENUM(NSInteger, RTC_OBJC_TYPE(RTCIceGatheringState)) {
-  RTC_OBJC_TYPE(RTCIceGatheringStateNew),
-  RTC_OBJC_TYPE(RTCIceGatheringStateGathering),
-  RTC_OBJC_TYPE(RTCIceGatheringStateComplete),
+typedef NS_ENUM(NSInteger, RTCIceGatheringState) {
+  RTCIceGatheringStateNew,
+  RTCIceGatheringStateGathering,
+  RTCIceGatheringStateComplete,
 };
 
 /** Represents the stats output level. */
-typedef NS_ENUM(NSInteger, RTC_OBJC_TYPE(RTCStatsOutputLevel)) {
-  RTC_OBJC_TYPE(RTCStatsOutputLevelStandard),
-  RTC_OBJC_TYPE(RTCStatsOutputLevelDebug),
+typedef NS_ENUM(NSInteger, RTCStatsOutputLevel) {
+  RTCStatsOutputLevelStandard,
+  RTCStatsOutputLevelDebug,
 };
 
 typedef void (^RTCCreateSessionDescriptionCompletionHandler)(
-    RTC_OBJC_TYPE(RTCSessionDescription) *_Nullable sdp,
-    NSError *_Nullable error);
+    RTC_OBJC_TYPE(RTCSessionDescription) *_Nullable sdp, NSError *_Nullable error);
 
-typedef void (^RTCSetSessionDescriptionCompletionHandler)(
-    NSError *_Nullable error);
+typedef void (^RTCSetSessionDescriptionCompletionHandler)(NSError *_Nullable error);
 
 @class RTC_OBJC_TYPE(RTCPeerConnection);
 
@@ -98,7 +96,7 @@ RTC_OBJC_EXPORT
     /** Called when the SignalingState changed. */
     - (void)peerConnection
     : (RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection didChangeSignalingState
-    : (RTC_OBJC_TYPE(RTCSignalingState))stateChanged;
+    : (RTCSignalingState)stateChanged;
 
 /** Called when media is received on a new stream from remote peer. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
@@ -111,16 +109,15 @@ RTC_OBJC_EXPORT
        didRemoveStream:(RTC_OBJC_TYPE(RTCMediaStream) *)stream;
 
 /** Called when negotiation is needed, for example ICE has restarted. */
-- (void)peerConnectionShouldNegotiate:
-    (RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection;
+- (void)peerConnectionShouldNegotiate:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection;
 
 /** Called any time the IceConnectionState changes. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
-    didChangeIceConnectionState:(RTC_OBJC_TYPE(RTCIceConnectionState))newState;
+    didChangeIceConnectionState:(RTCIceConnectionState)newState;
 
 /** Called any time the IceGatheringState changes. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
-    didChangeIceGatheringState:(RTC_OBJC_TYPE(RTCIceGatheringState))newState;
+    didChangeIceGatheringState:(RTCIceGatheringState)newState;
 
 /** New ice candidate has been found. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
@@ -128,8 +125,7 @@ RTC_OBJC_EXPORT
 
 /** Called when a group of local Ice candidates have been removed. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
-    didRemoveIceCandidates:
-        (NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates;
+    didRemoveIceCandidates:(NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates;
 
 /** New data channel has been opened. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
@@ -143,15 +139,14 @@ RTC_OBJC_EXPORT
 /** Called any time the IceConnectionState changes following standardized
  * transition. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
-    didChangeStandardizedIceConnectionState:(RTC_OBJC_TYPE(RTCIceConnectionState))newState;
+    didChangeStandardizedIceConnectionState:(RTCIceConnectionState)newState;
 
 /** Called any time the PeerConnectionState changes. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
-    didChangeConnectionState:(RTC_OBJC_TYPE(RTCPeerConnectionState))newState;
+    didChangeConnectionState:(RTCPeerConnectionState)newState;
 
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
-    didStartReceivingOnTransceiver:
-        (RTC_OBJC_TYPE(RTCRtpTransceiver) *)transceiver;
+    didStartReceivingOnTransceiver:(RTC_OBJC_TYPE(RTCRtpTransceiver) *)transceiver;
 
 /** Called when a receiver and its track are created. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
@@ -171,8 +166,7 @@ RTC_OBJC_EXPORT
 
 /** Called when gathering of an ICE candidate failed. */
 - (void)peerConnection:(RTC_OBJC_TYPE(RTCPeerConnection) *)peerConnection
-    didFailToGatherIceCandidate:
-        (RTC_OBJC_TYPE(RTCIceCandidateErrorEvent) *)event;
+    didFailToGatherIceCandidate:(RTC_OBJC_TYPE(RTCIceCandidateErrorEvent) *)event;
 
 @end
 
@@ -189,10 +183,10 @@ RTC_OBJC_EXPORT
 @property(nonatomic, readonly) NSArray<RTC_OBJC_TYPE(RTCMediaStream) *> *localStreams;
 @property(nonatomic, readonly, nullable) RTC_OBJC_TYPE(RTCSessionDescription) * localDescription;
 @property(nonatomic, readonly, nullable) RTC_OBJC_TYPE(RTCSessionDescription) * remoteDescription;
-@property(nonatomic, readonly) RTC_OBJC_TYPE(RTCSignalingState) signalingState;
-@property(nonatomic, readonly) RTC_OBJC_TYPE(RTCIceConnectionState) iceConnectionState;
-@property(nonatomic, readonly) RTC_OBJC_TYPE(RTCPeerConnectionState) connectionState;
-@property(nonatomic, readonly) RTC_OBJC_TYPE(RTCIceGatheringState) iceGatheringState;
+@property(nonatomic, readonly) RTCSignalingState signalingState;
+@property(nonatomic, readonly) RTCIceConnectionState iceConnectionState;
+@property(nonatomic, readonly) RTCPeerConnectionState connectionState;
+@property(nonatomic, readonly) RTCIceGatheringState iceGatheringState;
 @property(nonatomic, readonly, copy) RTC_OBJC_TYPE(RTCConfiguration) * configuration;
 
 /** Gets all RTCRtpSenders associated with this peer connection.
@@ -205,8 +199,7 @@ RTC_OBJC_EXPORT
  *  Note: reading this property returns different instances of RTCRtpReceiver.
  *  Use isEqual: instead of == to compare RTCRtpReceiver instances.
  */
-@property(nonatomic, readonly)
-    NSArray<RTC_OBJC_TYPE(RTCRtpReceiver) *> *receivers;
+@property(nonatomic, readonly) NSArray<RTC_OBJC_TYPE(RTCRtpReceiver) *> *receivers;
 
 /** Gets all RTCRtpTransceivers associated with this peer connection.
  *  Note: reading this property returns different instances of
@@ -214,8 +207,7 @@ RTC_OBJC_EXPORT
  *  RTCRtpTransceiver instances. This is only available with
  * RTCSdpSemanticsUnifiedPlan specified.
  */
-@property(nonatomic, readonly)
-    NSArray<RTC_OBJC_TYPE(RTCRtpTransceiver) *> *transceivers;
+@property(nonatomic, readonly) NSArray<RTC_OBJC_TYPE(RTCRtpTransceiver) *> *transceivers;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -232,16 +224,14 @@ RTC_OBJC_EXPORT
 
 /** Provide a remote candidate to the ICE Agent. */
 - (void)addIceCandidate:(RTC_OBJC_TYPE(RTCIceCandidate) *)candidate
-    DEPRECATED_MSG_ATTRIBUTE(
-        "Please use addIceCandidate:completionHandler: instead");
+    DEPRECATED_MSG_ATTRIBUTE("Please use addIceCandidate:completionHandler: instead");
 
 /** Provide a remote candidate to the ICE Agent. */
 - (void)addIceCandidate:(RTC_OBJC_TYPE(RTCIceCandidate) *)candidate
       completionHandler:(void (^)(NSError *_Nullable error))completionHandler;
 
 /** Remove a group of remote candidates from the ICE Agent. */
-- (void)removeIceCandidates:
-    (NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates;
+- (void)removeIceCandidates:(NSArray<RTC_OBJC_TYPE(RTCIceCandidate) *> *)candidates;
 
 /** Add a new media stream to be sent on this peer connection.
  *  This method is not supported with RTCSdpSemanticsUnifiedPlan. Please use
@@ -263,9 +253,8 @@ RTC_OBJC_EXPORT
  *  - A sender already exists for the track.
  *  - The peer connection is closed.
  */
-- (nullable RTC_OBJC_TYPE(RTCRtpSender) *)
-     addTrack:(RTC_OBJC_TYPE(RTCMediaStreamTrack) *)track
-    streamIds:(NSArray<NSString *> *)streamIds;
+- (nullable RTC_OBJC_TYPE(RTCRtpSender) *)addTrack:(RTC_OBJC_TYPE(RTCMediaStreamTrack) *)track
+                                         streamIds:(NSArray<NSString *> *)streamIds;
 
 /** With PlanB semantics, removes an RTCRtpSender from this peer connection.
  *
@@ -306,31 +295,28 @@ RTC_OBJC_EXPORT
 /** Adds a transceiver with the given kind. Can either be RTCRtpMediaTypeAudio
  *  or RTCRtpMediaTypeVideo.
  */
-- (nullable RTC_OBJC_TYPE(RTCRtpTransceiver) *)addTransceiverOfType:(RTC_OBJC_TYPE(RTCRtpMediaType))mediaType;
+- (nullable RTC_OBJC_TYPE(RTCRtpTransceiver) *)addTransceiverOfType:(RTCRtpMediaType)mediaType;
 - (nullable RTC_OBJC_TYPE(RTCRtpTransceiver) *)
-    addTransceiverOfType:(RTC_OBJC_TYPE(RTCRtpMediaType))mediaType
+    addTransceiverOfType:(RTCRtpMediaType)mediaType
                     init:(RTC_OBJC_TYPE(RTCRtpTransceiverInit) *)init;
 
 /** Tells the PeerConnection that ICE should be restarted. This triggers a need
- * for negotiation and subsequent offerForConstraints:completionHandler call
- * will act as if RTCOfferAnswerOptions::ice_restart is true.
+ * for negotiation and subsequent offerForConstraints:completionHandler call will act as if
+ * RTCOfferAnswerOptions::ice_restart is true.
  */
 - (void)restartIce;
 
 /** Generate an SDP offer. */
 - (void)offerForConstraints:(RTC_OBJC_TYPE(RTCMediaConstraints) *)constraints
-          completionHandler:
-              (RTCCreateSessionDescriptionCompletionHandler)completionHandler;
+          completionHandler:(RTCCreateSessionDescriptionCompletionHandler)completionHandler;
 
 /** Generate an SDP answer. */
 - (void)answerForConstraints:(RTC_OBJC_TYPE(RTCMediaConstraints) *)constraints
-           completionHandler:
-               (RTCCreateSessionDescriptionCompletionHandler)completionHandler;
+           completionHandler:(RTCCreateSessionDescriptionCompletionHandler)completionHandler;
 
 /** Apply the supplied RTCSessionDescription as the local description. */
 - (void)setLocalDescription:(RTC_OBJC_TYPE(RTCSessionDescription) *)sdp
-          completionHandler:
-              (RTCSetSessionDescriptionCompletionHandler)completionHandler;
+          completionHandler:(RTCSetSessionDescriptionCompletionHandler)completionHandler;
 
 /** Creates an offer or answer (depending on current signaling state) and sets
  * it as the local session description. */
@@ -339,8 +325,7 @@ RTC_OBJC_EXPORT
 
 /** Apply the supplied RTCSessionDescription as the remote description. */
 - (void)setRemoteDescription:(RTC_OBJC_TYPE(RTCSessionDescription) *)sdp
-           completionHandler:
-               (RTCSetSessionDescriptionCompletionHandler)completionHandler;
+           completionHandler:(RTCSetSessionDescriptionCompletionHandler)completionHandler;
 
 /** Limits the bandwidth allocated for all RTP streams sent by this
  *  PeerConnection. Nil parameters will be unchanged. Setting
@@ -352,8 +337,7 @@ RTC_OBJC_EXPORT
               maxBitrateBps:(nullable NSNumber *)maxBitrateBps;
 
 /** Start or stop recording an Rtc EventLog. */
-- (BOOL)startRtcEventLogWithFilePath:(NSString *)filePath
-                      maxSizeInBytes:(int64_t)maxSizeInBytes;
+- (BOOL)startRtcEventLogWithFilePath:(NSString *)filePath maxSizeInBytes:(int64_t)maxSizeInBytes;
 - (void)stopRtcEventLog;
 
 @end
@@ -376,28 +360,25 @@ RTC_OBJC_EXPORT
 
     /** Create a new data channel with the given label and configuration. */
     - (nullable RTC_OBJC_TYPE(RTCDataChannel) *)dataChannelForLabel
-    : (NSString *)label configuration
-    : (RTC_OBJC_TYPE(RTCDataChannelConfiguration) *)configuration;
+    : (NSString *)label configuration : (RTC_OBJC_TYPE(RTCDataChannelConfiguration) *)configuration;
 
 @end
 
-typedef void (^RTCStatisticsCompletionHandler)(
-    RTC_OBJC_TYPE(RTCStatisticsReport) *);
+typedef void (^RTCStatisticsCompletionHandler)(RTC_OBJC_TYPE(RTCStatisticsReport) *);
 
 @interface RTC_OBJC_TYPE (RTCPeerConnection)
 (Stats)
 
-    /** Gather stats for the given RTCMediaStreamTrack. If `mediaStreamTrack` is
-     * nil statistics are gathered for all tracks.
+    /** Gather stats for the given RTCMediaStreamTrack. If `mediaStreamTrack` is nil
+     *  statistics are gathered for all tracks.
      */
     - (void)statsForTrack
     : (nullable RTC_OBJC_TYPE(RTCMediaStreamTrack) *)mediaStreamTrack statsOutputLevel
-    : (RTC_OBJC_TYPE(RTCStatsOutputLevel))statsOutputLevel completionHandler
+    : (RTCStatsOutputLevel)statsOutputLevel completionHandler
     : (nullable void (^)(NSArray<RTC_OBJC_TYPE(RTCLegacyStatsReport) *> *stats))completionHandler;
 
 /** Gather statistic through the v2 statistics API. */
-- (void)statisticsWithCompletionHandler:
-    (RTCStatisticsCompletionHandler)completionHandler;
+- (void)statisticsWithCompletionHandler:(RTCStatisticsCompletionHandler)completionHandler;
 
 /** Spec-compliant getStats() performing the stats selection algorithm with the
  *  sender.

@@ -38,7 +38,7 @@ class RadioItem extends StatelessWidget {
         children: [
           svgIconPath != null
               ? SvgPicture.asset(svgIconPath!, width: 24, height: 24)
-              : Icon(icon, color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800),
+              : Icon(icon, color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800),
           SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -49,7 +49,7 @@ class RadioItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800,
+                    color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800,
                   ),
                 ),
                 if (description != null)

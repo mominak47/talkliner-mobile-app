@@ -45,8 +45,7 @@ class _LoginViewState extends State<LoginView> {
 
   void _processQrCode(String token) => authController.loginWithToken(token);
 
-  void _handleLogin() =>
-      authController.login(_usernameController.text, _passwordController.text);
+  void _handleLogin() => authController.login(_usernameController.text, _passwordController.text);
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +80,16 @@ class _LoginViewState extends State<LoginView> {
                             )
                       ),
                       const SizedBox(height: 40),
+                      if (authController.error.value != null)
+                        Text(
+                          authController.error.value ?? '',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      const SizedBox(height: 16),
                       // Username field
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

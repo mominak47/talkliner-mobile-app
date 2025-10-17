@@ -1,5 +1,5 @@
 /*
- *  Copyright 2025 The WebRTC project authors. All Rights Reserved.
+ *  Copyright 2024 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -56,7 +56,6 @@
 #import <WebRTC/RTCConfiguration.h>
 #import <WebRTC/RTCDataChannel.h>
 #import <WebRTC/RTCDataChannelConfiguration.h>
-#import <WebRTC/RTCDataPacketCryptor.h>
 #import <WebRTC/RTCFrameCryptor.h>
 #import <WebRTC/RTCFrameCryptorKeyProvider.h>
 #import <WebRTC/RTCFieldTrials.h>
@@ -82,7 +81,6 @@
 #import <WebRTC/RTCRtpHeaderExtensionCapability.h>
 #import <WebRTC/RTCRtpParameters.h>
 #import <WebRTC/RTCRtpReceiver.h>
-#import <WebRTC/RTCRtpSource.h>
 #import <WebRTC/RTCRtpSender.h>
 #import <WebRTC/RTCRtpTransceiver.h>
 #import <WebRTC/RTCDtmfSender.h>
@@ -109,11 +107,6 @@
 #import <WebRTC/RTCAudioProcessingModule.h>
 #import <WebRTC/RTCDefaultAudioProcessingModule.h>
 #import <WebRTC/RTCAudioCustomProcessingDelegate.h>
-#import <WebRTC/RTCAudioProcessingConfig.h>
-#import <WebRTC/RTCCodecSpecificInfoH265.h>
-#import <WebRTC/RTCH265ProfileLevelId.h>
-#import <WebRTC/RTCVideoDecoderH265.h>
-#import <WebRTC/RTCVideoEncoderH265.h>
 #import <WebRTC/RTCCameraPreviewView.h>
 #import <WebRTC/RTCMTLVideoView.h>
 #import <WebRTC/RTCCallbackLogger.h>

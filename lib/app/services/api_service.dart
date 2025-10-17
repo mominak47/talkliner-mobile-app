@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/config/app_config.dart';
 
 class ApiService extends GetConnect {
+
   @override
   void onInit() {
     super.onInit();

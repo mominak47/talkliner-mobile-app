@@ -40,8 +40,7 @@ RTC_OBJC_EXPORT
 (RTCDataChannelDelegate)<NSObject>
 
     /** The data channel state changed. */
-    - (void)dataChannelDidChangeState
-    : (RTC_OBJC_TYPE(RTCDataChannel) *)dataChannel;
+    - (void)dataChannelDidChangeState : (RTC_OBJC_TYPE(RTCDataChannel) *)dataChannel;
 
 /** The data channel successfully received a data buffer. */
 - (void)dataChannel:(RTC_OBJC_TYPE(RTCDataChannel) *)dataChannel
@@ -55,11 +54,11 @@ RTC_OBJC_EXPORT
 @end
 
 /** Represents the state of the data channel. */
-typedef NS_ENUM(NSInteger, RTC_OBJC_TYPE(RTCDataChannelState)) {
-  RTC_OBJC_TYPE(RTCDataChannelStateConnecting),
-  RTC_OBJC_TYPE(RTCDataChannelStateOpen),
-  RTC_OBJC_TYPE(RTCDataChannelStateClosing),
-  RTC_OBJC_TYPE(RTCDataChannelStateClosed),
+typedef NS_ENUM(NSInteger, RTCDataChannelState) {
+  RTCDataChannelStateConnecting,
+  RTCDataChannelStateOpen,
+  RTCDataChannelStateClosing,
+  RTCDataChannelStateClosed,
 };
 
 RTC_OBJC_EXPORT
@@ -78,8 +77,7 @@ RTC_OBJC_EXPORT
 @property(nonatomic, readonly) BOOL isOrdered;
 
 /** Deprecated. Use maxPacketLifeTime. */
-@property(nonatomic, readonly)
-    NSUInteger maxRetransmitTime DEPRECATED_ATTRIBUTE;
+@property(nonatomic, readonly) NSUInteger maxRetransmitTime DEPRECATED_ATTRIBUTE;
 
 /**
  * The length of the time window (in milliseconds) during which transmissions
@@ -110,7 +108,7 @@ RTC_OBJC_EXPORT
 @property(nonatomic, readonly) int channelId;
 
 /** The state of the data channel. */
-@property(nonatomic, readonly) RTC_OBJC_TYPE(RTCDataChannelState) readyState;
+@property(nonatomic, readonly) RTCDataChannelState readyState;
 
 /**
  * The number of bytes of application data that have been queued using
