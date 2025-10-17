@@ -58,13 +58,15 @@ class _MessagesContainerState extends State<MessagesContainer> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     Color getMessageColor(MessageModel message) {
       if (message.id == "sending") {
         return TalklinerThemeColors.primary025;
       }
       return message.isMe
-          ? TalklinerThemeColors.primary050
-          : TalklinerThemeColors.gray040;
+          ? (isDarkMode ? TalklinerThemeColors.primary100 : TalklinerThemeColors.primary050)
+          : (isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray040);
     }
 
     Color getMessageTextColor(MessageModel message) {
@@ -72,13 +74,13 @@ class _MessagesContainerState extends State<MessagesContainer> {
         return TalklinerThemeColors.primary100;
       }
       return message.isMe
-          ? TalklinerThemeColors.primary700
-          : TalklinerThemeColors.gray700;
+          ? (isDarkMode ? TalklinerThemeColors.primary800 : TalklinerThemeColors.primary700)
+          : (isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray700);
     }
 
     return Obx(
       () => Container(
-        decoration: BoxDecoration(color: TalklinerThemeColors.gray020),
+        decoration: BoxDecoration(color: isDarkMode ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray020),
         child: ListView.builder(
           controller: _scrollController,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),

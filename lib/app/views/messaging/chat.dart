@@ -15,17 +15,19 @@ class Chat extends StatelessWidget {
   Widget build(BuildContext context) {
     final chatController = Get.put(ChatController(user: user));
 
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
+        backgroundColor: isDarkMode ? TalklinerThemeColors.gray800 : Colors.white,
         elevation: 0,
         toolbarHeight: 72,
         titleSpacing: 0,
         title: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.arrow_back, color: TalklinerThemeColors.gray800),
+              icon: Icon(Icons.arrow_back, color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800),
               onPressed: () => Navigator.of(context).pop(),
               splashRadius: 24,
             ),
@@ -39,10 +41,10 @@ class Chat extends StatelessWidget {
                 children: [
                   Text(
                     user.displayName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black87,
+                      color: isDarkMode ? TalklinerThemeColors.gray050 : Colors.black87,
                     ),
                   ),
                   Row(
@@ -51,7 +53,7 @@ class Chat extends StatelessWidget {
                         "Available",
                         style: TextStyle(
                           fontSize: 13,
-                          color: TalklinerThemeColors.gray600,
+                          color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray600,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -63,7 +65,7 @@ class Chat extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.call_outlined,
-                color: TalklinerThemeColors.gray800,
+                color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800,
               ),
               onPressed: () {},
               splashRadius: 24,
@@ -71,13 +73,13 @@ class Chat extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.videocam_outlined,
-                color: TalklinerThemeColors.gray800,
+                color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800,
               ),
               onPressed: () {},
               splashRadius: 24,
             ),
             IconButton(
-              icon: Icon(Icons.more_vert, color: TalklinerThemeColors.gray800),
+              icon: Icon(Icons.more_vert, color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800),
               onPressed: () {},
               splashRadius: 24,
             ),
@@ -85,7 +87,7 @@ class Chat extends StatelessWidget {
           ],
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: isDarkMode ? TalklinerThemeColors.gray800 : Colors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

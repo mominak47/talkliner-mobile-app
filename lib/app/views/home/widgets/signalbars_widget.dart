@@ -27,11 +27,13 @@ class SignalBarsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final socketController = Get.find<SocketController>();
     return Obx(
-      () => Row(
-        children: [
-          _getSignalIcon(socketController.connectionQuality.value),
-          Text(socketController.latency.value.toString()),
-        ],
+      () => Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: _getSignalIcon(socketController.connectionQuality.value),
       )
     );
   }

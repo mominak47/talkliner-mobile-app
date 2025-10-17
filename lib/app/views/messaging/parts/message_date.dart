@@ -10,10 +10,10 @@ class MessageDate extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final formattedTime = DateFormat('h:mm a').format(timestamp);
-
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Text(
       formattedTime,
-      style: TextStyle(color: TalklinerThemeColors.gray500, fontSize: 12),
+      style: TextStyle(color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray500, fontSize: 12),
     );
   }
 }

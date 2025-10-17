@@ -24,7 +24,7 @@ class CheckboxItem extends StatelessWidget {
               child: Icon(icon, size: 16, color: iconColor),
             ),
             SizedBox(width: 8),
-            Text(title, style: TextStyle(fontSize: 16,color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800, fontWeight: FontWeight.w500),),
+            Text(title, style: TextStyle(fontSize: 16,color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800, fontWeight: FontWeight.w500),),
           ],
         ),
         Checkbox(
@@ -32,7 +32,7 @@ class CheckboxItem extends StatelessWidget {
           onChanged: onChanged,
           activeColor: TalklinerThemeColors.primary500,
           checkColor: Colors.white,
-          side: BorderSide(color: isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray040, width: 2),
+          side: BorderSide(color: isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray040, width: 2),
         ),
       ],
     );

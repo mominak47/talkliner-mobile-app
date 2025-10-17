@@ -16,7 +16,6 @@
         "flutter",
         "flutter_blue_plus",
         "flutter_callkit_incoming",
-        "flutter_compass",
         "flutter_launcher_icons",
         "flutter_local_notifications",
         "flutter_secure_storage",
@@ -25,11 +24,8 @@
         "fluttertoast",
         "get",
         "get_storage",
-        "hive",
-        "hive_flutter",
         "http",
         "intl",
-        "latlong2",
         "livekit_client",
         "lucide_icons",
         "ms_undraw",
@@ -190,8 +186,9 @@
     },
     {
       "name": "timezone",
-      "version": "0.9.4",
+      "version": "0.10.1",
       "dependencies": [
+        "http",
         "path"
       ]
     },
@@ -293,13 +290,6 @@
       ]
     },
     {
-      "name": "flutter_compass",
-      "version": "0.8.1",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
       "name": "socket_io_client",
       "version": "3.1.2",
       "dependencies": [
@@ -318,24 +308,6 @@
         "path_provider_linux",
         "path_provider_platform_interface",
         "path_provider_windows"
-      ]
-    },
-    {
-      "name": "hive_flutter",
-      "version": "1.1.0",
-      "dependencies": [
-        "flutter",
-        "hive",
-        "path",
-        "path_provider"
-      ]
-    },
-    {
-      "name": "hive",
-      "version": "2.2.3",
-      "dependencies": [
-        "crypto",
-        "meta"
       ]
     },
     {
@@ -364,13 +336,6 @@
         "clock",
         "meta",
         "path"
-      ]
-    },
-    {
-      "name": "latlong2",
-      "version": "0.9.1",
-      "dependencies": [
-        "intl"
       ]
     },
     {

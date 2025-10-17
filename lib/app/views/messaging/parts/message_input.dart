@@ -52,12 +52,14 @@ class _MessageInputState extends State<MessageInput> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       width: double.infinity,
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: TalklinerThemeColors.gray030)),
-        color: Colors.white,
+        // border: Border(top: BorderSide(color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray030)),
+        color: isDarkMode ? TalklinerThemeColors.gray800 : Colors.white,
       ),
       child: Column(
         children: [
@@ -66,13 +68,10 @@ class _MessageInputState extends State<MessageInput> {
               // TextField with rounded border and hint
               Expanded(
                 child: Container(
-                  height: 40,
+                  height: 35,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: TalklinerThemeColors.gray030,
-                      width: 1,
-                    ),
+                    color: isDarkMode ? TalklinerThemeColors.gray900 : Colors.white,
                   ),
                   alignment: Alignment.center,
                   child: TextField(
@@ -88,12 +87,14 @@ class _MessageInputState extends State<MessageInput> {
                       textController.clear();
                     },
                     decoration: InputDecoration(
+                      fillColor: isDarkMode ? TalklinerThemeColors.gray900 : Colors.white,
+                      filled: true,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 0,
                       ),
                       hintText: "Type a message...",
-                      hintStyle: TextStyle(color: TalklinerThemeColors.gray100),
+                      hintStyle: TextStyle(fontSize: 14, color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray100),
                       focusColor: Colors.transparent,
                       enabledBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
@@ -111,7 +112,7 @@ class _MessageInputState extends State<MessageInput> {
                 icon: Icon(
                   LucideIcons.paperclip,
                   size: 22,
-                  color: TalklinerThemeColors.gray500,
+                  color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray500,
                 ),
                 onPressed: () {},
                 splashRadius: 22,
@@ -123,7 +124,7 @@ class _MessageInputState extends State<MessageInput> {
                 icon: Icon(
                   LucideIcons.camera,
                   size: 22,
-                  color: TalklinerThemeColors.gray500,
+                  color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray500,
                 ),
                 onPressed: () {},
                 splashRadius: 22,

@@ -90,7 +90,7 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
                     state: pushToTalkController.getPTTButtonState(),
                     type: PushToTalkButtonType.main,
                     doWeNeedBorder: true,
-                    doWeNeedShadows: true,
+                    doWeNeedShadows: false,
                   ),
                 ),
                 SizedBox(height: 20),

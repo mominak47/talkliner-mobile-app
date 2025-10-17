@@ -18,7 +18,7 @@ class SettingsSectionContainer extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        border: border ? Border.all(color: isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray030) : null,
+        border: border ? Border.all(color: isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray020) : null,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(

@@ -238,7 +238,6 @@ class _LoginViewState extends State<LoginView> {
                                               ),
                                               SizedBox(height: 10),
                                               QRCodeDartScanView(
-                                                scanInvertedQRCode: true,
                                                 typeScan: TypeScan.live,
                                                 onCapture: (
                                                   Result result,

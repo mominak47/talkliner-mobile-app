@@ -45,8 +45,65 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<!-- Camera permission usage description -->
+	
+	<!-- Camera Permission -->
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires camera access to take photos and videos.</string>
+	<string>This app requires access to the camera for video calls and photo features.</string>
+	
+	<!-- Microphone Permission -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to the microphone for voice calls and audio recording.</string>
+	
+	<!-- Photo Library Permission -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to your photo library to share photos and videos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app requires access to save photos and videos to your library.</string>
+	
+	<!-- Location Permission -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires your location to show your position and provide location-based features.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app requires your location to track your position and provide location-based features even when the app is in the background.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app requires your location to track your position even when the app is in the background.</string>
+	
+	<!-- Bluetooth Permission -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app requires Bluetooth access to connect to nearby devices.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This app requires Bluetooth access to connect to nearby devices.</string>
+	
+	<!-- Contacts Permission -->
+	<key>NSContactsUsageDescription</key>
+	<string>This app requires access to your contacts to help you connect with friends.</string>
+	
+	<!-- Local Network Permission -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app requires local network access for peer-to-peer communication.</string>
+	
+	<!-- Notifications Permission -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>voip</string>
+		<string>remote-notification</string>
+		<string>fetch</string>
+	</array>
+	
+	<!-- Background Task Identifiers (if you need processing mode, add specific identifiers here) -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.steigenberg.talkliner.refresh</string>
+		<string>com.steigenberg.talkliner.cleanup</string>
+	</array>
+	
+	<!-- CallKit Support -->
+	<key>UIApplicationSupportsVoIP</key>
+	<true/>
+	
+	<!-- Speech Recognition (if needed) -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app requires speech recognition for voice commands.</string>
 </dict>
 </plist>
