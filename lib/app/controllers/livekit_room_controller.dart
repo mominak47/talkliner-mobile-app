@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,8 @@ class LivekitRoomController extends GetxController {
   final RxBool isRoomConnecting = false.obs;
   final RxString roomName = ''.obs;
   EventsListener<RoomEvent>? _listener;
+
+  final _audioPlayer = AudioPlayer();
 
   Room? _room;
 
@@ -118,9 +121,12 @@ Future<String> getChatId(UserModel user) async {
   }
 
   void _onRoomConnected(RoomConnectedEvent event) {
-    debugPrint('\nConnected to room 101 ${event.room.name}');
+    debugPrint('\nConnected to room : ${event.room.name}');
     isConnected.value = true;
     isRoomConnecting.value = false;
+
+    // Play PTT Connect Sound
+    _audioPlayer.play(AssetSource('audio/ptt-connect.wav'));
   }
 
   void _onRoomDisconnected(RoomDisconnectedEvent event) {

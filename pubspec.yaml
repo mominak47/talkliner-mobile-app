@@ -108,6 +108,7 @@ flutter:
     - assets/audio/talkliner-ringtone.mp3
     - assets/audio/emergency-tick-sound.mp3
     - assets/audio/emergency_sound.mp3
+    - assets/audio/ptt-connect.wav
     # Signals
     - assets/signals/0.svg
     - assets/signals/1.svg

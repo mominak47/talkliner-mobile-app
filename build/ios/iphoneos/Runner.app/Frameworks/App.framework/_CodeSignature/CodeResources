@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		wyCWDyoEFpBgZXMx+rUKg2cLsgQ=
+		Ktsp6JuodI41CRJCoU4RprD3sCw=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		Uj5/oVR9MzgVaPBooogbv9rF2iM=
+		PdOaLoRLPkhdxobVzEd7+vVAYfc=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -51,6 +51,10 @@
 		<key>flutter_assets/assets/audio/message-sent.mp3</key>
 		<data>
 		rurezt39nGYlnMrKsUvAoHGC5II=
+		</data>
+		<key>flutter_assets/assets/audio/ptt-connect.wav</key>
+		<data>
+		v9kuB8+93RpJnPxbUiRo36UQNgI=
 		</data>
 		<key>flutter_assets/assets/audio/talkliner-ringtone.mp3</key>
 		<data>
@@ -202,7 +206,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		oUXqyPPI9Xr05+JBmt2PfbL+tjY=
+		+Y5zGq+CjM5WyxK0CWc3EhlghIM=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -235,14 +239,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			iedq0pIkrS0SbQTw+WmwUKT5WqSi4VDUST7FsszrfwA=
+			0ve/HBDcFh6IDYeOfjZytoI3Cd+SLlju9zTcqOxD1OA=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			7vksfMQuuPNX1IYqzJByVGLtvy09kE+Yh50SP7UAY7g=
+			uEq+jC/BS1txraixW6ehgEFtxasvlTrGpHC8FNxALy8=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -306,6 +310,13 @@
 			<key>hash2</key>
 			<data>
 			mtf7BfB+H8Id7a/b941pHEnCqZZdlKzJ18ez3h81Bmc=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/audio/ptt-connect.wav</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			QBTrkDpnD4Y2YKO9Y7EE55iCLKXCyF8UdgYKQqjeNFU=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/audio/talkliner-ringtone.mp3</key>
@@ -571,7 +582,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			fpcEKWY/L178xATYTLPm+ZZnwJjYWiHQMzKjj6P1nG4=
+			RDtq7McXpuvKDsAt5pLBLAlMJJtlwt9FW8j81F6TfoI=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

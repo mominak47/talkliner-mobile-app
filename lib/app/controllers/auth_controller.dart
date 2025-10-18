@@ -4,7 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/auth_service.dart';
-import 'package:talkliner/app/services/token_manager.dart';
+import 'package:talkliner/app/cachemanagers/token_manager.dart';
 
 class AuthController extends GetxController {
   final AuthService authService = Get.find<AuthService>();

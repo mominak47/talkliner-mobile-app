@@ -23,9 +23,10 @@ class GroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Replace with your actual theme and avatar logic as needed
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
+
+    // Replace with your actual theme and avatar logic as needed
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return ElevatedButton(
       onPressed: onTapCard,
@@ -34,8 +35,9 @@ class GroupCard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: TalklinerThemeColors.primary500,
         foregroundColor: theme.primaryColor,
+        overlayColor: TalklinerThemeColors.primary500,
         elevation: 0,
       ),
       child: Row(
@@ -43,8 +45,8 @@ class GroupCard extends StatelessWidget {
         children: [
           // Replace with your actual UserAvatar widget
           CircleAvatar(
-            backgroundColor: TalklinerThemeColors.gray080,
-            radius: 25,
+              backgroundColor: isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray080,
+              radius: 25,
             child: Icon(LucideIcons.users, size: 24, color: Colors.white),
           ),
           const SizedBox(width: 16),
@@ -54,11 +56,11 @@ class GroupCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                    group.name,
+                  group.name,
                   style: TextStyle(
-                    color: isLight ? Colors.black87 : Colors.white,
+                    color: isDarkMode ? Colors.white : Colors.black87,
                     fontWeight: FontWeight.w500,
-                    fontSize: 18,
+                    fontSize: 16,
                   ),
                 ),
                 Row(
@@ -73,7 +75,7 @@ class GroupCard extends StatelessWidget {
                       '${group.memberCount.toString()} users',
                       style: TextStyle(
                         fontSize: 14,
-                        color: isLight ? Colors.grey : Colors.grey[300],
+                        color: isDarkMode ? Colors.grey[300] : Colors.grey,
                       ),
                     ),
                   ],
@@ -83,8 +85,21 @@ class GroupCard extends StatelessWidget {
           ),
           IconButton(
             onPressed: onTap,
-            icon: Icon( onTapIcon, color: isSelected ? Colors.white : TalklinerThemeColors.gray080),
-            style: IconButton.styleFrom(backgroundColor: isSelected ? TalklinerThemeColors.primary500 : TalklinerThemeColors.gray040),
+            icon: Icon(
+              onTapIcon,
+              color:
+                  isSelected
+                      ? (isDarkMode ? Colors.black : Colors.white)
+                      : TalklinerThemeColors.gray080,
+            ),
+            style: IconButton.styleFrom(
+              backgroundColor:
+                  isSelected
+                      ? TalklinerThemeColors.primary500
+                      : (isDarkMode
+                          ? TalklinerThemeColors.gray800
+                          : TalklinerThemeColors.gray040),
+            ),
           ),
         ],
       ),

@@ -138,7 +138,7 @@ class ContactsScreen extends StatelessWidget {
                             group.id,
                       ),
                     ),
-                    Divider(height: 1, color: TalklinerThemeColors.gray030),
+                    Divider(height: 1),
                   ],
                 );
               },
@@ -202,7 +202,6 @@ class ContactsScreen extends StatelessWidget {
                             textInputAction: TextInputAction.search,
                           ),
                         ),
-
                         actions: [
                           TextButton(
                             style: TextButton.styleFrom(

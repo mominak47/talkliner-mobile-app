@@ -28,7 +28,8 @@ class PushToTalkController extends GetxController {
     apiService.onInit();
 
     selectedUser.listen((user) {
-      livekitRoomController.connectToRoom(user);
+    livekitRoomController.isRoomConnecting.value = true;
+    livekitRoomController.connectToRoom(user);
     });
 
     // Fallback to reconncet to room if user is selected
