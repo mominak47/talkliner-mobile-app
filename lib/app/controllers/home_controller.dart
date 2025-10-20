@@ -16,9 +16,9 @@ class HomeController extends GetxController {
   SvgPicture getLogo() {
     bool isDarkMode = Theme.of(Get.context!).brightness == Brightness.dark;
     if (isDarkMode) {
-      return SvgPicture.asset('assets/logos/white_logo.svg', height: 36);
+      return SvgPicture.asset('assets/logos/white_logo.svg', height: 30);
     } else {
-      return SvgPicture.asset('assets/logos/talkliner.svg', height: 36);
+      return SvgPicture.asset('assets/logos/talkliner.svg', height: 30);
     }
   }
 

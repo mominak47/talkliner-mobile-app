@@ -11,7 +11,7 @@ class ContactCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onTapCard;
   final bool isSelected;
-
+  final VoidCallback onLongPress;
   const ContactCard({
     super.key,
     required this.user,
@@ -20,6 +20,7 @@ class ContactCard extends StatelessWidget {
     required this.onTap,
     required this.onTapCard,
     required this.isSelected,
+    required this.onLongPress,
   });
 
   @override
@@ -32,6 +33,7 @@ class ContactCard extends StatelessWidget {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ElevatedButton(
       onPressed: onTapCard,
+      onLongPress: onLongPress,
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
@@ -61,11 +63,15 @@ class ContactCard extends StatelessWidget {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
                       isSelected ? LucideIcons.volume2 : LucideIcons.volumeX,
                       size: 16,
-                      color: isSelected ? theme.primaryColor : Colors.red,
+                      color: isSelected ? (
+                        isDarkMode ? TalklinerThemeColors.gray200 : Colors.black
+                      ) : Colors.red,
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -73,7 +79,7 @@ class ContactCard extends StatelessWidget {
                           user.status.substring(1),
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDarkMode ? Colors.grey[300] : Colors.grey,
+                        color: isDarkMode ? TalklinerThemeColors.gray200 : Colors.grey,
                       ),
                     ),
                   ],

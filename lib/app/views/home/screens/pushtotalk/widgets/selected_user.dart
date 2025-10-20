@@ -74,15 +74,15 @@ class SelectedUser extends StatelessWidget {
                           Text(
                             pushToTalkController.selectedUser.value.displayName,
                             style: TextStyle(
-                              color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray800,
+                              color: isDarkMode ? TalklinerThemeColors.gray020 : TalklinerThemeColors.gray800,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
-                            pushToTalkController.selectedUser.value.status,
+                            pushToTalkController.selectedUser.value.status.substring(0, 1).toUpperCase() + pushToTalkController.selectedUser.value.status.substring(1),
                             style: TextStyle(
-                              color: isDarkMode ? TalklinerThemeColors.gray400 : TalklinerThemeColors.gray500,
+                              color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray500,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                             ),
@@ -100,7 +100,7 @@ class SelectedUser extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       LucideIcons.phone,
-                      color:TalklinerThemeColors.gray500,
+                      color:isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray500,
                       size: 24,
                     ),
                     onPressed: () {
@@ -113,7 +113,7 @@ class SelectedUser extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       LucideIcons.video,
-                      color: TalklinerThemeColors.gray500,
+                      color:isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray500,
                       size: 24,
                     ),
                     onPressed: () {
@@ -124,7 +124,7 @@ class SelectedUser extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       LucideIcons.messageSquare,
-                      color:TalklinerThemeColors.gray500,
+                      color:isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray500,
                       size: 24,
                     ),
                     onPressed: () {

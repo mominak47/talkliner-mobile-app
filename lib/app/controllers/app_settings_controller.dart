@@ -23,6 +23,15 @@ class AppSettingsController extends GetxController {
     authController.isLoggedIn.listen((isLoggedIn) => isLoggedIn ? loadSettings() : clearSettings());
   }
 
+  void permissionsManager(){
+    // Check for permissions 
+    // 1. Camera
+    // 2. Location
+    // 3. Microphone
+    // 4. Bluetooth
+    // 5. Notifications
+  }
+
   void toggleDarkMode() {
     isDarkMode.value = !isDarkMode.value;
   }

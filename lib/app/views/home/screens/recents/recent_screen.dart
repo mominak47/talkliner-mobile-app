@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:talkliner/app/controllers/layout_controller.dart';
 import 'package:talkliner/app/controllers/recents_controller.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/home/screens/recents/parts/new_screen.dart';
@@ -14,7 +15,7 @@ class RecentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final recentsController = Get.find<RecentsController>();
-
+    final layoutController = Get.find<LayoutController>();
     return Obx(
       () =>
           !recentsController.isLoading.value &&
@@ -22,6 +23,7 @@ class RecentScreen extends StatelessWidget {
               ? const NewScreen()
               : Column(
                 children: [
+                  ...layoutController.doAction('recent_screen'),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -30,26 +32,34 @@ class RecentScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            TabButton(
-                              title: "All",
-                              onTap: () {},
-                              isSelected: false,
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                TabButton(
+                                  icon: LucideIcons.messageCircle,
+                                  title: "All",
+                                  onTap: () {},
+                                  isSelected: false,
+                                ),
+                                SizedBox(width: 8),
+                                TabButton(
+                                  icon: LucideIcons.user,
+                                  title: "users".tr,
+                                  onTap: () {},
+                                  isSelected: false,
+                                ),
+                                SizedBox(width: 8),
+                                TabButton(
+                                  icon: LucideIcons.users,
+                                  title: "groups".tr,
+                                  onTap: () => {},
+                                  isSelected: false,
+                                ),
+                              ],
                             ),
-                            SizedBox(width: 10),
-                            TabButton(
-                              title: "users".tr,
-                              onTap: () {},
-                              isSelected: false,
-                            ),
-                            SizedBox(width: 10),
-                            TabButton(
-                              title: "groups".tr,
-                              onTap: () => {},
-                              isSelected: false,
-                            ),
-                          ],
+                          ),
                         ),
                         IconButton(
                           onPressed: () {},
@@ -88,9 +98,7 @@ class RecentScreen extends StatelessWidget {
                                       ),
                                   isSelected: false,
                                 ),
-                                Divider(
-                                  height: 1,
-                                ),
+                                Divider(height: 1),
                               ],
                             ),
                       ),

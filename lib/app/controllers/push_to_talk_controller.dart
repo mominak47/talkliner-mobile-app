@@ -28,8 +28,8 @@ class PushToTalkController extends GetxController {
     apiService.onInit();
 
     selectedUser.listen((user) {
-    livekitRoomController.isRoomConnecting.value = true;
-    livekitRoomController.connectToRoom(user);
+      livekitRoomController.isRoomConnecting.value = true;
+      livekitRoomController.connectToRoom(user);
     });
 
     // Fallback to reconncet to room if user is selected
@@ -37,17 +37,6 @@ class PushToTalkController extends GetxController {
       _reconnectToRoom();
     });
 
-    // Fallback to get user from local storage
-    // try {
-    //   final user = getUserFromLocalStorage();
-    //   debugPrint('[PushToTalkController] User from local storage: ${user}');
-    //   if (user.id.isNotEmpty) {
-    //     selectedUser.value = user;
-    //     livekitRoomController.connectToRoom(user);
-    //   }
-    // } catch (e) {
-    //   debugPrint('[PushToTalkController] Error getting user from local storage: $e');
-    // }
   }
 
   @override
@@ -70,6 +59,9 @@ class PushToTalkController extends GetxController {
   }
 
   void removeUser() {
+    _audioPlayer.stop();
+    _audioPlayer.play(AssetSource('audio/disconnect.mp3'));
+    _audioPlayer.setReleaseMode(ReleaseMode.release);
     livekitRoomController.disconnectFromRoom();
     selectedUser.value = UserModel.fromJson({});
   }

@@ -9,7 +9,9 @@ class MessageDate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final formattedTime = DateFormat('h:mm a').format(timestamp);
+    final localTimestamp = timestamp.toLocal();
+    final formattedTime = DateFormat('h:mm a').format(localTimestamp);
+    // Convert timestamp to local timezone
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Text(
       formattedTime,

@@ -99,6 +99,7 @@ class NewScreen extends StatelessWidget {
                                 onTapIcon: LucideIcons.mic,
                                 onTapIconColor: Colors.red,
                                 onTap: () {},
+                                onLongPress: () {},
                                 onTapCard: () {
                                   // Close the bottom sheet
                                   Get.back();

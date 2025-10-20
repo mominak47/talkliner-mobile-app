@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -15,6 +16,8 @@ class ChatController extends GetxController {
   final isKeyboardVisible = false.obs;
   final isTyping = false.obs;
 
+  final _audioPlayer = AudioPlayer();
+
   // Storage
   final GetStorage _storage = GetStorage();
 
@@ -23,6 +26,9 @@ class ChatController extends GetxController {
   ChatController({required this.user});
   final SocketController socketController = Get.find<SocketController>();
   final AuthController authController = Get.find<AuthController>();
+
+
+  
 
   void watchSocketEvent() {
     socketController.event.listen((event) {
@@ -138,6 +144,9 @@ class ChatController extends GetxController {
     });
     debugPrint("[GETX] sendMessage: ${response.body.toString()}");
     if (response.statusCode == 200 || response.statusCode == 201) {
+      // Play a sound
+      _audioPlayer.play(AssetSource('audio/message-sent.mp3'));
+      _audioPlayer.setReleaseMode(ReleaseMode.release);
 
       // Delete the message by id
       messages.removeWhere((message) => message.id == "sending");

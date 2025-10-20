@@ -72,7 +72,7 @@ class PushToTalkButton extends StatelessWidget {
       case PushToTalkButtonState.disabled:
         return TalklinerThemeColors.gray030;
       case PushToTalkButtonState.connectingRoom:
-        return TalklinerThemeColors.gray030;
+        return isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray030;
     }
   }
 

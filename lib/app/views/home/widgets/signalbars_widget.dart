@@ -26,14 +26,31 @@ class SignalBarsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final socketController = Get.find<SocketController>();
+    bool isDarkMode = Theme.of(Get.context!).brightness == Brightness.dark;
     return Obx(
       () => Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: isDarkMode ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: _getSignalIcon(socketController.connectionQuality.value),
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB( 18, 0, 8, 0),
+              child: _getSignalIcon(socketController.connectionQuality.value),
+            ),
+            Positioned(
+              top: 0,
+              left: 4,
+              right: 0,
+              bottom: 0,
+              child: Text("${socketController.latency.value.toInt().toString()}ms",
+              style: TextStyle(fontSize: 8, color: isDarkMode ? Colors.white : Colors.black),
+              ),
+            ),
+          ],
+        ),
       )
     );
   }

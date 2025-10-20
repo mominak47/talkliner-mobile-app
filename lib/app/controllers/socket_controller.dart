@@ -140,9 +140,14 @@ class SocketController extends GetxController {
     _socket!.emit(event, data);
   }
 
+  // Emit with ack
+  void emitWithAck(String event, dynamic data, Function(dynamic) callback) {
+    _socket!.emitWithAck(event, data, ack: callback);
+  }
+
   // On event
   void on(String event, Function(dynamic) callback) {
-    _socket!.on(event, callback);
+      _socket!.on(event, callback);
   }
 
   // Off event
@@ -211,6 +216,7 @@ class SocketController extends GetxController {
     int currentTime = DateTime.now().millisecondsSinceEpoch;
     latency.value = (currentTime - time).toDouble();
   }
+
 
   void emitTo(UserModel user, String event, dynamic data) {
     // If sockets is connected

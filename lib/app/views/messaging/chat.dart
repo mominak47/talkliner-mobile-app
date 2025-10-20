@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
+import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/messaging/parts/message_input.dart';
@@ -14,6 +17,7 @@ class Chat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatController = Get.put(ChatController(user: user));
+    final socketController = Get.find<SocketController>();
 
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
@@ -24,8 +28,9 @@ class Chat extends StatelessWidget {
         elevation: 0,
         toolbarHeight: 72,
         titleSpacing: 0,
-        title: Row(
-          children: [
+        title: Obx(
+          () => Row(
+            children: [
             IconButton(
               icon: Icon(Icons.arrow_back, color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800),
               onPressed: () => Navigator.of(context).pop(),
@@ -65,17 +70,34 @@ class Chat extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.call_outlined,
-                color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800,
+                color: 
+                isDarkMode ? 
+                (socketController.isConnected.value ? TalklinerThemeColors.gray020 : TalklinerThemeColors.gray900) : 
+                (socketController.isConnected.value ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray050),
               ),
-              onPressed: () {},
+              onPressed: () {
+                if(socketController.isConnected.value) {
+                  Get.toNamed(Routes.outgoingCall, arguments: user);
+                } else {
+                  Fluttertoast.showToast(msg: 'You are not connected to the internet');
+                }
+              },
               splashRadius: 24,
             ),
             IconButton(
               icon: Icon(
                 Icons.videocam_outlined,
-                color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800,
+                color: isDarkMode ? 
+                (socketController.isConnected.value ? TalklinerThemeColors.gray020 : TalklinerThemeColors.gray900) : 
+                (socketController.isConnected.value ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray050),
               ),
-              onPressed: () {},
+              onPressed: () {
+                if(socketController.isConnected.value) {
+                  // Get.toNamed(Routes.outgoingCall, arguments: user);
+                } else {
+                  Fluttertoast.showToast(msg: 'You are not connected to the internet');
+                }
+              },
               splashRadius: 24,
             ),
             IconButton(
@@ -85,7 +107,7 @@ class Chat extends StatelessWidget {
             ),
             const SizedBox(width: 8),
           ],
-        ),
+        )),
       ),
       backgroundColor: isDarkMode ? TalklinerThemeColors.gray800 : Colors.white,
       body: SafeArea(

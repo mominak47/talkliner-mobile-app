@@ -38,7 +38,7 @@ dependencies:
   lucide_icons: ^0.257.0
   qr_code_dart_scan: ^0.9.4
   http: ^1.4.0
-  fluttertoast: ^8.2.12
+  fluttertoast: ^9.0.0
   flutter_secure_storage: ^9.2.4
   intl: ^0.20.2
   audioplayers: ^6.4.0
@@ -63,6 +63,9 @@ dependencies:
   get: ^4.7.2
   get_storage: ^2.1.1
   ms_undraw: ^4.1.1
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  geolocator: ^14.0.2
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +91,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/send-horizontal-filled.svg
     - assets/logos/talkliner.svg
     - assets/logos/white_logo.svg
     - assets/icons/circle_x_filled.svg      

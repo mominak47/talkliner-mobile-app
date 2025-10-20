@@ -9,11 +9,13 @@ import 'dart:io'; // flutter_ignore: dart_io_import.
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:flutter_blue_plus_android/flutter_blue_plus_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator_android/geolocator_android.dart';
 import 'package:path_provider_android/path_provider_android.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:camera_avfoundation/camera_avfoundation.dart';
 import 'package:flutter_blue_plus_darwin/flutter_blue_plus_darwin.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator_apple/geolocator_apple.dart';
 import 'package:path_provider_foundation/path_provider_foundation.dart';
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
 import 'package:battery_plus/battery_plus.dart';
@@ -21,11 +23,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_blue_plus_linux/flutter_blue_plus_linux.dart';
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
+import 'package:geolocator_linux/geolocator_linux.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider_linux/path_provider_linux.dart';
 import 'package:shared_preferences_linux/shared_preferences_linux.dart';
 import 'package:flutter_blue_plus_darwin/flutter_blue_plus_darwin.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator_apple/geolocator_apple.dart';
 import 'package:path_provider_foundation/path_provider_foundation.dart';
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -63,6 +67,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`flutter_local_notifications` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        GeolocatorAndroid.registerWith();
+      } catch (err) {
+        print(
+          '`geolocator_android` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }
@@ -109,6 +122,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`flutter_local_notifications` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        GeolocatorApple.registerWith();
+      } catch (err) {
+        print(
+          '`geolocator_apple` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }
@@ -178,6 +200,15 @@ class _PluginRegistrant {
       }
 
       try {
+        GeolocatorLinux.registerWith();
+      } catch (err) {
+        print(
+          '`geolocator_linux` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
         PackageInfoPlusLinuxPlugin.registerWith();
       } catch (err) {
         print(
@@ -219,6 +250,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`flutter_local_notifications` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        GeolocatorApple.registerWith();
+      } catch (err) {
+        print(
+          '`geolocator_apple` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }

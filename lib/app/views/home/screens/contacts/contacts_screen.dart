@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/app_settings_controller.dart';
+import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/controllers/contacts_controller.dart';
 import 'package:talkliner/app/controllers/home_controller.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
@@ -67,12 +68,14 @@ class ContactsScreen extends StatelessWidget {
                                 : LucideIcons.mic,
                         onTapIconColor: TalklinerThemeColors.red500,
                         onTap: () {
-                          if (pushToTalkController.selectedUser.value.id ==
-                              user.id) {
+                          if (pushToTalkController.selectedUser.value.id == user.id) {
                             pushToTalkController.removeUser();
                           } else {
                             pushToTalkController.setUser(user);
                           }
+                        },
+                        onLongPress: () {
+                          Get.find<CallController>().showPopup(user);
                         },
                         onTapCard:
                             () => Get.toNamed(Routes.chat, arguments: user),
@@ -158,29 +161,36 @@ class ContactsScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    TabButton(
-                      title: "Online",
-                      onTap: () => contactsController.changeTabBar("users"),
-                      isSelected:
-                          contactsController.getSelectedTabBar() == "users",
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        // TabButton(
+                        //   title: "Online",
+                        //   onTap: () => contactsController.changeTabBar("users"),
+                        //   isSelected:
+                        //       contactsController.getSelectedTabBar() == "users",
+                        // ),
+                        // SizedBox(width: 10),
+                        TabButton(
+                          title: "users".tr,
+                          icon: LucideIcons.user,
+                          onTap: () => contactsController.changeTabBar("users"),
+                          isSelected:
+                              contactsController.getSelectedTabBar() == "users",
+                        ),
+                        SizedBox(width: 10),
+                        TabButton(
+                          title: "groups".tr,
+                          icon: LucideIcons.users,
+                          onTap: () => contactsController.changeTabBar("groups"),
+                          isSelected:
+                              contactsController.getSelectedTabBar() == "groups",
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 10),
-                    TabButton(
-                      title: "users".tr,
-                      onTap: () => contactsController.changeTabBar("users"),
-                      isSelected:
-                          contactsController.getSelectedTabBar() == "users",
-                    ),
-                    SizedBox(width: 10),
-                    TabButton(
-                      title: "groups".tr,
-                      onTap: () => contactsController.changeTabBar("groups"),
-                      isSelected:
-                          contactsController.getSelectedTabBar() == "groups",
-                    ),
-                  ],
+                  ),
                 ),
                 !homeController.showCustomAppBar.value ? IconButton(
                   onPressed: () {

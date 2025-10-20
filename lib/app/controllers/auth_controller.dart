@@ -38,11 +38,13 @@ class AuthController extends GetxController {
       isLoggedIn.value = true;
 
       user.value = await authService.getUser();
+      // Clear Cache
+
       Get.offAllNamed(Routes.home);
     } catch (e) {
       // Get Error Message
-      error.value = e.toString().split('message:')[1].trim().replaceAll('}', '');
-      
+      // error.value = e.toString().split('message:')[1].trim().replaceAll('}', '');
+      print(e);
       debugPrint("Login error: ${error.value}");
       isLoggedIn.value = false;
     } finally {

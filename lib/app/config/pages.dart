@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/views/auth/login_view.dart';
 import 'package:talkliner/app/views/auth/settings_view.dart';
+import 'package:talkliner/app/views/calling/outgoing_call_screen.dart';
 import 'package:talkliner/app/views/home/home_view.dart';
 import 'package:talkliner/app/views/messaging/chat.dart';
 import 'package:talkliner/app/views/others/splash_view.dart';
@@ -38,6 +39,13 @@ class Pages {
       name: Routes.chat,
       page: () => Chat(
         user: Get.arguments,
+      ),
+    ),
+    // Outgoing Call Page
+    GetPage(
+      name: Routes.outgoingCall,
+      page: () => OutgoingCallScreen(
+        user: Get.arguments
       ),
     ),
   ];

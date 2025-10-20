@@ -4,6 +4,7 @@ import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 class AppTheme {
   // Font family
   static const String fontFamily = 'Satoshi';
+  static const String lightFontFamily = 'Satoshi Light';
 
   // Font weights
   static const FontWeight light = FontWeight.w300;

@@ -79,13 +79,15 @@ class _MessagesContainerState extends State<MessagesContainer> {
     }
 
     return Obx(
-      () => Container(
-        decoration: BoxDecoration(color: isDarkMode ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray020),
-        child: ListView.builder(
-          controller: _scrollController,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-          itemCount: chatController.messages.length,
-          itemBuilder: (context, index) {
+      () => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Container(
+          decoration: BoxDecoration(color: isDarkMode ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray020),
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            itemCount: chatController.messages.length,
+            itemBuilder: (context, index) {
             final message = chatController.messages[index];
             final isMe = message.isMe;
             return Container(
@@ -137,6 +139,7 @@ class _MessagesContainerState extends State<MessagesContainer> {
               ),
             );
           },
+        ),
         ),
       ),
     );

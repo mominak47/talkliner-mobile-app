@@ -38,6 +38,7 @@ class HomeView extends StatelessWidget {
           child: Stack(
             children: [
               screens[homeController.currentIndex.value],
+             
               if (appSettingsController.showFloatingPushToTalkButton.value &&
                   homeController.currentIndex.value != 2)
                 Positioned(

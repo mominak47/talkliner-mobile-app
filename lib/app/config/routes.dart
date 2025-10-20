@@ -7,4 +7,7 @@ class Routes {
 
   // Chats
   static const chat = '/chat';
+
+  // Calling
+  static const outgoingCall = '/outgoing-call';
 }
