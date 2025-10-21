@@ -6,6 +6,11 @@ typedef WidgetHook = Widget Function();
 class LayoutController extends GetxController {
   final RxMap<String, Map<String, WidgetHook>> _hooks = <String, Map<String, WidgetHook>>{}.obs;
 
+
+  void refreshHooks() {
+    _hooks.refresh();
+  }
+
   // Register a widget-producing hook to a named action with an ID
   void addAction(String actionName, WidgetHook hook, {String? id}) {
     if (!_hooks.containsKey(actionName)) {
@@ -15,7 +20,7 @@ class LayoutController extends GetxController {
     // Use provided ID or generate a unique one
     final hookId = id ?? DateTime.now().millisecondsSinceEpoch.toString();
     _hooks[actionName]![hookId] = hook;
-    _hooks.refresh(); // Trigger update for observers
+    // _hooks.refresh(); // Trigger update for observers
   }
 
   // Remove a specific hook by action name and ID

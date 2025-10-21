@@ -75,7 +75,6 @@ class ContactsScreen extends StatelessWidget {
                           }
                         },
                         onLongPress: () {
-                          Get.find<CallController>().showPopup(user);
                         },
                         onTapCard:
                             () => Get.toNamed(Routes.chat, arguments: user),

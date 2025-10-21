@@ -32,7 +32,7 @@ class OutgoingCallScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Text(
-                callController.outGoingCallStatus.value,
+                callController.activeCall.value?.status.displayName ?? '',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Spacer(),
@@ -67,7 +67,7 @@ class OutgoingCallScreen extends StatelessWidget {
                 ],
               ),
 
-              if (callController.outGoingCallStatus.value != "No Answer")
+              if (callController.activeCall.value != null)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -103,7 +103,7 @@ class OutgoingCallScreen extends StatelessWidget {
                       child: IconButton(
                         iconSize: 24,
                         onPressed: () {
-                          callController.endCall();
+                          callController.endCall(callController.activeCall.value);
                           Get.back();
                         },
                         icon: Icon(LucideIcons.x, color: Colors.white),

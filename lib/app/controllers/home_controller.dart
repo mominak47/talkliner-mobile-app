@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/contacts_controller.dart';
+import 'package:talkliner/app/controllers/layout_controller.dart';
 import 'package:talkliner/app/views/home/widgets/signalbars_widget.dart';
 
 class HomeController extends GetxController {
   RxInt currentIndex = 0.obs;
   RxBool showAppBar = true.obs;
 
+  final LayoutController layoutController = Get.find<LayoutController>();
   // Get logo
 
   SvgPicture getLogo() {
@@ -41,6 +42,8 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     currentIndex.listen((index) {
+      layoutController.refreshHooks();
+
       if (index == 1) {
         Get.find<ContactsController>().changeTabBar("users");
       }else{
