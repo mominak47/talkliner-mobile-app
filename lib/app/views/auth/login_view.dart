@@ -22,8 +22,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final AuthController authController = Get.find<AuthController>();
 
-  final _usernameController = TextEditingController(text: 'fahad2');
-  final _passwordController = TextEditingController(text: '123qwe==');
+  final _usernameController = TextEditingController(text: '');
+  final _passwordController = TextEditingController(text: '');
   final String currentYear = DateTime.now().year.toString();
   bool _obscurePassword = true;
 

@@ -1,6 +1,6 @@
+import 'package:get_storage/get_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/auth_service.dart';
@@ -8,8 +8,6 @@ import 'package:talkliner/app/cachemanagers/token_manager.dart';
 
 class AuthController extends GetxController {
   final AuthService authService = Get.find<AuthService>();
-  final GetStorage _storage = GetStorage();
-
   final RxBool isLoggedIn = false.obs;
   final RxBool isLoading = false.obs;
   final Rxn<String> _token = Rxn<String>();
@@ -18,6 +16,8 @@ class AuthController extends GetxController {
 
   // Error
   final Rxn<String> error = Rxn<String>();
+
+  DateTime? _lastLoginAttempt;
 
   String get token => _token.value ?? '';
 
@@ -29,23 +29,38 @@ class AuthController extends GetxController {
   }
 
   void login(String username, String password) async {
+    if (isLoading.value || !_canAttemptLogin()) {
+      return;
+    }
+
+    final sanitizedUsername = username.trim();
+    final sanitizedPassword = password;
+
+    if (sanitizedUsername.isEmpty || sanitizedPassword.isEmpty) {
+      error.value = 'Username and password are required.';
+      return;
+    }
+
+    _lastLoginAttempt = DateTime.now();
     isLoading.value = true;
     error.value = null;
     try {
-      _token.value = await authService.login(username, password);
-      // Persist the token in storage
-      await TokenManager.setToken(_token.value ?? '');
+      final issuedToken = await authService.login(sanitizedUsername, sanitizedPassword);
+      _token.value = issuedToken;
+
+      await TokenManager.setToken(issuedToken);
       isLoggedIn.value = true;
 
       user.value = await authService.getUser();
-      // Clear Cache
 
-      Get.offAllNamed(Routes.home);
+      await Get.offAllNamed(Routes.home);
+    } on AuthException catch (e) {
+      error.value = e.message;
+      isLoggedIn.value = false;
+      await TokenManager.removeToken();
     } catch (e) {
-      // Get Error Message
-      // error.value = e.toString().split('message:')[1].trim().replaceAll('}', '');
-      print(e);
-      debugPrint("Login error: ${error.value}");
+      error.value = 'Unexpected error occurred. Please try again.';
+      debugPrint('Login error: $e');
       isLoggedIn.value = false;
     } finally {
       isLoading.value = false;
@@ -53,12 +68,35 @@ class AuthController extends GetxController {
   }
 
   void loginWithToken(String token) async {
-    _token.value = token;
+    if (token.isEmpty) {
+      error.value = 'Invalid token.';
+      return;
+    }
+
+    if (isLoading.value) {
+      return;
+    }
+
+    isLoading.value = true;
+    error.value = null;
+
+    _token.value = token.trim();
     await TokenManager.setToken(_token.value ?? '');
-    debugPrint("TOKEN: ${_token.value}");
-    // isLoggedIn.value = true;
-    // user.value = await authService.getUser();
-    // Get.offAllNamed(Routes.home);
+    try {
+      user.value = await authService.getUser();
+      isLoggedIn.value = true;
+      await Get.offAllNamed(Routes.home);
+    } on AuthException catch (e) {
+      error.value = e.message;
+      isLoggedIn.value = false;
+      await TokenManager.removeToken();
+    } catch (e) {
+      error.value = 'Unexpected error occurred. Please try again.';
+      debugPrint('Login with token error: $e');
+      isLoggedIn.value = false;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // Checks if a token exists in storage to determine the login state.
@@ -67,8 +105,15 @@ class AuthController extends GetxController {
       final storedToken = await TokenManager.getToken();
       if (storedToken.isNotEmpty) {
         _token.value = storedToken;
-        isLoggedIn.value = true;
-        user.value = await authService.getUser();
+        try {
+          user.value = await authService.getUser();
+          isLoggedIn.value = true;
+        } on AuthException catch (e) {
+          error.value = e.message;
+          isLoggedIn.value = false;
+          await TokenManager.removeToken();
+          await Get.offAllNamed(Routes.login);
+        }
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -91,5 +136,13 @@ class AuthController extends GetxController {
     await GetStorage().erase();
 
     Get.offAllNamed(Routes.login);
+  }
+
+  bool _canAttemptLogin() {
+    if (_lastLoginAttempt == null) {
+      return true;
+    }
+    final difference = DateTime.now().difference(_lastLoginAttempt!);
+    return difference.inMilliseconds > 800;
   }
 }

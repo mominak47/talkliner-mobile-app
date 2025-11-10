@@ -18,7 +18,6 @@ class NewScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       width: double.infinity,
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: TalklinerThemeColors.gray030)),
         color: isDarkMode ? TalklinerThemeColors.gray900 : Colors.white,
       ),
       child: Column(
@@ -62,7 +61,7 @@ class NewScreen extends StatelessWidget {
               // Getx BottomSheet
               Get.bottomSheet(
                 Container(
-                  color: Colors.white,
+                  color: isDarkMode ? TalklinerThemeColors.gray900 : Colors.white,
                   width: double.infinity,
                   child: Column(
                     children: [
@@ -71,17 +70,14 @@ class NewScreen extends StatelessWidget {
                         padding: EdgeInsets.all(16),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: "Search",
-                            fillColor: TalklinerThemeColors.gray020,
+                            hintText: "Search".tr,
+                            fillColor: isDarkMode ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray020,
                             filled: true,
                             // No border
                             prefixIcon: Icon(LucideIcons.search),
                             suffixIcon: IconButton(
                               icon: Icon(LucideIcons.xCircle),
-                              onPressed: (){
-                                // Close the bottom sheet
-                                Get.back();
-                              },
+                              onPressed: () => Get.back(),
                             ),
                           ),
                         ),
@@ -127,7 +123,7 @@ class NewScreen extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
             ),
-            child: Text("Create Chat"),
+            child: Text("Create Chat".tr),
           ),
         ],
       ),

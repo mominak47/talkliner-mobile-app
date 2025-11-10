@@ -16,6 +16,10 @@ class RecentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final recentsController = Get.find<RecentsController>();
     final layoutController = Get.find<LayoutController>();
+
+    // Get Fresh Chats from the API
+    recentsController.fetchRecents();
+    
     return Obx(
       () =>
           !recentsController.isLoading.value &&
