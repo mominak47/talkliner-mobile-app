@@ -3,11 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:talkliner/app/cachemanagers/token_manager.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
 
 class AuthService extends ApiService {
-  Future<String> login(String username, String password) async {
+  Future<TokenModel> login(String username, String password) async {
     final trimmedUsername = username.trim();
     final trimmedPassword = password;
 
@@ -21,10 +22,16 @@ class AuthService extends ApiService {
       );
 
       if (response.isOk) {
-        final token = response.body?['token'];
-        if (token is String && token.isNotEmpty) {
+        final token = TokenModel.fromJson(response.body?['data']);
+
+        if (token.isValid) {
+          debugPrint('Login token is valid');
+
+          // Save it to storage
+          await TokenManager.setToken(token);
           return token;
         }
+
         throw const FormatException('Malformed login response: token missing');
       }
 
@@ -42,7 +49,7 @@ class AuthService extends ApiService {
 
   Future<UserModel> getUser() async {
     try {
-      final response = await get('/domains/status');
+      final response = await makeGetRequest('/domains/status');
 
       if (response.isOk) {
         final body = response.body;
@@ -108,3 +115,4 @@ class AuthException implements Exception {
   @override
   String toString() => 'AuthException($statusCode): $message';
 }
+

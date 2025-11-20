@@ -12,6 +12,7 @@ class UserSettingsProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     final AuthController authController = Get.find<AuthController>();
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    authController.fetchUser();
     return SettingsSectionContainer(
       title: '',
       border: false,

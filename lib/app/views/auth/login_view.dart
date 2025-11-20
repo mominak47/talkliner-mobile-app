@@ -22,12 +22,10 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final AuthController authController = Get.find<AuthController>();
 
-  final _usernameController = TextEditingController(text: '');
-  final _passwordController = TextEditingController(text: '');
+  final _usernameController = TextEditingController(text: 'fahad2');
+  final _passwordController = TextEditingController(text: '123qwe==');
   final String currentYear = DateTime.now().year.toString();
   bool _obscurePassword = true;
-
-
 
   @override
   void initState() {
@@ -37,7 +35,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   @override
-void dispose() {
+  void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -45,7 +43,8 @@ void dispose() {
 
   void _processQrCode(String token) => authController.loginWithToken(token);
 
-  void _handleLogin() => authController.login(_usernameController.text, _passwordController.text);
+  void _handleLogin() =>
+      authController.login(_usernameController.text, _passwordController.text);
 
   @override
   Widget build(BuildContext context) {
@@ -66,18 +65,80 @@ void dispose() {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Get.bottomSheet(
+                                DraggableScrollableSheet(
+                                  initialChildSize: 0.8,
+                                  minChildSize: 0.3,
+                                  maxChildSize: 0.95,
+                                  builder: (context, scrollController) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? TalklinerThemeColors.gray900
+                                                : Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          // Handle bar
+                                          Container(
+                                            width: 40,
+                                            height: 4,
+                                            margin: EdgeInsets.symmetric(
+                                              vertical: 10,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[300],
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(16),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text('Select Language'),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            icon: Icon(LucideIcons.languages),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 40),
                       // Logo
                       Center(
-                        child: Theme.of(context).brightness == Brightness.dark 
-                          ? SvgPicture.asset(
-                              'assets/logos/white_logo.svg',
-                              height: 50,
-                            ) 
-                          : SvgPicture.asset(
-                              'assets/logos/talkliner.svg',
-                              height: 50,
-                            )
+                        child:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? SvgPicture.asset(
+                                  'assets/logos/white_logo.svg',
+                                  height: 50,
+                                )
+                                : SvgPicture.asset(
+                                  'assets/logos/talkliner.svg',
+                                  height: 50,
+                                ),
                       ),
                       const SizedBox(height: 40),
                       if (authController.error.value != null)
@@ -130,13 +191,17 @@ void dispose() {
                             decoration: InputDecoration(
                               hintText: 'password_placeholder'.tr,
                               prefixIcon: const Icon(LucideIcons.lock),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscurePassword = !_obscurePassword;
-                                    });
-                                  },
-                                  icon: Icon(_obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? LucideIcons.eyeOff
+                                      : LucideIcons.eye,
+                                ),
                               ),
                             ),
                           ),
@@ -166,6 +231,8 @@ void dispose() {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
                         ),
                         child: Text(
                           authController.isLoading.value
@@ -203,9 +270,12 @@ void dispose() {
                                       builder: (context, scrollController) {
                                         return Container(
                                           decoration: BoxDecoration(
-                                            color: Theme.of(context).brightness == Brightness.dark 
-                                              ? TalklinerThemeColors.gray900 
-                                              : Colors.white,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? TalklinerThemeColors
+                                                        .gray900
+                                                    : Colors.white,
                                             borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(20),
                                               topRight: Radius.circular(20),
@@ -292,18 +362,22 @@ void dispose() {
                                   side: const BorderSide(
                                     color: Colors.transparent,
                                   ),
-                                  backgroundColor: Theme.of(context).brightness == Brightness.dark
-                                    ? TalklinerThemeColors.gray800
-                                    : Colors.grey[100],
+                                  backgroundColor:
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? TalklinerThemeColors.gray800
+                                          : Colors.grey[100],
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       LucideIcons.qrCode,
-                                      color: Theme.of(context).brightness == Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black,
+                                      color:
+                                          Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white
+                                              : Colors.black,
                                       size: 24,
                                     ),
                                     const SizedBox(width: 8),
@@ -311,9 +385,11 @@ void dispose() {
                                       'qr_login'.tr,
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: Theme.of(context).brightness == Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white
+                                                : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -337,18 +413,22 @@ void dispose() {
                                   side: const BorderSide(
                                     color: Colors.transparent,
                                   ),
-                                  backgroundColor: Theme.of(context).brightness == Brightness.dark
-                                    ? TalklinerThemeColors.gray800
-                                    : Colors.grey[100],
+                                  backgroundColor:
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? TalklinerThemeColors.gray800
+                                          : Colors.grey[100],
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       LucideIcons.settings,
-                                      color: Theme.of(context).brightness == Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black,
+                                      color:
+                                          Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.white
+                                              : Colors.black,
                                       size: 24,
                                     ),
                                     const SizedBox(width: 8),
@@ -356,9 +436,11 @@ void dispose() {
                                       'settings'.tr,
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: Theme.of(context).brightness == Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white
+                                                : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -375,7 +457,9 @@ void dispose() {
                       Center(
                         child: Text(
                           // Translate the text
-                          "Copyright © %s Talkliner".trArgs([currentYear.toString()]),
+                          "Copyright © %s Talkliner".trArgs([
+                            currentYear.toString(),
+                          ]),
                           style: const TextStyle(
                             fontSize: 12,
                             color: Colors.grey,

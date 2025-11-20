@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/profile/parts/user_settins_profile.dart';
@@ -13,6 +14,11 @@ class UserSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
   final AuthController authController = Get.find<AuthController>();
+  final token = GetStorage().read('authToken');
+  // Format in x days left
+  final daysLeft = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(token['valid_until'])).inDays;
+  final daysLeftString = daysLeft.abs().toString();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -23,7 +29,7 @@ class UserSettings extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              UserSettingsProfile(),
+              Obx(() => UserSettingsProfile()),
               SizedBox(height: 16),
               UserSettingsStatus(),
               SizedBox(height: 16),
@@ -49,6 +55,8 @@ class UserSettings extends StatelessWidget {
               SizedBox(height: 16),
               Text('Version'.tr, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
               Text('1.0.0', style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal)),
+              // Show the valid until date of the token
+              Text('Token valid until: ${daysLeftString} days left'), // Format the date to be more readable
             ],
           ),
         ),

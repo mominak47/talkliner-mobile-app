@@ -4,9 +4,57 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>._._FirebaseCoreInternal</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._._FirebaseCoreInternal_Privacy.bundle</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._FirebaseCoreInternal</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._FirebaseCoreInternal_Privacy.bundle</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Headers</key>
+		<data>
+		jj+3ihLGUaqGP2WEAekrFES0OCA=
+		</data>
+		<key>._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Modules</key>
+		<data>
+		jj+3ihLGUaqGP2WEAekrFES0OCA=
+		</data>
+		<key>FirebaseCoreInternal_Privacy.bundle/._._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>FirebaseCoreInternal_Privacy.bundle/._._PrivacyInfo.xcprivacy</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>FirebaseCoreInternal_Privacy.bundle/._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>FirebaseCoreInternal_Privacy.bundle/._PrivacyInfo.xcprivacy</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
 		<key>FirebaseCoreInternal_Privacy.bundle/Info.plist</key>
 		<data>
-		dskOkYIo4P6GofjcMJtv9Ojk2N0=
+		80OcAlrT0WC2+ZBrPQhCWfH38Jg=
 		</data>
 		<key>FirebaseCoreInternal_Privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -14,16 +62,100 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		VnHAw6EyvwdyDOg/0NZtVcBJm6E=
+		go7VeaTQhGGTJXc8w3qufFFPJjE=
 		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>._._FirebaseCoreInternal</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._._FirebaseCoreInternal_Privacy.bundle</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._FirebaseCoreInternal</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._FirebaseCoreInternal_Privacy.bundle</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Headers</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			a7qKt/1MDvhJKx1r4RY+ifB3Lg97Ryv0mKPhI0X1I1c=
+			</data>
+		</dict>
+		<key>._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Modules</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			a7qKt/1MDvhJKx1r4RY+ifB3Lg97Ryv0mKPhI0X1I1c=
+			</data>
+		</dict>
+		<key>FirebaseCoreInternal_Privacy.bundle/._._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>FirebaseCoreInternal_Privacy.bundle/._._PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>FirebaseCoreInternal_Privacy.bundle/._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>FirebaseCoreInternal_Privacy.bundle/._PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
 		<key>FirebaseCoreInternal_Privacy.bundle/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			9aftEPuH/Jb566hgDmYFfByywLVXVSUdfa/aS4iu/l4=
+			qfFhclYH/nq2GG7PNzK1+rVuFoyyiNn0jjoMQWEni94=
 			</data>
 		</dict>
 		<key>FirebaseCoreInternal_Privacy.bundle/PrivacyInfo.xcprivacy</key>

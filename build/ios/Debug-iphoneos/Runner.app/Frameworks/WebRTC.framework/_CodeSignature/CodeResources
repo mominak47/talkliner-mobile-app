@@ -4,6 +4,38 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>._._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._._PrivacyInfo.xcprivacy</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._._WebRTC</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Headers</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Modules</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._PrivacyInfo.xcprivacy</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._WebRTC</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
 		<key>Info.plist</key>
 		<data>
 		hz3fKabZT2AAHWSmP6wiyiM80xg=
@@ -15,6 +47,62 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>._._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._._PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._._WebRTC</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Headers</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Modules</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._WebRTC</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
 		<key>PrivacyInfo.xcprivacy</key>
 		<dict>
 			<key>hash2</key>

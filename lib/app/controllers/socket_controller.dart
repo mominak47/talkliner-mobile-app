@@ -7,7 +7,6 @@ import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/battery_service.dart';
 import 'package:talkliner/app/services/chat_service.dart';
-import 'package:talkliner/app/services/fcm_service.dart';
 import 'package:talkliner/app/services/network_service.dart';
 
 enum SocketConnectionQuality {
@@ -44,7 +43,7 @@ class SocketController extends GetxController {
     isConnected.listen((isConnected) => sendPing());
     latency.listen((latency) => updateConnectionQuality());
 
-    connect();
+    // connect();
   }
 
   void updateConnectionQuality() {
@@ -79,6 +78,7 @@ class SocketController extends GetxController {
     debugPrint('SocketController: Connecting to socket');
     await disconnect();
     try {
+      debugPrint('SocketController: Connecting to socket: ${AppConfig.socketUrl}');
       _socket = io.io(AppConfig.socketUrl, _getSocketOptions());
       // Connect to the server
       _socket!.connect();

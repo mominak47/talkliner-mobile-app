@@ -4,13 +4,80 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>._._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._._torch_light</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Headers</key>
+		<data>
+		jj+3ihLGUaqGP2WEAekrFES0OCA=
+		</data>
+		<key>._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Modules</key>
+		<data>
+		jj+3ihLGUaqGP2WEAekrFES0OCA=
+		</data>
+		<key>._torch_light</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		iic6EX8ATfd4JlaAIRdue4euFAM=
+		B0Tf3eg3ur7OlYYX59qblUHf5D4=
 		</data>
 	</dict>
 	<key>files2</key>
-	<dict/>
+	<dict>
+		<key>._._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._._torch_light</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Headers</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			a7qKt/1MDvhJKx1r4RY+ifB3Lg97Ryv0mKPhI0X1I1c=
+			</data>
+		</dict>
+		<key>._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Modules</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			a7qKt/1MDvhJKx1r4RY+ifB3Lg97Ryv0mKPhI0X1I1c=
+			</data>
+		</dict>
+		<key>._torch_light</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+	</dict>
 	<key>rules</key>
 	<dict>
 		<key>^.*</key>

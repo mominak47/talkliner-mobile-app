@@ -46,9 +46,8 @@ class AuthController extends GetxController {
     error.value = null;
     try {
       final issuedToken = await authService.login(sanitizedUsername, sanitizedPassword);
-      _token.value = issuedToken;
+      _token.value = issuedToken.token;
 
-      await TokenManager.setToken(issuedToken);
       isLoggedIn.value = true;
 
       user.value = await authService.getUser();
@@ -81,7 +80,12 @@ class AuthController extends GetxController {
     error.value = null;
 
     _token.value = token.trim();
-    await TokenManager.setToken(_token.value ?? '');
+    
+    // Save token to storage with a far future expiry since QR tokens are pre-validated
+    // 7 days in milliseconds
+    final validUntil = DateTime.now().millisecondsSinceEpoch + (7 * 24 * 60 * 60 * 1000);
+    await TokenManager.setToken(TokenModel(token: _token.value!, validUntil: validUntil));
+    
     try {
       user.value = await authService.getUser();
       isLoggedIn.value = true;
@@ -99,30 +103,47 @@ class AuthController extends GetxController {
     }
   }
 
+  void fetchUser() async {
+    try {
+      user.value = await authService.getUser();
+    } on AuthException catch (e) {
+      error.value = e.message;
+      isLoggedIn.value = false;
+    } catch (e) {
+      error.value = 'Unexpected error occurred. Please try again.';
+      debugPrint('Fetch user error: $e');
+    }
+  }
+
   // Checks if a token exists in storage to determine the login state.
   void _checkLoginStatus() async {
     try {
-      final storedToken = await TokenManager.getToken();
-      if (storedToken.isNotEmpty) {
-        _token.value = storedToken;
+      debugPrint('Checking login status');
+      TokenModel storedToken = await TokenManager.getToken();
+      debugPrint('STORED Token: ${storedToken.toJson()}');
+      
+      if (storedToken.isValid) {
+        debugPrint('Valid token found');
+        // _token.value = storedToken.token;
         try {
-          user.value = await authService.getUser();
+          fetchUser();
           isLoggedIn.value = true;
+          debugPrint('User logged in');
+
         } on AuthException catch (e) {
+          debugPrint('Token invalid or expired: ${e.message}');
           error.value = e.message;
           isLoggedIn.value = false;
-          await TokenManager.removeToken();
-          await Get.offAllNamed(Routes.login);
+          // await TokenManager.removeToken();
+          // await Get.offAllNamed(Routes.login);
         }
+      } else {
+        debugPrint('No valid token found');
       }
     } catch (e) {
-      debugPrint(e.toString());
-
-      // Delete the token from storage
+      debugPrint('Error checking login status: $e');
+      // Delete the token from storage if there was an error
       await TokenManager.removeToken();
-
-      // Take user to login screen
-      Get.offAllNamed(Routes.login);
     }
 
     debugPrint('Login status: ${isLoggedIn.value}');

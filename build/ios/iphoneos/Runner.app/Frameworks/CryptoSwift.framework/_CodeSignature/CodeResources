@@ -4,9 +4,57 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>._._CryptoSwift</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._._CryptoSwift.bundle</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._CryptoSwift</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._CryptoSwift.bundle</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Headers</key>
+		<data>
+		jj+3ihLGUaqGP2WEAekrFES0OCA=
+		</data>
+		<key>._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._Modules</key>
+		<data>
+		jj+3ihLGUaqGP2WEAekrFES0OCA=
+		</data>
+		<key>CryptoSwift.bundle/._._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>CryptoSwift.bundle/._._PrivacyInfo.xcprivacy</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>CryptoSwift.bundle/._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>CryptoSwift.bundle/._PrivacyInfo.xcprivacy</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
 		<key>CryptoSwift.bundle/Info.plist</key>
 		<data>
-		RXwKwnAtFiFqFEE1HIb5HalI+C4=
+		shNrhzGvY6RGLHhh0W/V5zsktJI=
 		</data>
 		<key>CryptoSwift.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -14,16 +62,100 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		oow9sXTgMq7S/V3d+idzZ6Xyn5M=
+		0zUEItRxgCTkLKTPRBLnP1tkKec=
 		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>._._CryptoSwift</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._._CryptoSwift.bundle</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._CryptoSwift</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._CryptoSwift.bundle</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Headers</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			a7qKt/1MDvhJKx1r4RY+ifB3Lg97Ryv0mKPhI0X1I1c=
+			</data>
+		</dict>
+		<key>._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._Modules</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			a7qKt/1MDvhJKx1r4RY+ifB3Lg97Ryv0mKPhI0X1I1c=
+			</data>
+		</dict>
+		<key>CryptoSwift.bundle/._._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>CryptoSwift.bundle/._._PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>CryptoSwift.bundle/._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>CryptoSwift.bundle/._PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
 		<key>CryptoSwift.bundle/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			a4EkuT8+wslWmTElWRsINctO6oO9w7am3E9HLyXMgks=
+			kHuW0LOACebMkYUOnNpbcwX6yYqEjLmyJMQUTGMZR8g=
 			</data>
 		</dict>
 		<key>CryptoSwift.bundle/PrivacyInfo.xcprivacy</key>

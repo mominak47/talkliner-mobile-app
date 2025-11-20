@@ -1,73 +1,72 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
+
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter/foundation.dart';
 
 class TokenManager {
   static const String tokenKey = 'authToken';
-  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
-  static final GetStorage _fallbackStorage = GetStorage();
+  static final GetStorage _storage = GetStorage();
 
-  static Future<String> getToken() async {
-    if (!kIsWeb) {
-      try {
-        final secureToken = await _secureStorage.read(key: tokenKey);
-        if (secureToken != null && secureToken.isNotEmpty) {
-          return secureToken;
+  static Future<TokenModel> getToken() async {
+    final storedData = _storage.read(tokenKey);
+    if (storedData != null) {
+      if (storedData is Map<String, dynamic>) {
+        return TokenModel.fromJson(storedData);
+      } else if (storedData is String) {
+        try {
+          // Try parsing as JSON string just in case
+          return TokenModel.fromJson(jsonDecode(storedData));
+        } catch (e) {
+          debugPrint('Error decoding token string: $e');
         }
-      } catch (_) {
-        // Ignore and fall back to GetStorage
       }
     }
-
-    return _fallbackStorage.read(tokenKey) ?? '';
+    return TokenModel(token: '', validUntil: 0);
   }
 
-  static Future<void> setToken(String token) async {
-    if (token.isEmpty) {
+  static Future<void> setToken(TokenModel token) async {
+    if (!token.isValid) {
       await removeToken();
       return;
     }
-
-    var persisted = false;
-
-    if (!kIsWeb) {
-      try {
-        await _secureStorage.write(key: tokenKey, value: token);
-        persisted = true;
-      } catch (_) {
-        persisted = false;
-      }
-    }
-
-    if (!persisted) {
-      await _fallbackStorage.write(tokenKey, token);
-    }
+    await _storage.write(tokenKey, token.toJson());
+    debugPrint('Token saved to GetStorage');
   }
 
   static Future<void> removeToken() async {
-    if (!kIsWeb) {
-      try {
-        await _secureStorage.delete(key: tokenKey);
-      } catch (_) {
-        // Ignore failure and continue to clear fallback storage
-      }
-    }
-
-    await _fallbackStorage.remove(tokenKey);
+    await _storage.remove(tokenKey);
+    debugPrint('Token removed from GetStorage');
   }
 
   static Future<bool> hasToken() async {
-    if (!kIsWeb) {
-      try {
-        final secureToken = await _secureStorage.read(key: tokenKey);
-        if (secureToken != null && secureToken.isNotEmpty) {
-          return true;
-        }
-      } catch (_) {
-        // Ignore and fall back
-      }
-    }
+    return _storage.hasData(tokenKey);
+  }
+}
 
-    return _fallbackStorage.hasData(tokenKey);
+class TokenModel {
+  final String token;
+  final int validUntil;
+
+  TokenModel({
+    required this.token,
+    required this.validUntil,
+  });
+
+  factory TokenModel.fromJson(Map<String, dynamic> json) {
+    return TokenModel(token: json['token'], validUntil: json['valid_until']);
+  }
+
+  int getCurrentTimestamp() {
+    // Return timestamp in milliseconds since epoch (most common format)
+    return DateTime.now().millisecondsSinceEpoch;
+  }
+
+  bool get isValid => token.isNotEmpty && validUntil > getCurrentTimestamp();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'token': token,
+      'valid_until': validUntil,
+    };
   }
 }

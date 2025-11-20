@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
@@ -14,13 +15,15 @@ class AppSettingsController extends GetxController {
   final RxBool incomingPTTAlert = false.obs;
   final RxBool outgoingPTTAlert = false.obs;
   final RxBool pttEarphonesControl = false.obs;
+  final RxString apiUrl = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
     // Load settings from storage
+    loadSettings();
     listenToSettingsChanges();
-    authController.isLoggedIn.listen((isLoggedIn) => isLoggedIn ? loadSettings() : clearSettings());
+    // authController.isLoggedIn.listen((isLoggedIn) => isLoggedIn ? loadSettings() : clearSettings());
   }
 
   void permissionsManager(){
@@ -48,6 +51,7 @@ class AppSettingsController extends GetxController {
   void setIncomingPTTAlert(bool value) => incomingPTTAlert.value = value;
   void setOutgoingPTTAlert(bool value) => outgoingPTTAlert.value = value;
   void setPttEarphonesControl(bool value) => pttEarphonesControl.value = value;
+  void setApiUrl(String value) => apiUrl.value = value;
 
   // Load settings
   void loadSettings() {
@@ -59,6 +63,7 @@ class AppSettingsController extends GetxController {
     incomingPTTAlert.value = GetStorage().read('settings.incomingPTTAlert') ?? false;
     outgoingPTTAlert.value = GetStorage().read('settings.outgoingPTTAlert') ?? false;
     pttEarphonesControl.value = GetStorage().read('settings.pttEarphonesControl') ?? false;
+    apiUrl.value = GetStorage().read('settings.apiUrl') ?? '';
   }
 
   // Listen to settings changes
@@ -71,6 +76,10 @@ class AppSettingsController extends GetxController {
     incomingPTTAlert.listen((value) => GetStorage().write('settings.incomingPTTAlert', value));
     outgoingPTTAlert.listen((value) => GetStorage().write('settings.outgoingPTTAlert', value));
     pttEarphonesControl.listen((value) => GetStorage().write('settings.pttEarphonesControl', value));
+    apiUrl.listen((value) {
+      GetStorage().write('settings.apiUrl', value);
+      debugPrint("Saved API URL: $value");
+    });
   }
 
   // Clear settings
@@ -83,5 +92,6 @@ class AppSettingsController extends GetxController {
     GetStorage().remove('settings.incomingPTTAlert');
     GetStorage().remove('settings.outgoingPTTAlert');
     GetStorage().remove('settings.pttEarphonesControl');
+    GetStorage().remove('settings.apiUrl');
   }
 }
