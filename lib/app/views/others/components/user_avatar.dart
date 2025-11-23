@@ -109,14 +109,21 @@ class UserAvatar extends StatelessWidget {
     // Return Circle with initials
     return Stack(
       children: [
-        CircleAvatar(
-          radius: size / 2,
-          backgroundColor: isDarkMode ? TalklinerThemeColors.gray700 : backgroundColor,
-          child: Text(
-            getInitials(),
-            style: TextStyle(fontSize: (1/3) * size, color: textColor),
+        if (user?.profilePicture != null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(size / 2),
+            clipBehavior: Clip.hardEdge,
+            child: Image.network(user!.profilePicture!, width: size, height: size),
           ),
-        ),
+        if (user?.profilePicture == null)
+          CircleAvatar(
+            radius: size / 2,
+            backgroundColor: isDarkMode ? TalklinerThemeColors.gray700 : backgroundColor,
+            child: Text(
+              getInitials(),
+              style: TextStyle(fontSize: (1/3) * size, color: textColor),
+            ),
+          ),
         if (indicator)
           Obx(() => Positioned(
             bottom: 0,

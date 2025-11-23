@@ -18,8 +18,9 @@ class AppConfig {
 
   static String get socketUrl {
     try {
-      String _apiUrl = apiUrl.replaceAll('/api', '');
-      return _apiUrl;
+      String _apiUrl = apiUrl.replaceAll('https://', '');
+      _apiUrl = _apiUrl.replaceAll('/api', '');
+      return 'https://$_apiUrl';
     } catch (e) {
       // Return default if GetStorage not initialized yet
       return 'https://api.talkliner.com/';

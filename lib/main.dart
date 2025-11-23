@@ -1,5 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -9,47 +7,15 @@ import 'package:talkliner/app/config/pages.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/language/app_language.dart';
 import 'package:talkliner/app/themes/app_theme.dart';
-import 'package:talkliner/app/services/fcm_service.dart';
-import 'firebase_options.dart';
-
-// Background message handler
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  debugPrint("Handling a background message: ${message.messageId}");
-}
 
 Future<void> main() async {
   try {
     // Initialize Flutter bindings
     WidgetsFlutterBinding.ensureInitialized();
     
-    // Initialize Firebase Core
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    debugPrint('[MAIN] Firebase initialized successfully');
-
-    // Set up background message handler
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    // Initialize GetStorage first
+    // Initialize GetStorage
     await GetStorage.init();
     debugPrint('[MAIN] GetStorage initialized successfully');
-
-    // Initialize FCM Service (includes local notifications setup)
-    try {
-      await FCMService.initialize();
-      debugPrint('[MAIN] FCM Service initialized successfully');
-    } catch (e) {
-      debugPrint('[MAIN] FCM Service initialization failed: $e');
-      // Continue without FCM - app should still work
-    }
-
-    // Get FCM token (non-critical)
-    try {
-      String? fcmToken = await FCMService.getToken();
-      debugPrint('[MAIN] FCM Token: $fcmToken');
-    } catch (e) {
-      debugPrint('[MAIN] Failed to get FCM token: $e');
-    }
     
     // Disable app rotation (lock to portrait)
     await SystemChrome.setPreferredOrientations([

@@ -15,9 +15,14 @@ class UserSettings extends StatelessWidget {
   Widget build(BuildContext context) {
   final AuthController authController = Get.find<AuthController>();
   final token = GetStorage().read('authToken');
+  String daysLeftString = '0';
   // Format in x days left
-  final daysLeft = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(token['valid_until'])).inDays;
-  final daysLeftString = daysLeft.abs().toString();
+  if (token != null) {
+    final daysLeft = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(token['valid_until'])).inDays;
+    daysLeftString = daysLeft.abs().toString();
+  } else {
+    daysLeftString = '0';
+  }
 
     return Scaffold(
       appBar: AppBar(
@@ -29,7 +34,7 @@ class UserSettings extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Obx(() => UserSettingsProfile()),
+              UserSettingsProfile(),
               SizedBox(height: 16),
               UserSettingsStatus(),
               SizedBox(height: 16),

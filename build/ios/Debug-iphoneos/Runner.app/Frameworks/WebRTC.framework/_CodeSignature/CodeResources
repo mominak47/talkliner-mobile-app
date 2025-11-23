@@ -4,7 +4,15 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>._._Headers</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
 		<key>._._Info.plist</key>
+		<data>
+		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		</data>
+		<key>._._Modules</key>
 		<data>
 		XEMD0YUf87nL6VvQzHe2lHUJzQw=
 		</data>
@@ -47,7 +55,21 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>._._Headers</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
 		<key>._._Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
+			</data>
+		</dict>
+		<key>._._Modules</key>
 		<dict>
 			<key>hash2</key>
 			<data>

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
+import 'package:talkliner/app/services/api_service.dart';
 class AppSettingsController extends GetxController {
   AuthController authController = Get.find<AuthController>();
 
@@ -79,6 +80,15 @@ class AppSettingsController extends GetxController {
     apiUrl.listen((value) {
       GetStorage().write('settings.apiUrl', value);
       debugPrint("Saved API URL: $value");
+      
+      // Update API service base URL immediately
+      try {
+        final apiService = Get.find<ApiService>();
+        apiService.updateBaseUrl(value);
+        debugPrint("Updated API Service base URL to: $value");
+      } catch (e) {
+        debugPrint("Failed to update API Service base URL: $e");
+      }
     });
   }
 

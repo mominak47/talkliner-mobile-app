@@ -57,7 +57,7 @@ class UserModel {
   final String fcmToken;
   final String apnToken;
   final String? chatId;
-
+  final String? profilePicture;
   UserModel({
     required this.id,
     required this.domainId,
@@ -69,6 +69,7 @@ class UserModel {
     required this.fcmToken,
     required this.apnToken,
     this.chatId,
+    this.profilePicture,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -83,6 +84,7 @@ class UserModel {
       fcmToken: json['fcm_token'] ?? '',
       apnToken: json['apn_token'] ?? '',
       chatId: json['chat_id'] ?? '',
+      profilePicture: json['profile_picture'] ?? '',
     );
   }
 
@@ -98,6 +100,7 @@ class UserModel {
       'fcm_token': fcmToken,
       'apn_token': apnToken,
       'chat_id': chatId,
+      'profile_picture': profilePicture,
     };
   }
 }

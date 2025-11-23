@@ -11,8 +11,6 @@ import 'package:battery_plus/src/battery_plus_web.dart';
 import 'package:camera_web/camera_web.dart';
 import 'package:connectivity_plus/src/connectivity_plus_web.dart';
 import 'package:device_info_plus/src/device_info_plus_web.dart';
-import 'package:firebase_core_web/firebase_core_web.dart';
-import 'package:firebase_messaging_web/firebase_messaging_web.dart';
 import 'package:flutter_blue_plus_web/flutter_blue_plus_web.dart';
 import 'package:flutter_secure_storage_web/flutter_secure_storage_web.dart';
 import 'package:fluttertoast/fluttertoast_web.dart';
@@ -30,8 +28,6 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   CameraPlugin.registerWith(registrar);
   ConnectivityPlusWebPlugin.registerWith(registrar);
   DeviceInfoPlusWebPlugin.registerWith(registrar);
-  FirebaseCoreWeb.registerWith(registrar);
-  FirebaseMessagingWeb.registerWith(registrar);
   FlutterBluePlusWeb.registerWith(registrar);
   FlutterSecureStorageWeb.registerWith(registrar);
   FluttertoastWebPlugin.registerWith(registrar);

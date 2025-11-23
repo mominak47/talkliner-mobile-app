@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:talkliner/app/cachemanagers/token_manager.dart';
 import 'package:talkliner/app/models/group_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
@@ -50,6 +51,7 @@ class ContactsController extends GetxController with GetSingleTickerProviderStat
     try {
       final response = await apiService.get('/domains/contacts');
       if (response.body['success'] == true) {
+        debugPrint("fetchContacts: ${response.body['data']['contacts'][0].toString()}");
         final List<dynamic> contactList = response.body['data']['contacts'] ?? [];
         contacts.assignAll(contactList.map((contact) => UserModel.fromJson(contact)).toList());
       } else {
@@ -69,10 +71,13 @@ class ContactsController extends GetxController with GetSingleTickerProviderStat
     final response = await apiService.get('/domains/contacts/groups');
 
     if(response.statusCode == 200){
+      // Print Token
+      final token = await TokenManager.getToken();
+      debugPrint("Token: ${token.toJson()}");
       final List<dynamic> groupList = response.body['data']['groups'] ?? [];
       groups.assignAll(groupList.map((group) => GroupModel.fromJson(group)).toList());
-      debugPrint(response.body['data']['groups'].toString());
-      saveInfoInLocalStorage();
+      debugPrint("fetchGroups: ${response.body['data']['groups'].toString()}");
+      // saveInfoInLocalStorage();
     } else {
       debugPrint(response.body.toString());
     }

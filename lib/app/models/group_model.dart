@@ -118,7 +118,7 @@ class GroupUser {
   factory GroupUser.fromJson(Map<String, dynamic> json) {
     return GroupUser(
       settings: UserSettings.fromJson(json['settings'] ?? {}),
-      userId: json['user'] ?? '',
+      userId: '',//json['user']['_id'] ?? '',
       role: json['role'] ?? 'member',
       joinedAt: DateTime.parse(json['joined_at'] ?? DateTime.now().toIso8601String()),
     );

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/app_settings_controller.dart';
-import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/controllers/contacts_controller.dart';
 import 'package:talkliner/app/controllers/home_controller.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
@@ -26,6 +25,9 @@ class ContactsScreen extends StatelessWidget {
     final appSettingsController = Get.find<AppSettingsController>();
     final homeController = Get.find<HomeController>();
 
+    contactsController.fetchContacts();
+    contactsController.fetchGroups();
+    
     Widget getCurrentPage() {
       switch (contactsController.getSelectedTabBar()) {
         case "users":

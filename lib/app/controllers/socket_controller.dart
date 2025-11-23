@@ -18,8 +18,18 @@ enum SocketConnectionQuality {
   disconnected, // -1
 }
 
+class PingItem {
+  final DateTime time;
+  final int latency;
+
+  PingItem({required this.time, required this.latency});
+}
+
 class SocketController extends GetxController {
   final AuthController authController = Get.find<AuthController>();
+
+  // Last 10 pings
+  RxList<PingItem> last10Pings = <PingItem>[].obs;
 
   RxBool isConnected = false.obs;
   io.Socket? _socket;
@@ -29,9 +39,20 @@ class SocketController extends GetxController {
   Rx<SocketConnectionQuality> connectionQuality =
       SocketConnectionQuality.disconnected.obs;
 
+  int maximumPings = 100;
+
+  void defaultPings() {
+    // Loop from 0 to maximumPings
+    for (int i = 0; i < maximumPings; i++) {
+      last10Pings.add(PingItem(time: DateTime.now(), latency: 0));
+    }
+  }
+
+
   @override
   void onInit() {
     super.onInit();
+    defaultPings();
     authController.isLoggedIn.listen((value) async {
       if (value && !isConnected.value) {
         await connect();
@@ -41,19 +62,37 @@ class SocketController extends GetxController {
     });
 
     isConnected.listen((isConnected) => sendPing());
-    latency.listen((latency) => updateConnectionQuality());
+    latency.listen((latency) {
+      updateConnectionQuality();
+    });
 
     // connect();
+    addPingInterval();
+  }
+
+  // Interval to add ping
+  void addPingInterval() {
+    Future.delayed(Duration(milliseconds: 500), () {
+      addPing(PingItem(time: DateTime.now(), latency: latency.value.toInt()));
+      addPingInterval();
+    });
+  }
+
+  void addPing(PingItem ping) {
+    last10Pings.add(ping);
+    if (last10Pings.length > maximumPings) {
+      last10Pings.removeAt(0);
+    }
   }
 
   void updateConnectionQuality() {
-    if (latency.value < 50) {
+    if (latency.value < 200) {
       connectionQuality.value = SocketConnectionQuality.excellent;
-    } else if (latency.value < 100) {
-      connectionQuality.value = SocketConnectionQuality.good;
     } else if (latency.value < 200) {
-      connectionQuality.value = SocketConnectionQuality.fair;
+      connectionQuality.value = SocketConnectionQuality.good;
     } else if (latency.value < 500) {
+      connectionQuality.value = SocketConnectionQuality.fair;
+    } else if (latency.value < 1000) {
       connectionQuality.value = SocketConnectionQuality.poor;
     } else {
       connectionQuality.value = SocketConnectionQuality.veryPoor;
@@ -78,7 +117,9 @@ class SocketController extends GetxController {
     debugPrint('SocketController: Connecting to socket');
     await disconnect();
     try {
-      debugPrint('SocketController: Connecting to socket: ${AppConfig.socketUrl}');
+      debugPrint(
+        'SocketController: Connecting to socket: ${AppConfig.socketUrl}',
+      );
       _socket = io.io(AppConfig.socketUrl, _getSocketOptions());
       // Connect to the server
       _socket!.connect();
@@ -121,11 +162,14 @@ class SocketController extends GetxController {
     // On any event
     _socket!.onAny((event, data) {
       if (event == 'new_message') {
-        ChatService.appendMessageToChat(data['chat_id'], MessageModel.fromJson(data['message']));
+        ChatService.appendMessageToChat(
+          data['chat_id'],
+          MessageModel.fromJson(data['message']),
+        );
         eventData.value = data;
       }
 
-      if(event == 'USER_TO_USER_EVENT') {
+      if (event == 'USER_TO_USER_EVENT') {
         eventData.value = data;
       }
 
@@ -147,7 +191,7 @@ class SocketController extends GetxController {
 
   // On event
   void on(String event, Function(dynamic) callback) {
-      _socket!.on(event, callback);
+    _socket!.on(event, callback);
   }
 
   // Off event
@@ -179,25 +223,16 @@ class SocketController extends GetxController {
         // Get network type WIFI or MOBILE
         String networkType = NetworkService().getNetworkType();
 
-        // Get FCM token with timeout
-        String? fcmToken = "";
-        // try {
-        //   fcmToken = await FCMService.getToken();
-        // } catch (e) {
-        //   debugPrint('SocketService: Error getting FCM token: $e');
-        // }
-
         Map<String, dynamic> pingData = {
           'time': DateTime.now().millisecondsSinceEpoch,
           'battery': batteryInfo,
           'location': null, //location?.toJson(),
           'networkType': networkType,
-          'fcmToken': fcmToken,
           'voipToken': null, //VoipPushService().voipToken,
         };
 
         _socket!.emit('ping', pingData);
-        
+
         // Send ping every 10 seconds
         Future.delayed(
           Duration(seconds: AppConfig.pingInterval),
@@ -217,18 +252,21 @@ class SocketController extends GetxController {
     latency.value = (currentTime - time).toDouble();
   }
 
-
   void emitTo(UserModel user, String event, dynamic data) {
     // If sockets is connected
-    if(_socket?.connected ?? false) {
+    if (_socket?.connected ?? false) {
       _socket!.emit('USER_TO_USER_EVENT', {
         'user_id': user.id,
         'event': event,
         'data': data,
       });
-      debugPrint('SocketController: Emitted to user: $user, event: $event, data: $data');
+      debugPrint(
+        'SocketController: Emitted to user: $user, event: $event, data: $data',
+      );
     } else {
-      debugPrint('SocketController: Cannot emit to user - socket not connected');
+      debugPrint(
+        'SocketController: Cannot emit to user - socket not connected',
+      );
     }
   }
 }

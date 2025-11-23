@@ -28,8 +28,15 @@ class AuthController extends GetxController {
     _checkLoginStatus();
   }
 
-  void login(String username, String password) async {
-    if (isLoading.value || !_canAttemptLogin()) {
+  Future<void> login(String username, String password) async {
+    // Prevent multiple simultaneous login attempts
+    if (isLoading.value) {
+      debugPrint('[AuthController] Login already in progress');
+      return;
+    }
+    
+    if (!_canAttemptLogin()) {
+      debugPrint('[AuthController] Rate limit: Too many login attempts');
       return;
     }
 
@@ -44,35 +51,42 @@ class AuthController extends GetxController {
     _lastLoginAttempt = DateTime.now();
     isLoading.value = true;
     error.value = null;
+    
     try {
+      debugPrint('[AuthController] Attempting login for: $sanitizedUsername');
       final issuedToken = await authService.login(sanitizedUsername, sanitizedPassword);
       _token.value = issuedToken.token;
 
-      isLoggedIn.value = true;
-
+      debugPrint('[AuthController] Token received, fetching user');
       user.value = await authService.getUser();
+      
+      isLoggedIn.value = true;
+      debugPrint('[AuthController] Login successful');
 
       await Get.offAllNamed(Routes.home);
     } on AuthException catch (e) {
       error.value = e.message;
       isLoggedIn.value = false;
       await TokenManager.removeToken();
+      debugPrint('[AuthController] Login failed: ${e.message}');
     } catch (e) {
       error.value = 'Unexpected error occurred. Please try again.';
-      debugPrint('Login error: $e');
       isLoggedIn.value = false;
+      await TokenManager.removeToken();
+      debugPrint('[AuthController] Login error: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  void loginWithToken(String token) async {
+  Future<void> loginWithToken(String token) async {
     if (token.isEmpty) {
       error.value = 'Invalid token.';
       return;
     }
 
     if (isLoading.value) {
+      debugPrint('[AuthController] Login with token already in progress');
       return;
     }
 
@@ -87,75 +101,96 @@ class AuthController extends GetxController {
     await TokenManager.setToken(TokenModel(token: _token.value!, validUntil: validUntil));
     
     try {
+      debugPrint('[AuthController] Logging in with token');
       user.value = await authService.getUser();
       isLoggedIn.value = true;
+      debugPrint('[AuthController] Token login successful');
       await Get.offAllNamed(Routes.home);
     } on AuthException catch (e) {
       error.value = e.message;
       isLoggedIn.value = false;
       await TokenManager.removeToken();
+      debugPrint('[AuthController] Token login failed: ${e.message}');
     } catch (e) {
       error.value = 'Unexpected error occurred. Please try again.';
-      debugPrint('Login with token error: $e');
       isLoggedIn.value = false;
+      await TokenManager.removeToken();
+      debugPrint('[AuthController] Token login error: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  void fetchUser() async {
+  Future<void> fetchUser() async {
     try {
       user.value = await authService.getUser();
+      debugPrint('[AuthController] User fetched successfully');
     } on AuthException catch (e) {
       error.value = e.message;
       isLoggedIn.value = false;
+      await TokenManager.removeToken();
+      debugPrint('[AuthController] Auth error fetching user: ${e.message}');
+      rethrow; // Re-throw to be caught by caller
     } catch (e) {
       error.value = 'Unexpected error occurred. Please try again.';
-      debugPrint('Fetch user error: $e');
+      debugPrint('[AuthController] Fetch user error: $e');
+      rethrow;
     }
   }
 
   // Checks if a token exists in storage to determine the login state.
-  void _checkLoginStatus() async {
+  Future<void> _checkLoginStatus() async {
     try {
-      debugPrint('Checking login status');
+      debugPrint('[AuthController] Checking login status');
       TokenModel storedToken = await TokenManager.getToken();
-      debugPrint('STORED Token: ${storedToken.toJson()}');
+      debugPrint('[AuthController] Stored Token: ${storedToken.toJson()}');
       
       if (storedToken.isValid) {
-        debugPrint('Valid token found');
-        // _token.value = storedToken.token;
+        debugPrint('[AuthController] Valid token found, fetching user');
+        _token.value = storedToken.token;
+        
         try {
-          fetchUser();
+          await fetchUser();
           isLoggedIn.value = true;
-          debugPrint('User logged in');
-
+          debugPrint('[AuthController] Auto-login successful');
         } on AuthException catch (e) {
-          debugPrint('Token invalid or expired: ${e.message}');
+          debugPrint('[AuthController] Token invalid or expired: ${e.message}');
           error.value = e.message;
           isLoggedIn.value = false;
-          // await TokenManager.removeToken();
-          // await Get.offAllNamed(Routes.login);
+          await TokenManager.removeToken();
+          // User will be on login screen by default, no need to navigate
+        } catch (e) {
+          debugPrint('[AuthController] Error during auto-login: $e');
+          isLoggedIn.value = false;
+          await TokenManager.removeToken();
         }
       } else {
-        debugPrint('No valid token found');
+        debugPrint('[AuthController] No valid token found');
+        isLoggedIn.value = false;
       }
     } catch (e) {
-      debugPrint('Error checking login status: $e');
+      debugPrint('[AuthController] Error checking login status: $e');
+      isLoggedIn.value = false;
       // Delete the token from storage if there was an error
       await TokenManager.removeToken();
     }
 
-    debugPrint('Login status: ${isLoggedIn.value}');
+    debugPrint('[AuthController] Login status: ${isLoggedIn.value}');
   }
 
-  void logout() async {
+  Future<void> logout() async {
+    debugPrint('[AuthController] Logging out');
+    
     await TokenManager.removeToken();
     isLoggedIn.value = false;
+    _token.value = null;
+    user.value = null;
+    error.value = null;
 
     // Clear GetStorage All
     await GetStorage().erase();
 
+    debugPrint('[AuthController] Logout complete, redirecting to login');
     Get.offAllNamed(Routes.login);
   }
 

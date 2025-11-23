@@ -12,10 +12,6 @@
 		<data>
 		XEMD0YUf87nL6VvQzHe2lHUJzQw=
 		</data>
-		<key>._._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
 		<key>._GoogleDataTransport</key>
 		<data>
 		XEMD0YUf87nL6VvQzHe2lHUJzQw=
@@ -35,14 +31,6 @@
 		<key>._Modules</key>
 		<data>
 		jj+3ihLGUaqGP2WEAekrFES0OCA=
-		</data>
-		<key>GoogleDataTransport_Privacy.bundle/._._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>GoogleDataTransport_Privacy.bundle/._._PrivacyInfo.xcprivacy</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
 		</data>
 		<key>GoogleDataTransport_Privacy.bundle/._Info.plist</key>
 		<data>
@@ -81,13 +69,6 @@
 			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
 			</data>
 		</dict>
-		<key>._._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
 		<key>._GoogleDataTransport</key>
 		<dict>
 			<key>hash2</key>
@@ -121,20 +102,6 @@
 			<key>hash2</key>
 			<data>
 			a7qKt/1MDvhJKx1r4RY+ifB3Lg97Ryv0mKPhI0X1I1c=
-			</data>
-		</dict>
-		<key>GoogleDataTransport_Privacy.bundle/._._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>GoogleDataTransport_Privacy.bundle/._._PrivacyInfo.xcprivacy</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
 			</data>
 		</dict>
 		<key>GoogleDataTransport_Privacy.bundle/._Info.plist</key>

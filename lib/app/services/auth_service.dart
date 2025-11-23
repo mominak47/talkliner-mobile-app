@@ -54,6 +54,7 @@ class AuthService extends ApiService {
       if (response.isOk) {
         final body = response.body;
         final rawUser = body?['data']?['user'];
+        debugPrint('AuthService: User response: $rawUser');
         if (rawUser is Map<String, dynamic>) {
           return UserModel.fromJson(rawUser);
         }

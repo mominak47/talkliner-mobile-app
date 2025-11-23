@@ -42,6 +42,11 @@ post_install do |installer|
     # Ensure all pods use a modern iOS deployment target to avoid build errors
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      
+      # Disable dSYM generation for WebRTC to avoid missing dSYM warnings
+      if target.name == 'WebRTC-SDK'
+        config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
+      end
     end
   end
 end
