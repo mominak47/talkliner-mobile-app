@@ -49,7 +49,7 @@ class LivekitRoomController extends GetxController {
     return throw Exception(response.body);
   }
 
-Future<String> getChatId(UserModel user) async {
+  Future<String> getChatId(UserModel user) async {
     final response = await apiService.get('/chats/get_chat_id/${user.id}');
     if (response.statusCode == 200) {
       return response.body['data']['chat_id'];
@@ -65,7 +65,7 @@ Future<String> getChatId(UserModel user) async {
       if (isConnected.value) {
         await disconnectFromRoom();
       }
-      if(user.id.isEmpty) {
+      if (user.id.isEmpty) {
         return;
       }
       String chatId = await getChatId(user);
@@ -74,18 +74,13 @@ Future<String> getChatId(UserModel user) async {
       isRoomConnecting.value = true;
 
       String token = await getLivekitToken("ptt_$chatId");
-      _room = Room(
-        roomOptions: getRoomOptions(),
-      );
+      _room = Room(roomOptions: getRoomOptions());
 
       _listener = _room?.createListener();
 
       _setupRoomEventListeners();
 
-      await _room!.connect(
-        AppConfig.livekitUrl,
-        token,
-      );
+      await _room!.connect(AppConfig.livekitUrl, token);
     } catch (e) {
       debugPrint('Error connecting to room: $e');
     }
@@ -170,17 +165,25 @@ Future<String> getChatId(UserModel user) async {
 
   Future<void> speak() async {
     _room?.localParticipant?.setMicrophoneEnabled(true);
-    await sendEvent(jsonEncode({'type': 'individual', 'from': authController.user.value?.id ?? ''}),
-        "ptt-speaking-start",
-      );
+    await sendEvent(
+      jsonEncode({
+        'type': 'individual',
+        'from': authController.user.value?.id ?? '',
+      }),
+      "ptt-speaking-start",
+    );
   }
 
   Future<void> stopSpeaking() async {
     _room?.localParticipant?.setMicrophoneEnabled(false);
 
-    await sendEvent(jsonEncode({'type': 'individual', 'from': authController.user.value?.id ?? ''}),
-        "ptt-speaking-end",
-      );
+    await sendEvent(
+      jsonEncode({
+        'type': 'individual',
+        'from': authController.user.value?.id ?? '',
+      }),
+      "ptt-speaking-end",
+    );
   }
 
   Future<void> sendEvent(String event, String type) async {

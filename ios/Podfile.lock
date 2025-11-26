@@ -115,26 +115,26 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/torch_light/ios"
 
 SPEC CHECKSUMS:
-  audioplayers_darwin: 4f9ca89d92d3d21cec7ec580e78ca888e5fb68bd
-  battery_plus: b42253f6d2dde71712f8c36fef456d99121c5977
-  camera_avfoundation: 5675ca25298b6f81fa0a325188e7df62cc217741
-  connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
+  audioplayers_darwin: 4027b33a8f471d996c13f71cb77f0b1583b5d923
+  battery_plus: 34f72fa2afeeea83bbae306c72a25828d3ec727a
+  camera_avfoundation: 281867ff09f1da66f031a184ecfbc6f2e625c9f5
+  connectivity_plus: 2a701ffec2c0ae28a48cf7540e279787e77c447d
   CryptoSwift: e64e11850ede528a02a0f3e768cec8e9d92ecb90
-  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
+  device_info_plus: bf2e3232933866d73fe290f2942f2156cdd10342
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_blue_plus_darwin: 20a08bfeaa0f7804d524858d3d8744bcc1b6dbc3
-  flutter_callkit_incoming: cb8138af67cda6dd981f7101a5d709003af21502
-  flutter_local_notifications: 395056b3175ba4f08480a7c5de30cd36d69827e4
-  flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
-  flutter_webrtc: 57f32415b8744e806f9c2a96ccdb60c6a627ba33
-  fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
-  geolocator_apple: ab36aa0e8b7d7a2d7639b3b4e48308394e8cef5e
-  livekit_client: 08755cabfa4da4ed455642f460cfbb39bc518070
-  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
-  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
-  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
-  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
-  torch_light: d093d579a221a59ef8a6b8c0eca20d52f7178087
+  flutter_blue_plus_darwin: 904ed52825285a15f60e9d90312337a09f11a785
+  flutter_callkit_incoming: 417dd1b46541cdd5d855ad795ccbe97d1c18155e
+  flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9
+  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  flutter_webrtc: 90260f83024b1b96d239a575ea4e3708e79344d1
+  fluttertoast: 21eecd6935e7064cc1fcb733a4c5a428f3f24f0f
+  geolocator_apple: 66b711889fd333205763b83c9dcf0a57a28c7afd
+  livekit_client: 170022ce5f7c8c70d7f862ac9c17e11508ad5fbc
+  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  torch_light: 682062fa12102172fa38b6b14c106d93b060f83e
   WebRTC-SDK: 79942c006ea64f6fb48d7da8a4786dfc820bc1db
 
 PODFILE CHECKSUM: 5ecebfc357b256417c93b037cfa1e31f674ef840

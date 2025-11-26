@@ -4,49 +4,13 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>._._fluttertoast</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._._fluttertoast_privacy.bundle</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._fluttertoast</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._fluttertoast_privacy.bundle</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
 		<key>Info.plist</key>
 		<data>
-		hx3B7oBpyU5/XhWxAL32vLKe7wM=
-		</data>
-		<key>fluttertoast_privacy.bundle/._._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>fluttertoast_privacy.bundle/._._PrivacyInfo.xcprivacy</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>fluttertoast_privacy.bundle/._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>fluttertoast_privacy.bundle/._PrivacyInfo.xcprivacy</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		mmHsQE2mtO3NWE8xRTFyVEQRDs4=
 		</data>
 		<key>fluttertoast_privacy.bundle/Info.plist</key>
 		<data>
-		TgkU6+Y18LyUJ5HeJk41FjYBZ4I=
+		jUHMfRmvsMKKyVCDDpDG0Oz+Xcg=
 		</data>
 		<key>fluttertoast_privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -55,74 +19,11 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>._._fluttertoast</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._._fluttertoast_privacy.bundle</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._fluttertoast</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._fluttertoast_privacy.bundle</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>fluttertoast_privacy.bundle/._._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>fluttertoast_privacy.bundle/._._PrivacyInfo.xcprivacy</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>fluttertoast_privacy.bundle/._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>fluttertoast_privacy.bundle/._PrivacyInfo.xcprivacy</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
 		<key>fluttertoast_privacy.bundle/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Ytgx4B1qGBdOXSWF8OSM7lSpiNJd0iYHfpFefmaS4e0=
+			ItVKHglyQ3GCGkM+/lkySmnHAToT7NSH2961qxaVuI4=
 			</data>
 		</dict>
 		<key>fluttertoast_privacy.bundle/PrivacyInfo.xcprivacy</key>

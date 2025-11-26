@@ -36,7 +36,6 @@ class PushToTalkController extends GetxController {
     _timer = Timer.periodic(Duration(seconds: 10), (timer) {
       _reconnectToRoom();
     });
-
   }
 
   @override

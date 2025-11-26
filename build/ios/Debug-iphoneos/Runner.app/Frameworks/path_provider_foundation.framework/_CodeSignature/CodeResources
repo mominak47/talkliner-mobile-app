@@ -4,49 +4,13 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>._._path_provider_foundation</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._._path_provider_foundation_privacy.bundle</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._path_provider_foundation</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._path_provider_foundation_privacy.bundle</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
 		<key>Info.plist</key>
 		<data>
-		qv0FQEOsHVPN6GSZdhsLrvrxlNw=
-		</data>
-		<key>path_provider_foundation_privacy.bundle/._._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>path_provider_foundation_privacy.bundle/._._PrivacyInfo.xcprivacy</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>path_provider_foundation_privacy.bundle/._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>path_provider_foundation_privacy.bundle/._PrivacyInfo.xcprivacy</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
+		FUst5qZW9CFlEjNDtc9nPqwh1DE=
 		</data>
 		<key>path_provider_foundation_privacy.bundle/Info.plist</key>
 		<data>
-		korhPCrCWtk/O6z/pmDIbFZ+psY=
+		x1RUK6qR238MHqUoKD+U5V/RgX8=
 		</data>
 		<key>path_provider_foundation_privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -55,74 +19,11 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>._._path_provider_foundation</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._._path_provider_foundation_privacy.bundle</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._path_provider_foundation</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._path_provider_foundation_privacy.bundle</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>path_provider_foundation_privacy.bundle/._._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>path_provider_foundation_privacy.bundle/._._PrivacyInfo.xcprivacy</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>path_provider_foundation_privacy.bundle/._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>path_provider_foundation_privacy.bundle/._PrivacyInfo.xcprivacy</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
 		<key>path_provider_foundation_privacy.bundle/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			M4xoYT86vXeXnw4bZ9Bvy27JQo7A/GrWOMW5gBaBP3Y=
+			nYwACb93NzAM4JtklVxTL+9rsLxkIOIEnuC+BoG6M58=
 			</data>
 		</dict>
 		<key>path_provider_foundation_privacy.bundle/PrivacyInfo.xcprivacy</key>

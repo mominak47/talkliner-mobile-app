@@ -4,47 +4,13 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>._._flutter_blue_plus_darwin</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._Info.plist</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
-		<key>._flutter_blue_plus_darwin</key>
-		<data>
-		XEMD0YUf87nL6VvQzHe2lHUJzQw=
-		</data>
 		<key>Info.plist</key>
 		<data>
-		DZ2i1a4y9BvVv6sQAW8bRakzvQw=
+		4yf64sfRDadTjy3S6Nv/oc5SW4E=
 		</data>
 	</dict>
 	<key>files2</key>
-	<dict>
-		<key>._._flutter_blue_plus_darwin</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-		<key>._flutter_blue_plus_darwin</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			KPQCU5UQrcNmROuZG92EiPY2Mn7lVM1tNDSeNr18q2U=
-			</data>
-		</dict>
-	</dict>
+	<dict/>
 	<key>rules</key>
 	<dict>
 		<key>^.*</key>

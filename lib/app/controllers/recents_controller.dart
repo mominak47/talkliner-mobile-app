@@ -4,16 +4,20 @@ import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/models/recent_item.dart';
 import 'package:talkliner/app/services/api_service.dart';
 
-class RecentsController extends GetxController {
+class RecentsController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final ApiService apiService = ApiService();
   final RxBool isLoading = false.obs;
   final RxList<RecentItem> recents = <RecentItem>[].obs;
 
   final GetStorage _storage = GetStorage();
 
+  late TabController tabController;
+
   @override
   void onInit() {
     super.onInit();
+    tabController = TabController(length: 3, vsync: this);
     apiService.onInit();
     getInfoFromLocalStorage();
     // Use WidgetsBinding to ensure this runs after the build phase
@@ -21,6 +25,18 @@ class RecentsController extends GetxController {
       fetchRecents();
     });
   }
+
+  @override
+  void onClose() {
+    tabController.dispose();
+    super.onClose();
+  }
+
+  List<RecentItem> get userRecents =>
+      recents.where((r) => r.chatType != 'group').toList();
+
+  List<RecentItem> get groupRecents =>
+      recents.where((r) => r.chatType == 'group').toList();
 
   Future<void> fetchRecents({bool shouldShowLoading = false}) async {
     if (shouldShowLoading) {
@@ -49,7 +65,10 @@ class RecentsController extends GetxController {
   Future<void> refreshRecents() async => await fetchRecents();
 
   void saveInfoInLocalStorage() {
-    _storage.write('recents', recents.map((recent) => recent.toJson()).toList());
+    _storage.write(
+      'recents',
+      recents.map((recent) => recent.toJson()).toList(),
+    );
   }
 
   void getInfoFromLocalStorage() {
