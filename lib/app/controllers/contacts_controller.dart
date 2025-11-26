@@ -6,7 +6,8 @@ import 'package:talkliner/app/models/group_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
 
-class ContactsController extends GetxController with GetSingleTickerProviderStateMixin{
+class ContactsController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
   final refreshGroupsIndicatorKey = GlobalKey<RefreshIndicatorState>();
   final RxList<UserModel> contacts = <UserModel>[].obs;
@@ -18,18 +19,26 @@ class ContactsController extends GetxController with GetSingleTickerProviderStat
   // Tab bar index
   final RxString selectedTabBar = "users".obs;
 
-
   final GetStorage _storage = GetStorage();
+
+  late TabController tabController;
 
   @override
   void onInit() {
     super.onInit();
+    tabController = TabController(length: 2, vsync: this);
     apiService.onInit();
     getInfoFromLocalStorage();
-    fetchContacts(); 
+    fetchContacts();
     fetchGroups();
     loadingContacts();
     loadingGroups();
+  }
+
+  @override
+  void onClose() {
+    tabController.dispose();
+    super.onClose();
   }
 
   String getSelectedTabBar() => selectedTabBar.value;
@@ -42,18 +51,27 @@ class ContactsController extends GetxController with GetSingleTickerProviderStat
 
   void loadContacts() => contacts.assignAll(contacts);
 
-  void loadingContacts() => WidgetsBinding.instance.addPostFrameCallback((_) =>refreshIndicatorKey.currentState?.show());
+  void loadingContacts() => WidgetsBinding.instance.addPostFrameCallback(
+    (_) => refreshIndicatorKey.currentState?.show(),
+  );
 
-  void loadingGroups() => WidgetsBinding.instance.addPostFrameCallback((_) =>refreshGroupsIndicatorKey.currentState?.show());
+  void loadingGroups() => WidgetsBinding.instance.addPostFrameCallback(
+    (_) => refreshGroupsIndicatorKey.currentState?.show(),
+  );
 
   // Fetch contacts from the API
   Future<void> fetchContacts() async {
     try {
-      final response = await apiService.get('/domains/contacts');
+      final response = await apiService.makeGetRequest('/domains/contacts');
       if (response.body['success'] == true) {
-        debugPrint("fetchContacts: ${response.body['data']['contacts'][0].toString()}");
-        final List<dynamic> contactList = response.body['data']['contacts'] ?? [];
-        contacts.assignAll(contactList.map((contact) => UserModel.fromJson(contact)).toList());
+        debugPrint(
+          "fetchContacts: ${response.body['data']['contacts'][0].toString()}",
+        );
+        final List<dynamic> contactList =
+            response.body['data']['contacts'] ?? [];
+        contacts.assignAll(
+          contactList.map((contact) => UserModel.fromJson(contact)).toList(),
+        );
       } else {
         debugPrint(response.body['message']);
       }
@@ -68,14 +86,18 @@ class ContactsController extends GetxController with GetSingleTickerProviderStat
   }
 
   Future<void> fetchGroups() async {
-    final response = await apiService.get('/domains/contacts/groups');
+    final response = await apiService.makeGetRequest(
+      '/domains/contacts/groups',
+    );
 
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       // Print Token
       final token = await TokenManager.getToken();
       debugPrint("Token: ${token.toJson()}");
       final List<dynamic> groupList = response.body['data']['groups'] ?? [];
-      groups.assignAll(groupList.map((group) => GroupModel.fromJson(group)).toList());
+      groups.assignAll(
+        groupList.map((group) => GroupModel.fromJson(group)).toList(),
+      );
       debugPrint("fetchGroups: ${response.body['data']['groups'].toString()}");
       // saveInfoInLocalStorage();
     } else {
@@ -97,7 +119,15 @@ class ContactsController extends GetxController with GetSingleTickerProviderStat
 
     final contactsList = _storage.read('contacts') ?? [];
     final groupsList = _storage.read('groups') ?? [];
-    contacts.assignAll((contactsList as List<dynamic>).map((contact) => UserModel.fromJson(contact)).toList());
-    groups.assignAll((groupsList as List<dynamic>).map((group) => GroupModel.fromJson(group)).toList());
+    contacts.assignAll(
+      (contactsList as List<dynamic>)
+          .map((contact) => UserModel.fromJson(contact))
+          .toList(),
+    );
+    groups.assignAll(
+      (groupsList as List<dynamic>)
+          .map((group) => GroupModel.fromJson(group))
+          .toList(),
+    );
   }
 }

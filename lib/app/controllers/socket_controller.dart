@@ -48,7 +48,6 @@ class SocketController extends GetxController {
     }
   }
 
-
   @override
   void onInit() {
     super.onInit();
@@ -118,9 +117,10 @@ class SocketController extends GetxController {
     await disconnect();
     try {
       debugPrint(
-        'SocketController: Connecting to socket: ${AppConfig.socketUrl}',
+        'SocketController: Connecting to socket: ${AppConfig().socketUrl()}',
       );
-      _socket = io.io(AppConfig.socketUrl, _getSocketOptions());
+      String socketUrl_ = AppConfig().socketUrl();
+      _socket = io.io(socketUrl_, _getSocketOptions());
       // Connect to the server
       _socket!.connect();
       _setupSocketListeners();

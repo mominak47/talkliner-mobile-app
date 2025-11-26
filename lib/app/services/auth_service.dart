@@ -13,13 +13,10 @@ class AuthService extends ApiService {
     final trimmedPassword = password;
 
     try {
-      final response = await post(
-        '/domains/login',
-        {
-          'username': trimmedUsername,
-          'password': trimmedPassword,
-        },
-      );
+      final response = await makePostRequest('/domains/login', {
+        'username': trimmedUsername,
+        'password': trimmedPassword,
+      });
 
       if (response.isOk) {
         final token = TokenModel.fromJson(response.body?['data']);
@@ -37,7 +34,10 @@ class AuthService extends ApiService {
 
       throw _mapToAuthException(response);
     } on TimeoutException {
-      throw const AuthException('Login request timed out', HttpStatus.requestTimeout);
+      throw const AuthException(
+        'Login request timed out',
+        HttpStatus.requestTimeout,
+      );
     } on AuthException {
       rethrow;
     } on FormatException catch (e) {
@@ -67,7 +67,10 @@ class AuthService extends ApiService {
 
       throw _mapToAuthException(response);
     } on TimeoutException {
-      throw const AuthException('User status request timed out', HttpStatus.requestTimeout);
+      throw const AuthException(
+        'User status request timed out',
+        HttpStatus.requestTimeout,
+      );
     } on AuthException {
       rethrow;
     } on FormatException catch (e) {
@@ -110,10 +113,9 @@ class AuthException implements Exception {
   const AuthException(this.message, this.statusCode);
 
   const AuthException.unauthorized()
-      : message = 'Unauthorized',
-        statusCode = HttpStatus.unauthorized;
+    : message = 'Unauthorized',
+      statusCode = HttpStatus.unauthorized;
 
   @override
   String toString() => 'AuthException($statusCode): $message';
 }
-

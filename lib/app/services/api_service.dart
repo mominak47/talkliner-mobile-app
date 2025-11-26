@@ -8,15 +8,18 @@ class ApiService extends GetConnect {
   @override
   void onInit() {
     super.onInit();
-    updateBaseUrl(AppConfig.apiUrl);
+    updateBaseUrl();
     _configureRequestInterceptor();
     _configureResponseInterceptor();
   }
 
-  // Update base URL dynamically
-  void updateBaseUrl(String newUrl) {
-    httpClient.baseUrl = newUrl;
-    debugPrint('[ApiService] Base URL updated to: $newUrl');
+  void updateBaseUrl() {
+    httpClient.baseUrl = getBaseUrl();
+    debugPrint('[ApiService] Base URL updated to: ${getBaseUrl()}');
+  }
+
+  String getBaseUrl() {
+    return AppConfig().apiUrl();
   }
 
   // Configure request interceptor (runs once, applies to all requests)
@@ -28,20 +31,24 @@ class ApiService extends GetConnect {
         if (token.isValid) {
           request.headers['Authorization'] = 'Bearer ${token.token}';
           if (kDebugMode) {
-            debugPrint('[ApiService] Request: ${request.method} ${request.url}');
+            debugPrint(
+              '[ApiService] Request: ${request.method} ${request.url}',
+            );
             debugPrint('[ApiService] Auth token added');
           }
         } else {
           request.headers.remove('Authorization');
           if (kDebugMode) {
-            debugPrint('[ApiService] Request: ${request.method} ${request.url} (no token)');
+            debugPrint(
+              '[ApiService] Request: ${request.method} ${request.url} (no token)',
+            );
           }
         }
-        
+
         // Add common headers
         request.headers['Content-Type'] = 'application/json';
         request.headers['Accept'] = 'application/json';
-        
+
         return request;
       });
     } catch (e) {
@@ -53,7 +60,9 @@ class ApiService extends GetConnect {
   void _configureResponseInterceptor() {
     httpClient.addResponseModifier((request, response) async {
       if (kDebugMode) {
-        debugPrint('[ApiService] Response: ${response.statusCode} for ${request.url}');
+        debugPrint(
+          '[ApiService] Response: ${response.statusCode} for ${request.url}',
+        );
       }
 
       // Handle 401 Unauthorized globally
@@ -66,9 +75,11 @@ class ApiService extends GetConnect {
 
       // Log errors in debug mode
       if (response.hasError && kDebugMode) {
-        debugPrint('[ApiService] Error ${response.statusCode}: ${response.statusText}');
+        debugPrint(
+          '[ApiService] Error ${response.statusCode}: ${response.statusText}',
+        );
         debugPrint('[ApiService] Body: ${response.body}');
-        if(response.statusCode == 401) {
+        if (response.statusCode == 401) {
           // Logout
           debugPrint('[ApiService] 401 Unauthorized - Logging out');
         }
@@ -80,14 +91,12 @@ class ApiService extends GetConnect {
 
   // Simplified GET request with timeout
   Future<Response<T>> makeGetRequest<T>(String url) async {
+    updateBaseUrl();
     try {
       return await get<T>(url).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
-          return Response(
-            statusCode: 408,
-            statusText: 'Request timeout',
-          );
+          return Response(statusCode: 408, statusText: 'Request timeout');
         },
       );
     } catch (e) {
@@ -98,14 +107,12 @@ class ApiService extends GetConnect {
 
   // Simplified POST request with timeout
   Future<Response<T>> makePostRequest<T>(String url, dynamic body) async {
+    updateBaseUrl();
     try {
       return await post<T>(url, body).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
-          return Response(
-            statusCode: 408,
-            statusText: 'Request timeout',
-          );
+          return Response(statusCode: 408, statusText: 'Request timeout');
         },
       );
     } catch (e) {

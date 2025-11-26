@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
 import 'package:talkliner/app/services/api_service.dart';
+
 class AppSettingsController extends GetxController {
   AuthController authController = Get.find<AuthController>();
 
@@ -27,8 +28,8 @@ class AppSettingsController extends GetxController {
     // authController.isLoggedIn.listen((isLoggedIn) => isLoggedIn ? loadSettings() : clearSettings());
   }
 
-  void permissionsManager(){
-    // Check for permissions 
+  void permissionsManager() {
+    // Check for permissions
     // 1. Camera
     // 2. Location
     // 3. Microphone
@@ -44,9 +45,12 @@ class AppSettingsController extends GetxController {
     this.language.value = language;
   }
 
-  void setShowFloatingPushToTalkButton(bool value) => showFloatingPushToTalkButton.value = value;
-  void setVibrateOnIncomingPTT(bool value) => vibrateOnIncomingPTT.value = value;
-  void setWhenBluetoothDisconnects(bool value) => whenBluetoothDisconnects.value = value;
+  void setShowFloatingPushToTalkButton(bool value) =>
+      showFloatingPushToTalkButton.value = value;
+  void setVibrateOnIncomingPTT(bool value) =>
+      vibrateOnIncomingPTT.value = value;
+  void setWhenBluetoothDisconnects(bool value) =>
+      whenBluetoothDisconnects.value = value;
   void setPttDuringCellular(bool value) => pttDuringCellular.value = value;
   void setRejectPhoneCalls(bool value) => rejectPhoneCalls.value = value;
   void setIncomingPTTAlert(bool value) => incomingPTTAlert.value = value;
@@ -56,35 +60,60 @@ class AppSettingsController extends GetxController {
 
   // Load settings
   void loadSettings() {
-    showFloatingPushToTalkButton.value = GetStorage().read('settings.showFloatingPushToTalkButton') ?? true;
-    vibrateOnIncomingPTT.value = GetStorage().read('settings.vibrateOnIncomingPTT') ?? true;
-    whenBluetoothDisconnects.value = GetStorage().read('settings.whenBluetoothDisconnects') ?? false;
-    pttDuringCellular.value = GetStorage().read('settings.pttDuringCellular') ?? false;
-    rejectPhoneCalls.value = GetStorage().read('settings.rejectPhoneCalls') ?? false;
-    incomingPTTAlert.value = GetStorage().read('settings.incomingPTTAlert') ?? false;
-    outgoingPTTAlert.value = GetStorage().read('settings.outgoingPTTAlert') ?? false;
-    pttEarphonesControl.value = GetStorage().read('settings.pttEarphonesControl') ?? false;
+    showFloatingPushToTalkButton.value =
+        GetStorage().read('settings.showFloatingPushToTalkButton') ?? true;
+    vibrateOnIncomingPTT.value =
+        GetStorage().read('settings.vibrateOnIncomingPTT') ?? true;
+    whenBluetoothDisconnects.value =
+        GetStorage().read('settings.whenBluetoothDisconnects') ?? false;
+    pttDuringCellular.value =
+        GetStorage().read('settings.pttDuringCellular') ?? false;
+    rejectPhoneCalls.value =
+        GetStorage().read('settings.rejectPhoneCalls') ?? false;
+    incomingPTTAlert.value =
+        GetStorage().read('settings.incomingPTTAlert') ?? false;
+    outgoingPTTAlert.value =
+        GetStorage().read('settings.outgoingPTTAlert') ?? false;
+    pttEarphonesControl.value =
+        GetStorage().read('settings.pttEarphonesControl') ?? false;
     apiUrl.value = GetStorage().read('settings.apiUrl') ?? '';
   }
 
   // Listen to settings changes
   void listenToSettingsChanges() {
-    showFloatingPushToTalkButton.listen((value) => GetStorage().write('settings.showFloatingPushToTalkButton', value));
-    vibrateOnIncomingPTT.listen((value) => GetStorage().write('settings.vibrateOnIncomingPTT', value));
-    whenBluetoothDisconnects.listen((value) => GetStorage().write('settings.whenBluetoothDisconnects', value));
-    pttDuringCellular.listen((value) => GetStorage().write('settings.pttDuringCellular', value));
-    rejectPhoneCalls.listen((value) => GetStorage().write('settings.rejectPhoneCalls', value));
-    incomingPTTAlert.listen((value) => GetStorage().write('settings.incomingPTTAlert', value));
-    outgoingPTTAlert.listen((value) => GetStorage().write('settings.outgoingPTTAlert', value));
-    pttEarphonesControl.listen((value) => GetStorage().write('settings.pttEarphonesControl', value));
+    showFloatingPushToTalkButton.listen(
+      (value) =>
+          GetStorage().write('settings.showFloatingPushToTalkButton', value),
+    );
+    vibrateOnIncomingPTT.listen(
+      (value) => GetStorage().write('settings.vibrateOnIncomingPTT', value),
+    );
+    whenBluetoothDisconnects.listen(
+      (value) => GetStorage().write('settings.whenBluetoothDisconnects', value),
+    );
+    pttDuringCellular.listen(
+      (value) => GetStorage().write('settings.pttDuringCellular', value),
+    );
+    rejectPhoneCalls.listen(
+      (value) => GetStorage().write('settings.rejectPhoneCalls', value),
+    );
+    incomingPTTAlert.listen(
+      (value) => GetStorage().write('settings.incomingPTTAlert', value),
+    );
+    outgoingPTTAlert.listen(
+      (value) => GetStorage().write('settings.outgoingPTTAlert', value),
+    );
+    pttEarphonesControl.listen(
+      (value) => GetStorage().write('settings.pttEarphonesControl', value),
+    );
     apiUrl.listen((value) {
       GetStorage().write('settings.apiUrl', value);
       debugPrint("Saved API URL: $value");
-      
+
       // Update API service base URL immediately
       try {
         final apiService = Get.find<ApiService>();
-        apiService.updateBaseUrl(value);
+        apiService.updateBaseUrl();
         debugPrint("Updated API Service base URL to: $value");
       } catch (e) {
         debugPrint("Failed to update API Service base URL: $e");

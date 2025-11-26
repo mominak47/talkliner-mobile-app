@@ -5,28 +5,29 @@ class AppConfig {
   static const String version = '1.0.0';
   static const String buildNumber = '1';
   static const int splashDelay = 300;
-  
+
   // Use getter to avoid initialization issues with GetStorage
-  static String get apiUrl {
+  String apiUrl() {
     try {
-      return GetStorage().read('settings.apiUrl') ?? 'https://api.talkliner.com/api';
+      return GetStorage().read('settings.apiUrl') ??
+          'https://api.talkliner.com/api';
     } catch (e) {
       // Return default if GetStorage not initialized yet
       return 'https://api.talkliner.com/api';
     }
   }
 
-  static String get socketUrl {
+  String socketUrl() {
     try {
-      String _apiUrl = apiUrl.replaceAll('https://', '');
-      _apiUrl = _apiUrl.replaceAll('/api', '');
-      return 'https://$_apiUrl';
+      String apiUrl = this.apiUrl().replaceAll('https://', '');
+      apiUrl = apiUrl.replaceAll('/api', '');
+      return 'https://$apiUrl';
     } catch (e) {
       // Return default if GetStorage not initialized yet
       return 'https://api.talkliner.com/';
     }
   }
-  
+
   static const String livekitUrl = 'wss://talkliner-nh2ljes1.livekit.cloud';
   static const int pingInterval = 3;
 }

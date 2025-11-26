@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:qr_code_dart_scan/qr_code_dart_scan.dart';
 import 'package:talkliner/app/config/routes.dart';
+import 'package:talkliner/app/controllers/app_settings_controller.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 
@@ -21,23 +22,31 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final AuthController authController = Get.find<AuthController>();
+  final AppSettingsController settingsController =
+      Get.find<AppSettingsController>();
 
   final _usernameController = TextEditingController(text: 'fahad2');
   final _passwordController = TextEditingController(text: '123qwe==');
   final String currentYear = DateTime.now().year.toString();
   bool _obscurePassword = true;
+  Worker? _apiUrlWorker;
 
   @override
   void initState() {
     super.initState();
     _usernameController.addListener(() => setState(() {}));
     _passwordController.addListener(() => setState(() {}));
+
+    _apiUrlWorker = ever(settingsController.apiUrl, (value) {
+      debugPrint("apiUrl changed: $value");
+    });
   }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _apiUrlWorker?.dispose();
     super.dispose();
   }
 
@@ -127,6 +136,7 @@ class _LoginViewState extends State<LoginView> {
                         ],
                       ),
                       const SizedBox(height: 40),
+                      Text(settingsController.apiUrl.value),
                       // Logo
                       Center(
                         child:
@@ -262,7 +272,7 @@ class _LoginViewState extends State<LoginView> {
                                   Get.bottomSheet(
                                     DraggableScrollableSheet(
                                       initialChildSize:
-                                          0.8, // 80% of screen height initially
+                                          0.85, // 80% of screen height initially
                                       minChildSize:
                                           0.3, // Minimum 30% when dragged down
                                       maxChildSize:
