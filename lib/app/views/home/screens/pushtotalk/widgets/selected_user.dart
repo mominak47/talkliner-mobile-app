@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:talkliner/app/controllers/auth_controller.dart';
+import 'package:talkliner/app/controllers/home_controller.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
 import 'package:talkliner/app/controllers/push_to_talk_controller.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
@@ -17,8 +17,7 @@ class SelectedUser extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     final livekitRoomController = Get.find<LivekitRoomController>();
-
-    final AuthController authController = Get.find<AuthController>();
+    final homeController = Get.find<HomeController>();
 
     if (pushToTalkController.selectedUser.value.id == "" &&
         pushToTalkController.selectedGroup.value.id == "") {
@@ -38,18 +37,21 @@ class SelectedUser extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Text(
-              "select_user_or_group_for_ptt_connection".tr,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color:
-                    isDarkMode
-                        ? TalklinerThemeColors.gray100
-                        : TalklinerThemeColors.gray800,
-                fontSize: 14,
+          child: GestureDetector(
+            onTap: () => homeController.setCurrentIndex(1),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Text(
+                "select_user_or_group_for_ptt_connection".tr,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color:
+                      isDarkMode
+                          ? TalklinerThemeColors.gray100
+                          : TalklinerThemeColors.gray800,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
