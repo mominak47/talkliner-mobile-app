@@ -50,20 +50,22 @@ class SignalBarsWidget extends StatelessWidget {
     final latencies = pings.map((p) => p.latency.toDouble()).toList();
     final maxLatency = latencies.reduce((a, b) => a > b ? a : b);
     final minLatency = latencies.reduce((a, b) => a < b ? a : b);
-    
+
     // Add some padding to the range
     var range = maxLatency - minLatency;
-    
+
     // Ensure minimum range to avoid zero interval
     if (range < 10) {
       range = 10;
     }
-    
+
     final yMax = maxLatency + (range * 0.2);
-    final yMin = (minLatency - (range * 0.2)).clamp(0.0, double.infinity).toDouble();
-    
+    final yMin =
+        (minLatency - (range * 0.2)).clamp(0.0, double.infinity).toDouble();
+
     // Calculate horizontal interval and ensure it's not zero
-    final horizontalInterval = ((yMax - yMin) / 4).clamp(1.0, double.infinity).toDouble();
+    final horizontalInterval =
+        ((yMax - yMin) / 4).clamp(1.0, double.infinity).toDouble();
 
     return Padding(
       padding: const EdgeInsets.only(right: 16, top: 8),
@@ -75,9 +77,10 @@ class SignalBarsWidget extends StatelessWidget {
             horizontalInterval: horizontalInterval,
             getDrawingHorizontalLine: (value) {
               return FlLine(
-                color: isDarkMode
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.1),
+                color:
+                    isDarkMode
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.black.withOpacity(0.1),
                 strokeWidth: 1,
               );
             },
@@ -103,9 +106,10 @@ class SignalBarsWidget extends StatelessWidget {
                       child: Text(
                         DateFormat('HH:mm:ss').format(ping.time),
                         style: TextStyle(
-                          color: isDarkMode
-                              ? Colors.white.withOpacity(0.5)
-                              : Colors.black.withOpacity(0.5),
+                          color:
+                              isDarkMode
+                                  ? Colors.white.withOpacity(0.5)
+                                  : Colors.black.withOpacity(0.5),
                           fontSize: 10,
                         ),
                       ),
@@ -124,9 +128,10 @@ class SignalBarsWidget extends StatelessWidget {
                   return Text(
                     '${value.toInt()}ms',
                     style: TextStyle(
-                      color: isDarkMode
-                          ? Colors.white.withOpacity(0.5)
-                          : Colors.black.withOpacity(0.5),
+                      color:
+                          isDarkMode
+                              ? Colors.white.withOpacity(0.5)
+                              : Colors.black.withOpacity(0.5),
                       fontSize: 10,
                     ),
                   );
@@ -137,9 +142,10 @@ class SignalBarsWidget extends StatelessWidget {
           borderData: FlBorderData(
             show: true,
             border: Border.all(
-              color: isDarkMode
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.black.withOpacity(0.1),
+              color:
+                  isDarkMode
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.black.withOpacity(0.1),
             ),
           ),
           minX: 0,
@@ -148,14 +154,17 @@ class SignalBarsWidget extends StatelessWidget {
           maxY: yMax,
           lineBarsData: [
             LineChartBarData(
-              spots: pings
-                  .asMap()
-                  .entries
-                  .map((e) => FlSpot(
-                        e.key.toDouble(),
-                        e.value.latency.toDouble(),
-                      ))
-                  .toList(),
+              spots:
+                  pings
+                      .asMap()
+                      .entries
+                      .map(
+                        (e) => FlSpot(
+                          e.key.toDouble(),
+                          e.value.latency.toDouble(),
+                        ),
+                      )
+                      .toList(),
               isCurved: false,
               color: TalklinerThemeColors.primary300,
               barWidth: 1,
@@ -198,7 +207,6 @@ class SignalBarsWidget extends StatelessWidget {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     final socketController = Get.find<SocketController>();
@@ -216,9 +224,10 @@ class SignalBarsWidget extends StatelessWidget {
               builder: (context, scrollController) {
                 return Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TalklinerThemeColors.gray900
-                        : Colors.white,
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? TalklinerThemeColors.gray900
+                            : Colors.white,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -232,13 +241,14 @@ class SignalBarsWidget extends StatelessWidget {
                         height: 4,
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? Colors.white.withOpacity(0.1)
-                              : Colors.black.withOpacity(0.1),
+                          color:
+                              isDarkMode
+                                  ? Colors.white.withOpacity(0.1)
+                                  : Colors.black.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      
+
                       // Title
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -251,7 +261,7 @@ class SignalBarsWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      
+
                       Expanded(
                         child: SingleChildScrollView(
                           controller: scrollController,
@@ -259,14 +269,20 @@ class SignalBarsWidget extends StatelessWidget {
                             padding: const EdgeInsets.all(16.0),
                             child: Obx(() {
                               final pings = socketController.last10Pings;
-                              final currentLatency = socketController.latency.value;
-                              final quality = socketController.connectionQuality.value;
-                              
+                              final currentLatency =
+                                  socketController.latency.value;
+                              final quality =
+                                  socketController.connectionQuality.value;
+
                               // Calculate average latency
-                              final avgLatency = pings.isEmpty
-                                  ? 0.0
-                                  : pings.map((p) => p.latency).reduce((a, b) => a + b) / pings.length;
-                              
+                              final avgLatency =
+                                  pings.isEmpty
+                                      ? 0.0
+                                      : pings
+                                              .map((p) => p.latency)
+                                              .reduce((a, b) => a + b) /
+                                          pings.length;
+
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -276,12 +292,15 @@ class SignalBarsWidget extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: isDarkMode ? Colors.white : Colors.black,
+                                      color:
+                                          isDarkMode
+                                              ? Colors.white
+                                              : Colors.black,
                                     ),
                                   ),
-                                  
+
                                   const SizedBox(height: 16),
-                                  
+
                                   // Chart
                                   if (pings.isEmpty)
                                     Container(
@@ -290,29 +309,40 @@ class SignalBarsWidget extends StatelessWidget {
                                       child: Text(
                                         "No data available yet",
                                         style: TextStyle(
-                                          color: isDarkMode
-                                              ? Colors.white.withOpacity(0.5)
-                                              : Colors.black.withOpacity(0.5),
+                                          color:
+                                              isDarkMode
+                                                  ? Colors.white.withOpacity(
+                                                    0.5,
+                                                  )
+                                                  : Colors.black.withOpacity(
+                                                    0.5,
+                                                  ),
                                         ),
                                       ),
                                     )
                                   else
                                     SizedBox(
                                       height: 200,
-                                      child: _buildLatencyChart(pings, isDarkMode),
+                                      child: _buildLatencyChart(
+                                        pings,
+                                        isDarkMode,
+                                      ),
                                     ),
-                                  
+
                                   const SizedBox(height: 24),
-                                  
+
                                   // Stats Cards Row
-                                  Text("Current Latency: ${currentLatency.toInt()}ms, Average Latency: ${avgLatency.toInt()}ms, Connection Quality: ${_getQualityText(quality)}",
+                                  Text(
+                                    "Current Latency: ${currentLatency.toInt()}ms, Average Latency: ${avgLatency.toInt()}ms, Connection Quality: ${_getQualityText(quality)}",
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.normal,
-                                      color: isDarkMode ? Colors.white.withOpacity(0.5) : Colors.black.withOpacity(0.5),
+                                      color:
+                                          isDarkMode
+                                              ? Colors.white.withOpacity(0.5)
+                                              : Colors.black.withOpacity(0.5),
                                     ),
                                   ),
-                                 
                                 ],
                               );
                             }),
@@ -328,13 +358,6 @@ class SignalBarsWidget extends StatelessWidget {
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-          decoration: BoxDecoration(
-            color:
-                isDarkMode
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
           child: Stack(
             children: [
               Padding(

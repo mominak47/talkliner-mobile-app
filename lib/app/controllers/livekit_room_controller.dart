@@ -6,6 +6,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:get/get.dart';
 import 'package:talkliner/app/config/app_config.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
+import 'package:talkliner/app/models/group_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
 
@@ -17,6 +18,10 @@ class LivekitRoomController extends GetxController {
   final RxBool isRoomConnecting = false.obs;
   final RxString roomName = ''.obs;
   EventsListener<RoomEvent>? _listener;
+
+  final Rx<UserModel?> activeSpeaker = Rx<UserModel?>(null);
+
+  Worker? _authWorker;
 
   final _audioPlayer = AudioPlayer();
 
@@ -34,9 +39,18 @@ class LivekitRoomController extends GetxController {
   onInit() {
     super.onInit();
     apiService.onInit();
-    authController.isLoggedIn.listen(
-      (isLoggedIn) => !isLoggedIn ? disconnectFromRoom() : null,
-    );
+    _authWorker = ever(authController.isLoggedIn, (isLoggedIn) {
+      if (!isLoggedIn) {
+        disconnectFromRoom();
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    _audioPlayer.dispose();
+    _authWorker?.dispose();
+    super.onClose();
   }
 
   Future<String> getLivekitToken(String roomName) async {
@@ -59,21 +73,39 @@ class LivekitRoomController extends GetxController {
     return '';
   }
 
-  Future<void> connectToRoom(UserModel user) async {
+  Future<void> connectToGroupRoom(GroupModel group) =>
+      connectToRoom(group: group, type: 'group');
+
+  Future<void> connectToUserRoom(UserModel user) =>
+      connectToRoom(user: user, type: 'user');
+
+  Future<void> connectToRoom({
+    UserModel? user,
+    GroupModel? group,
+    String type = 'user',
+  }) async {
     try {
       // Check if room is already connected
       if (isConnected.value) {
         await disconnectFromRoom();
       }
-      if (user.id.isEmpty) {
+
+      if (user == null && group == null) {
         return;
       }
-      String chatId = await getChatId(user);
+
+      String chatId = '';
+
+      if (type == 'user' && chatId.isEmpty) {
+        chatId = await getChatId(user!);
+      } else if (type == 'group') {
+        chatId = group!.chatId;
+      }
 
       debugPrint("Chat ID: $chatId");
       isRoomConnecting.value = true;
 
-      String token = await getLivekitToken("ptt_$chatId");
+      String token = await getLivekitToken("ptt_${type}_$chatId");
       _room = Room(roomOptions: getRoomOptions());
 
       _listener = _room?.createListener();
@@ -83,6 +115,7 @@ class LivekitRoomController extends GetxController {
       await _room!.connect(AppConfig.livekitUrl, token);
     } catch (e) {
       debugPrint('Error connecting to room: $e');
+      isRoomConnecting.value = false;
     }
   }
 
@@ -96,7 +129,22 @@ class LivekitRoomController extends GetxController {
       ..on<TrackUnpublishedEvent>(_onTrackUnpublished)
       ..on<TrackSubscribedEvent>(_onTrackSubscribed)
       ..on<TrackUnsubscribedEvent>(_onTrackUnsubscribed)
+      ..on<ActiveSpeakersChangedEvent>(_onActiveSpeakersChanged)
       ..on<DataReceivedEvent>(_onDataReceived);
+  }
+
+  UserModel getUserFromEvent(participant) {
+    return UserModel.fromJson(jsonDecode(participant.metadata));
+  }
+
+  void _onActiveSpeakersChanged(ActiveSpeakersChangedEvent event) {
+    if (event.speakers.isNotEmpty) {
+      UserModel speaker = getUserFromEvent(event.speakers.first);
+      activeSpeaker.value = speaker;
+      debugPrint('\nActive speakers changed ${speaker.displayName}');
+    } else {
+      activeSpeaker.value = null;
+    }
   }
 
   Future<void> disconnectFromRoom() async {

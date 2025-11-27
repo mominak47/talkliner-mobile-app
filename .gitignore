@@ -64,3 +64,11 @@ Icon
 .com.apple.timemachine.supported.noindex
 .ios/
 build/
+
+# Additional Build & Ephemeral files
+**/build/
+**/ephemeral/
+*.apk
+*.aab
+*.ipa
+lib/generated_plugin_registrant.dart

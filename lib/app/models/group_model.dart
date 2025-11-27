@@ -1,6 +1,7 @@
 class GroupModel {
   final String id;
   final String name;
+  final String chatId;
   final String createdBy;
   final String domainId;
   final DateTime createdAt;
@@ -11,6 +12,7 @@ class GroupModel {
   GroupModel({
     required this.id,
     required this.name,
+    required this.chatId,
     required this.createdBy,
     required this.domainId,
     required this.createdAt,
@@ -23,12 +25,17 @@ class GroupModel {
     return GroupModel(
       id: json['_id'] ?? json['id'] ?? '',
       name: json['name'] ?? '',
+      chatId: json['chat_id'] ?? '',
       createdBy: json['created_by'] ?? '',
       domainId: json['domain_id'] ?? '',
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
-      users: (json['users'] as List<dynamic>?)
-          ?.map((user) => GroupUser.fromJson(user))
-          .toList() ?? [],
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      users:
+          (json['users'] as List<dynamic>?)
+              ?.map((user) => GroupUser.fromJson(user))
+              .toList() ??
+          [],
       version: json['__v'] ?? 0,
       memberCount: json['memberCount'] ?? 0,
     );
@@ -38,6 +45,7 @@ class GroupModel {
     return {
       '_id': id,
       'name': name,
+      'chat_id': chatId,
       'created_by': createdBy,
       'domain_id': domainId,
       'created_at': createdAt.toIso8601String(),
@@ -51,6 +59,7 @@ class GroupModel {
   GroupModel copyWith({
     String? id,
     String? name,
+    String? chatId,
     String? createdBy,
     String? domainId,
     DateTime? createdAt,
@@ -61,6 +70,7 @@ class GroupModel {
     return GroupModel(
       id: id ?? this.id,
       name: name ?? this.name,
+      chatId: chatId ?? this.chatId,
       createdBy: createdBy ?? this.createdBy,
       domainId: domainId ?? this.domainId,
       createdAt: createdAt ?? this.createdAt,
@@ -76,6 +86,7 @@ class GroupModel {
     return other is GroupModel &&
         other.id == id &&
         other.name == name &&
+        other.chatId == chatId &&
         other.createdBy == createdBy &&
         other.domainId == domainId &&
         other.createdAt == createdAt &&
@@ -88,6 +99,7 @@ class GroupModel {
   int get hashCode {
     return id.hashCode ^
         name.hashCode ^
+        chatId.hashCode ^
         createdBy.hashCode ^
         domainId.hashCode ^
         createdAt.hashCode ^
@@ -98,7 +110,7 @@ class GroupModel {
 
   @override
   String toString() {
-    return 'GroupModel(id: $id, name: $name, createdBy: $createdBy, domainId: $domainId, createdAt: $createdAt, users: $users, version: $version, memberCount: $memberCount)';
+    return 'GroupModel(id: $id, name: $name, chatId: $chatId, createdBy: $createdBy, domainId: $domainId, createdAt: $createdAt, users: $users, version: $version, memberCount: $memberCount)';
   }
 }
 
@@ -118,9 +130,11 @@ class GroupUser {
   factory GroupUser.fromJson(Map<String, dynamic> json) {
     return GroupUser(
       settings: UserSettings.fromJson(json['settings'] ?? {}),
-      userId: '',//json['user']['_id'] ?? '',
+      userId: '', //json['user']['_id'] ?? '',
       role: json['role'] ?? 'member',
-      joinedAt: DateTime.parse(json['joined_at'] ?? DateTime.now().toIso8601String()),
+      joinedAt: DateTime.parse(
+        json['joined_at'] ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 
@@ -210,7 +224,8 @@ class UserSettings {
   }) {
     return UserSettings(
       talkPriority: talkPriority ?? this.talkPriority,
-      canDisconnectFromGroup: canDisconnectFromGroup ?? this.canDisconnectFromGroup,
+      canDisconnectFromGroup:
+          canDisconnectFromGroup ?? this.canDisconnectFromGroup,
       canSendAlertToGroup: canSendAlertToGroup ?? this.canSendAlertToGroup,
       gpsLocation: gpsLocation ?? this.gpsLocation,
     );

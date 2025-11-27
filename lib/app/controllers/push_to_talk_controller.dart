@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
+import 'package:talkliner/app/models/group_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
 import 'package:talkliner/app/views/home/screens/pushtotalk/widgets/push_to_talk_button.dart';
@@ -11,6 +12,9 @@ import 'dart:async';
 class PushToTalkController extends GetxController {
   // Selected User
   final Rx<UserModel> selectedUser = UserModel.fromJson({}).obs;
+  // Selected Group
+  final Rx<GroupModel> selectedGroup = GroupModel.fromJson({}).obs;
+
   final LivekitRoomController livekitRoomController =
       Get.put<LivekitRoomController>(LivekitRoomController());
   final RxBool isPTTActive = false.obs;
@@ -18,6 +22,7 @@ class PushToTalkController extends GetxController {
 
   // Timer
   Timer? _timer;
+  Worker? _selectedUserWorker, _selectedGroupWorker;
 
   // Audios
   final _audioPlayer = AudioPlayer();
@@ -27,9 +32,14 @@ class PushToTalkController extends GetxController {
     super.onInit();
     apiService.onInit();
 
-    selectedUser.listen((user) {
+    _selectedUserWorker = ever(selectedUser, (user) {
       livekitRoomController.isRoomConnecting.value = true;
-      livekitRoomController.connectToRoom(user);
+      livekitRoomController.connectToUserRoom(user);
+    });
+
+    _selectedGroupWorker = ever(selectedGroup, (group) {
+      livekitRoomController.isRoomConnecting.value = true;
+      livekitRoomController.connectToGroupRoom(group);
     });
 
     // Fallback to reconncet to room if user is selected
@@ -41,6 +51,9 @@ class PushToTalkController extends GetxController {
   @override
   void onClose() {
     _timer?.cancel();
+    _selectedUserWorker?.dispose();
+    _selectedGroupWorker?.dispose();
+    _audioPlayer.dispose();
     super.onClose();
   }
 
@@ -63,11 +76,23 @@ class PushToTalkController extends GetxController {
     _audioPlayer.setReleaseMode(ReleaseMode.release);
     livekitRoomController.disconnectFromRoom();
     selectedUser.value = UserModel.fromJson({});
+    selectedGroup.value = GroupModel.fromJson({});
   }
 
   void setUser(UserModel user) {
-    saveUserToLocalStorage(user);
+    // Unset Selected Group
+    if (selectedGroup.value.id.isNotEmpty) {
+      removeUser();
+    }
     selectedUser.value = user;
+  }
+
+  void setGroup(GroupModel group) {
+    // Unset Selected User
+    if (selectedUser.value.id.isNotEmpty) {
+      removeUser();
+    }
+    selectedGroup.value = group;
   }
 
   void startPTT() async {
@@ -105,7 +130,7 @@ class PushToTalkController extends GetxController {
   }
 
   PushToTalkButtonState getPTTButtonState() {
-    if (selectedUser.value.id.isEmpty) {
+    if (selectedUser.value.id.isEmpty && selectedGroup.value.id.isEmpty) {
       return PushToTalkButtonState.notSelected;
     }
     if (livekitRoomController.isRoomConnecting.value) {
@@ -119,7 +144,7 @@ class PushToTalkController extends GetxController {
 
   void _reconnectToRoom() {
     // Check if user is selected
-    if (selectedUser.value.id.isEmpty) {
+    if (selectedUser.value.id.isEmpty && selectedGroup.value.id.isEmpty) {
       return;
     }
 
@@ -134,7 +159,11 @@ class PushToTalkController extends GetxController {
     }
 
     // Reconnect to room
-    livekitRoomController.connectToRoom(selectedUser.value);
+    if (selectedUser.value.id.isNotEmpty) {
+      livekitRoomController.connectToUserRoom(selectedUser.value);
+    } else if (selectedGroup.value.id.isNotEmpty) {
+      livekitRoomController.connectToGroupRoom(selectedGroup.value);
+    }
   }
 
   // Save the user to local storage

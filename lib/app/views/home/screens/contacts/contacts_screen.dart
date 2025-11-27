@@ -24,10 +24,10 @@ class ContactsScreen extends StatelessWidget {
     final appSettingsController = Get.find<AppSettingsController>();
     final homeController = Get.find<HomeController>();
 
-    contactsController.fetchContacts();
-    contactsController.fetchGroups();
-
     Widget buildUsersList() {
+      if (contactsController.contacts.isEmpty) {
+        return const Center(child: Text("No contacts"));
+      }
       return RefreshIndicator(
         color: TalklinerThemeColors.primary500,
         backgroundColor: TalklinerThemeColors.primary025,
@@ -35,58 +35,60 @@ class ContactsScreen extends StatelessWidget {
         elevation: 4,
         onRefresh: () async => contactsController.refreshContacts(),
         key: contactsController.refreshIndicatorKey,
-        child: ListView.builder(
-          padding: EdgeInsets.zero,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount:
-              contactsController.contacts.length +
-              ((appSettingsController.showFloatingPushToTalkButton.value &&
-                      homeController.currentIndex.value != 2)
-                  ? 1
-                  : 0),
-          itemBuilder: (context, index) {
-            if (index == contactsController.contacts.length &&
-                appSettingsController.showFloatingPushToTalkButton.value &&
-                homeController.currentIndex.value != 2) {
-              return const SizedBox(height: 100);
-            }
-            UserModel user = contactsController.contacts[index];
-            return Column(
-              children: [
-                Obx(
-                  () => ContactCard(
-                    user: user,
-                    onTapIcon:
-                        livekitRoomController.isRoomConnecting.value &&
-                                pushToTalkController.selectedUser.value.id ==
-                                    user.id
-                            ? LucideIcons.loader
-                            : LucideIcons.mic,
-                    onTapIconColor: TalklinerThemeColors.red500,
-                    onTap: () {
-                      if (pushToTalkController.selectedUser.value.id ==
-                          user.id) {
-                        pushToTalkController.removeUser();
-                      } else {
-                        pushToTalkController.setUser(user);
-                      }
-                    },
-                    onLongPress: () {},
-                    onTapCard: () => Get.toNamed(Routes.chat, arguments: user),
-                    isSelected:
-                        pushToTalkController.selectedUser.value.id == user.id &&
-                        !livekitRoomController.isRoomConnecting.value,
+        child: Obx(
+          () => ListView.builder(
+            padding: EdgeInsets.zero,
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: contactsController.contacts.length,
+            itemBuilder: (context, index) {
+              if (index == (contactsController.contacts.length - 1) &&
+                  appSettingsController.showFloatingPushToTalkButton.value) {
+                return const SizedBox(height: 100);
+              }
+              UserModel user = contactsController.contacts[index];
+              return Column(
+                children: [
+                  Obx(
+                    () => ContactCard(
+                      user: user,
+                      onTapIcon:
+                          livekitRoomController.isRoomConnecting.value &&
+                                  pushToTalkController.selectedUser.value.id ==
+                                      user.id
+                              ? LucideIcons.loader
+                              : LucideIcons.mic,
+                      onTapIconColor: TalklinerThemeColors.red500,
+                      onTap: () {
+                        if (pushToTalkController.selectedUser.value.id ==
+                            user.id) {
+                          pushToTalkController.removeUser();
+                        } else {
+                          pushToTalkController.setUser(user);
+                        }
+                      },
+                      onLongPress: () {},
+                      onTapCard:
+                          () => Get.toNamed(Routes.chat, arguments: user),
+                      isSelected:
+                          pushToTalkController.selectedUser.value.id ==
+                              user.id &&
+                          !livekitRoomController.isRoomConnecting.value,
+                    ),
                   ),
-                ),
-                Divider(height: 1),
-              ],
-            );
-          },
+                  Divider(height: 1),
+                ],
+              );
+            },
+          ),
         ),
       );
     }
 
     Widget buildGroupsList() {
+      if (contactsController.groups.isEmpty) {
+        return const Center(child: Text("No groups"));
+      }
+
       return RefreshIndicator(
         color: TalklinerThemeColors.primary500,
         backgroundColor: TalklinerThemeColors.primary025,
@@ -94,51 +96,49 @@ class ContactsScreen extends StatelessWidget {
         elevation: 4,
         onRefresh: () async => contactsController.refreshGroups(),
         key: contactsController.refreshGroupsIndicatorKey,
-        child: ListView.builder(
-          padding: EdgeInsets.zero,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount:
-              contactsController.groups.length +
-              ((appSettingsController.showFloatingPushToTalkButton.value &&
-                      homeController.currentIndex.value != 2)
-                  ? 1
-                  : 0),
-          itemBuilder: (context, index) {
-            if (index == contactsController.groups.length &&
-                appSettingsController.showFloatingPushToTalkButton.value &&
-                homeController.currentIndex.value != 2) {
-              return const SizedBox(height: 100);
-            }
-            GroupModel group = contactsController.groups[index];
-            return Column(
-              children: [
-                Obx(
-                  () => GroupCard(
-                    group: group,
-                    onTapIcon:
-                        livekitRoomController.isRoomConnecting.value &&
-                                pushToTalkController.selectedUser.value.id ==
-                                    group.id
-                            ? LucideIcons.loader
-                            : LucideIcons.mic,
-                    onTapIconColor: Colors.red,
-                    onTap: () {
-                      if (pushToTalkController.selectedUser.value.id ==
-                          group.id) {
-                        // pushToTalkController.removeUser();
-                      } else {
-                        // pushToTalkController.setUser(group);
-                      }
-                    },
-                    onTapCard: () {},
-                    isSelected:
-                        pushToTalkController.selectedUser.value.id == group.id,
+        child: Obx(
+          () => ListView.builder(
+            padding: EdgeInsets.zero,
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: contactsController.groups.length,
+            itemBuilder: (context, index) {
+              if (index == contactsController.groups.length &&
+                  appSettingsController.showFloatingPushToTalkButton.value &&
+                  homeController.currentIndex.value != 2) {
+                return const SizedBox(height: 100);
+              }
+              GroupModel group = contactsController.groups[index];
+              return Column(
+                children: [
+                  Obx(
+                    () => GroupCard(
+                      group: group,
+                      onTapIcon:
+                          livekitRoomController.isRoomConnecting.value &&
+                                  pushToTalkController.selectedGroup.value.id ==
+                                      group.id
+                              ? LucideIcons.loader
+                              : LucideIcons.mic,
+                      onTapIconColor: Colors.red,
+                      onTap: () {
+                        if (pushToTalkController.selectedGroup.value.id ==
+                            group.id) {
+                          pushToTalkController.removeUser();
+                        } else {
+                          pushToTalkController.setGroup(group);
+                        }
+                      },
+                      onTapCard: () {},
+                      isSelected:
+                          pushToTalkController.selectedGroup.value.id ==
+                          group.id,
+                    ),
                   ),
-                ),
-                Divider(height: 1),
-              ],
-            );
-          },
+                  Divider(height: 1),
+                ],
+              );
+            },
+          ),
         ),
       );
     }
@@ -161,6 +161,7 @@ class ContactsScreen extends StatelessWidget {
                           index: 0,
                           controller: contactsController.tabController,
                           icon: LucideIcons.users,
+                          onOpened: () => contactsController.refreshContacts(),
                         ),
                         const SizedBox(width: 12),
                         _buildTabButton(
@@ -169,6 +170,7 @@ class ContactsScreen extends StatelessWidget {
                           index: 1,
                           controller: contactsController.tabController,
                           icon: LucideIcons.users,
+                          onOpened: () => contactsController.refreshGroups(),
                         ),
                       ],
                     );
@@ -201,6 +203,7 @@ class ContactsScreen extends StatelessWidget {
     required int index,
     required TabController controller,
     required IconData icon,
+    Function()? onOpened,
   }) {
     final isSelected = controller.index == index;
     final isLightMode = Theme.of(context).brightness == Brightness.light;
@@ -208,6 +211,7 @@ class ContactsScreen extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         controller.animateTo(index);
+        onOpened?.call();
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
