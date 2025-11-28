@@ -3,6 +3,8 @@ import 'user_model.dart';
 
 enum ChatType { individual, group }
 
+enum Role { admin, member }
+
 class ChatModel {
   final String id;
   final String domainId;
@@ -115,7 +117,7 @@ class RecentLastMessage {
 
 class RecentParticipant {
   final RecentUser userId;
-  final String role;
+  final Role role;
   final String id;
   final DateTime joinedAt;
   final DateTime lastSeen;
@@ -133,7 +135,7 @@ class RecentParticipant {
   factory RecentParticipant.fromJson(Map<String, dynamic> json) {
     return RecentParticipant(
       userId: RecentUser.fromJson(json['user_id'] as Map<String, dynamic>),
-      role: json['role'] as String,
+      role: Role.values.firstWhere((e) => e.name == json['role']),
       id: json['_id'] as String,
       joinedAt: DateTime.parse(json['joined_at'] as String),
       lastSeen: DateTime.parse(json['last_seen'] as String),

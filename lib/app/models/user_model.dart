@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:talkliner/app/models/chat_model.dart';
+
 class UserSettings {
   final bool pushToTalk;
   final bool emergencyAlertCall;
@@ -102,5 +105,42 @@ class UserModel {
       'chat_id': chatId,
       'profile_picture': profilePicture,
     };
+  }
+
+  ChatModel createChat() {
+    ChatModel chat = ChatModel(
+      id: '',
+      domainId: domainId,
+      chatType: ChatType.individual,
+      participants: [
+        // Add Self
+        RecentParticipant(
+          userId: RecentUser(
+            id: id,
+            username: username,
+            displayName: displayName,
+          ),
+          role: Role.member,
+          id: id,
+          joinedAt: DateTime.now(),
+          lastSeen: DateTime.now(),
+          user: this,
+        ),
+      ],
+      name: displayName,
+      description: null,
+      avatar: null,
+      unreadCount: 0,
+      isActive: false,
+      createdBy: '',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      lastMessage: null,
+      settings: RecentSettings(muteNotifications: false, autoDeleteMessages: 0),
+    );
+
+    debugPrint("createChat");
+
+    return chat;
   }
 }

@@ -7,6 +7,7 @@ import 'package:talkliner/app/controllers/home_controller.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
 import 'package:talkliner/app/controllers/push_to_talk_controller.dart';
 import 'package:talkliner/app/controllers/recents_controller.dart';
+import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/group_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
@@ -25,9 +26,21 @@ class ContactsScreen extends StatelessWidget {
     final appSettingsController = Get.find<AppSettingsController>();
     final homeController = Get.find<HomeController>();
 
-    void onCardClick(UserModel user) {
-      debugPrint("User clicked: ${user.displayName}");
+    void onUserCardClick(UserModel user) {
+      ChatModel? chat;
+      chat = recents_controller.getChatByParticipant(user);
+      if (chat != null) {
+        debugPrint("Chat already exists: ${chat.toJson()}");
+        Get.toNamed('/chat', arguments: chat);
+      } else {
+        chat = user.createChat();
+        debugPrint("Chat created: ${chat.toJson()}");
+        debugPrint("User clicked: ${user.displayName}");
+        Get.toNamed('/chat', arguments: chat);
+      }
     }
+
+    void onGroupCardClick(GroupModel group) {}
 
     Widget buildUsersList() {
       if (contactsController.contacts.isEmpty) {
@@ -72,7 +85,7 @@ class ContactsScreen extends StatelessWidget {
                         }
                       },
                       onLongPress: () {},
-                      onTapCard: () => onCardClick(user),
+                      onTapCard: () => onUserCardClick(user),
                       isSelected:
                           pushToTalkController.selectedUser.value.id ==
                               user.id &&

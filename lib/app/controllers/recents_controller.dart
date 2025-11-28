@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/models/chat_model.dart';
+import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
 
 class RecentsController extends GetxController
@@ -63,6 +64,12 @@ class RecentsController extends GetxController
   }
 
   Future<void> refreshRecents() async => await fetchRecents();
+
+  ChatModel? getChatByParticipant(UserModel participant) {
+    return recents.firstWhereOrNull(
+      (chat) => chat.participants.any((p) => p.userId.id == participant.id),
+    );
+  }
 
   void saveInfoInLocalStorage() {
     _storage.write(
