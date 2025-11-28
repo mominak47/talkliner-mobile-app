@@ -30,19 +30,15 @@ class ApiService extends GetConnect {
         final token = await TokenManager.getToken();
         if (token.isValid) {
           request.headers['Authorization'] = 'Bearer ${token.token}';
-          if (kDebugMode) {
-            debugPrint(
-              '[ApiService] Request: ${request.method} ${request.url}',
-            );
-            debugPrint('[ApiService] Auth token added');
-          }
+          debugPrint('[ApiService] Request: ${request.method} ${request.url}');
+          debugPrint(
+            '[ApiService] Auth token added: ${token.token.substring(0, 10)}...',
+          );
         } else {
           request.headers.remove('Authorization');
-          if (kDebugMode) {
-            debugPrint(
-              '[ApiService] Request: ${request.method} ${request.url} (no token)',
-            );
-          }
+          debugPrint(
+            '[ApiService] Request: ${request.method} ${request.url} (no token)',
+          );
         }
 
         // Add common headers

@@ -7,7 +7,6 @@ import 'package:talkliner/app/controllers/recents_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/message_model.dart';
-import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
 
 class ChatController extends GetxController {

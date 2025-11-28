@@ -20,7 +20,7 @@ class RecentsController extends GetxController
     super.onInit();
     tabController = TabController(length: 3, vsync: this);
     apiService.onInit();
-    getInfoFromLocalStorage();
+    // getInfoFromLocalStorage();
     // Use WidgetsBinding to ensure this runs after the build phase
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchRecents();
@@ -69,6 +69,10 @@ class RecentsController extends GetxController
     return recents.firstWhereOrNull(
       (chat) => chat.participants.any((p) => p.userId.id == participant.id),
     );
+  }
+
+  ChatModel? getChatByChatId(String chatId) {
+    return recents.firstWhereOrNull((chat) => chat.id == chatId);
   }
 
   void saveInfoInLocalStorage() {

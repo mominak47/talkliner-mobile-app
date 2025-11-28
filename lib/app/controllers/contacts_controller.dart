@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/cachemanagers/token_manager.dart';
 import 'package:talkliner/app/models/group_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
@@ -19,25 +18,34 @@ class ContactsController extends GetxController
   // Tab bar index
   final RxString selectedTabBar = "users".obs;
 
-  final GetStorage _storage = GetStorage();
-
   late TabController tabController;
+
+  // Worker
+  Worker? _tabsWorker;
 
   @override
   void onInit() {
     super.onInit();
     tabController = TabController(length: 2, vsync: this);
     apiService.onInit();
-    getInfoFromLocalStorage();
     fetchContacts();
     fetchGroups();
     loadingContacts();
     loadingGroups();
+
+    _tabsWorker = ever(selectedTabBar, (_) {
+      if (selectedTabBar.value == "users") {
+        fetchContacts();
+      } else {
+        fetchGroups();
+      }
+    });
   }
 
   @override
   void onClose() {
     tabController.dispose();
+    _tabsWorker?.dispose();
     super.onClose();
   }
 
@@ -75,7 +83,6 @@ class ContactsController extends GetxController
       } else {
         debugPrint(response.body['message']);
       }
-      saveInfoInLocalStorage();
     } catch (e) {
       debugPrint(e.toString());
     } finally {
@@ -108,26 +115,4 @@ class ContactsController extends GetxController
   Future<void> refreshContacts() async => await fetchContacts();
 
   Future<void> refreshGroups() async => await fetchGroups();
-
-  void saveInfoInLocalStorage() {
-    _storage.write('contacts', contacts.toJson());
-    _storage.write('groups', groups.toJson());
-  }
-
-  void getInfoFromLocalStorage() {
-    debugPrint("getInfoFromLocalStorage");
-
-    final contactsList = _storage.read('contacts') ?? [];
-    final groupsList = _storage.read('groups') ?? [];
-    contacts.assignAll(
-      (contactsList as List<dynamic>)
-          .map((contact) => UserModel.fromJson(contact))
-          .toList(),
-    );
-    groups.assignAll(
-      (groupsList as List<dynamic>)
-          .map((group) => GroupModel.fromJson(group))
-          .toList(),
-    );
-  }
 }

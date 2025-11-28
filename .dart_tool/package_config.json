@@ -255,7 +255,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///Users/mominkhan/flutter/packages/flutter",
+      "rootUri": "file:///opt/homebrew/share/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -387,13 +387,13 @@
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///Users/mominkhan/flutter/packages/flutter_test",
+      "rootUri": "file:///opt/homebrew/share/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///Users/mominkhan/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///opt/homebrew/share/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -801,7 +801,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///Users/mominkhan/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///opt/homebrew/share/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -1000,7 +1000,7 @@
   ],
   "generator": "pub",
   "generatorVersion": "3.10.1",
-  "flutterRoot": "file:///Users/mominkhan/flutter",
+  "flutterRoot": "file:///opt/homebrew/share/flutter",
   "flutterVersion": "3.38.3",
   "pubCache": "file:///Users/mominkhan/.pub-cache"
 }

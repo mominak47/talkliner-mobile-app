@@ -40,12 +40,21 @@ class ContactsScreen extends StatelessWidget {
       }
     }
 
-    void onGroupCardClick(GroupModel group) {}
+    void onGroupCardClick(GroupModel group) {
+      ChatModel? chat;
+      chat = recents_controller.getChatByChatId(group.chatId);
+      if (chat != null) {
+        debugPrint("Chat already exists: ${chat.toJson()}");
+        Get.toNamed('/chat', arguments: chat);
+      } else {
+        chat = group.createChat();
+        debugPrint("Chat created: ${chat.toJson()}");
+        debugPrint("Group clicked: ${group.name}");
+        Get.toNamed('/chat', arguments: chat);
+      }
+    }
 
     Widget buildUsersList() {
-      if (contactsController.contacts.isEmpty) {
-        return const Center(child: Text("No contacts"));
-      }
       return RefreshIndicator(
         color: TalklinerThemeColors.primary500,
         backgroundColor: TalklinerThemeColors.primary025,
@@ -145,7 +154,7 @@ class ContactsScreen extends StatelessWidget {
                           pushToTalkController.setGroup(group);
                         }
                       },
-                      onTapCard: () {},
+                      onTapCard: () => onGroupCardClick(group),
                       isSelected:
                           pushToTalkController.selectedGroup.value.id ==
                           group.id,

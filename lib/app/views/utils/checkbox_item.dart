@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 
 class CheckboxItem extends StatelessWidget {
-  const CheckboxItem({super.key, required this.title, required this.value, required this.onChanged, required this.icon, required this.iconColor, required this.iconBackground});
+  const CheckboxItem({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.onChanged,
+    required this.icon,
+    required this.iconColor,
+    required this.iconBackground,
+  });
   final String title;
   final bool value;
   final Function(bool?) onChanged;
@@ -13,28 +21,47 @@ class CheckboxItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: 10,
-              backgroundColor: iconBackground,
-              child: Icon(icon, size: 16, color: iconColor),
+    return Padding(
+      padding: EdgeInsets.only(left: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 10,
+                backgroundColor: iconBackground,
+                child: Icon(icon, size: 16, color: iconColor),
+              ),
+              SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  color:
+                      isDarkMode
+                          ? TalklinerThemeColors.gray050
+                          : TalklinerThemeColors.gray800,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          Checkbox(
+            value: false,
+            onChanged: onChanged,
+            activeColor: TalklinerThemeColors.primary500,
+            checkColor: Colors.white,
+            side: BorderSide(
+              color:
+                  isDarkMode
+                      ? TalklinerThemeColors.gray700
+                      : TalklinerThemeColors.gray040,
+              width: 2,
             ),
-            SizedBox(width: 8),
-            Text(title, style: TextStyle(fontSize: 16,color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800, fontWeight: FontWeight.w500),),
-          ],
-        ),
-        Checkbox(
-          value: false,
-          onChanged: onChanged,
-          activeColor: TalklinerThemeColors.primary500,
-          checkColor: Colors.white,
-          side: BorderSide(color: isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray040, width: 2),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }

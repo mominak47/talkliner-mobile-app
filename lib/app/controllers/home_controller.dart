@@ -46,7 +46,9 @@ class HomeController extends GetxController {
 
       if (index == 1) {
         Get.find<ContactsController>().changeTabBar("users");
-      }else{
+        Get.find<ContactsController>().fetchContacts();
+        Get.find<ContactsController>().fetchGroups();
+      } else {
         showCustomAppBar.value = false;
       }
     });
@@ -65,7 +67,7 @@ class HomeController extends GetxController {
   void removeCustomAppBar() {
     showCustomAppBar.value = false;
     _customAppBar = AppBar();
-  } 
+  }
 
   AppBar getAppBar() {
     AppBar appBar = showCustomAppBar.value ? _customAppBar : _appbar;

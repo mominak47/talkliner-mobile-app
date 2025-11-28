@@ -246,7 +246,7 @@ class SelectedUser extends StatelessWidget {
       () => Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(

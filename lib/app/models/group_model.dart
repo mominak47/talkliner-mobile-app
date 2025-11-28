@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:talkliner/app/models/chat_model.dart';
+import 'package:talkliner/app/models/user_model.dart';
+
 class GroupModel {
   final String id;
   final String name;
@@ -112,6 +116,46 @@ class GroupModel {
   String toString() {
     return 'GroupModel(id: $id, name: $name, chatId: $chatId, createdBy: $createdBy, domainId: $domainId, createdAt: $createdAt, users: $users, version: $version, memberCount: $memberCount)';
   }
+
+  ChatModel createChat() {
+    ChatModel chat = ChatModel(
+      id: '',
+      domainId: domainId,
+      chatType: ChatType.group,
+      participants: [],
+      name: name,
+      description: null,
+      avatar: null,
+      unreadCount: 0,
+      isActive: false,
+      createdBy: '',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      lastMessage: null,
+      settings: RecentSettings(muteNotifications: false, autoDeleteMessages: 0),
+    );
+
+    // Loop through users and add them to participants
+    for (var user in users) {
+      chat.participants.add(
+        RecentParticipant(
+          userId: RecentUser(
+            id: user.userId,
+            username: user.userId,
+            displayName: user.userId,
+          ),
+          role: Role.member,
+          id: user.userId,
+          joinedAt: user.joinedAt,
+          lastSeen: DateTime.now(),
+          user: user.user,
+        ),
+      );
+    }
+
+    debugPrint("createChat");
+    return chat;
+  }
 }
 
 class GroupUser {
@@ -119,12 +163,14 @@ class GroupUser {
   final String userId;
   final String role;
   final DateTime joinedAt;
+  final UserModel? user;
 
   GroupUser({
     required this.settings,
     required this.userId,
     required this.role,
     required this.joinedAt,
+    this.user,
   });
 
   factory GroupUser.fromJson(Map<String, dynamic> json) {
@@ -135,13 +181,14 @@ class GroupUser {
       joinedAt: DateTime.parse(
         json['joined_at'] ?? DateTime.now().toIso8601String(),
       ),
+      user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'settings': settings.toJson(),
-      'user': userId,
+      'user': user?.toJson(),
       'role': role,
       'joined_at': joinedAt.toIso8601String(),
     };
@@ -152,12 +199,14 @@ class GroupUser {
     String? userId,
     String? role,
     DateTime? joinedAt,
+    UserModel? user,
   }) {
     return GroupUser(
       settings: settings ?? this.settings,
       userId: userId ?? this.userId,
       role: role ?? this.role,
       joinedAt: joinedAt ?? this.joinedAt,
+      user: user ?? this.user,
     );
   }
 
@@ -168,7 +217,8 @@ class GroupUser {
         other.settings == settings &&
         other.userId == userId &&
         other.role == role &&
-        other.joinedAt == joinedAt;
+        other.joinedAt == joinedAt &&
+        other.user == user;
   }
 
   @override

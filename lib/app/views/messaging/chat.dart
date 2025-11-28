@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/chat_model.dart';
-import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/messaging/parts/message_input.dart';
 import 'package:talkliner/app/views/messaging/parts/messages_container.dart';
@@ -47,6 +45,15 @@ class Chat extends StatelessWidget {
               const SizedBox(width: 4),
               if (chat.chatType == ChatType.individual)
                 UserAvatar(user: chat.participants[0].user!),
+              if (chat.chatType == ChatType.group)
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor:
+                      isDarkMode
+                          ? TalklinerThemeColors.gray900
+                          : TalklinerThemeColors.gray020,
+                  child: Icon(Icons.group, color: TalklinerThemeColors.gray050),
+                ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

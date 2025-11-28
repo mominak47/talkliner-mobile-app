@@ -21,7 +21,6 @@ class AuthController extends GetxController {
 
   String get token => _token.value ?? '';
 
-
   @override
   void onInit() {
     super.onInit();
@@ -34,7 +33,7 @@ class AuthController extends GetxController {
       debugPrint('[AuthController] Login already in progress');
       return;
     }
-    
+
     if (!_canAttemptLogin()) {
       debugPrint('[AuthController] Rate limit: Too many login attempts');
       return;
@@ -51,15 +50,18 @@ class AuthController extends GetxController {
     _lastLoginAttempt = DateTime.now();
     isLoading.value = true;
     error.value = null;
-    
+
     try {
       debugPrint('[AuthController] Attempting login for: $sanitizedUsername');
-      final issuedToken = await authService.login(sanitizedUsername, sanitizedPassword);
+      final issuedToken = await authService.login(
+        sanitizedUsername,
+        sanitizedPassword,
+      );
       _token.value = issuedToken.token;
 
       debugPrint('[AuthController] Token received, fetching user');
       user.value = await authService.getUser();
-      
+
       isLoggedIn.value = true;
       debugPrint('[AuthController] Login successful');
 
@@ -94,12 +96,15 @@ class AuthController extends GetxController {
     error.value = null;
 
     _token.value = token.trim();
-    
+
     // Save token to storage with a far future expiry since QR tokens are pre-validated
     // 7 days in milliseconds
-    final validUntil = DateTime.now().millisecondsSinceEpoch + (7 * 24 * 60 * 60 * 1000);
-    await TokenManager.setToken(TokenModel(token: _token.value!, validUntil: validUntil));
-    
+    final validUntil =
+        DateTime.now().millisecondsSinceEpoch + (7 * 24 * 60 * 60 * 1000);
+    await TokenManager.setToken(
+      TokenModel(token: _token.value!, validUntil: validUntil),
+    );
+
     try {
       debugPrint('[AuthController] Logging in with token');
       user.value = await authService.getUser();
@@ -144,11 +149,16 @@ class AuthController extends GetxController {
       debugPrint('[AuthController] Checking login status');
       TokenModel storedToken = await TokenManager.getToken();
       debugPrint('[AuthController] Stored Token: ${storedToken.toJson()}');
-      
+      if (storedToken.token.isNotEmpty) {
+        debugPrint(
+          '[AuthController] Token length: ${storedToken.token.length}',
+        );
+      }
+
       if (storedToken.isValid) {
         debugPrint('[AuthController] Valid token found, fetching user');
         _token.value = storedToken.token;
-        
+
         try {
           await fetchUser();
           isLoggedIn.value = true;
@@ -180,7 +190,7 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     debugPrint('[AuthController] Logging out');
-    
+
     await TokenManager.removeToken();
     isLoggedIn.value = false;
     _token.value = null;
