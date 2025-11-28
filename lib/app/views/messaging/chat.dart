@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
+import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/messaging/parts/message_input.dart';
@@ -11,12 +12,12 @@ import 'package:talkliner/app/views/messaging/parts/messages_container.dart';
 import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
 class Chat extends StatelessWidget {
-  final UserModel user;
-  const Chat({super.key, required this.user});
+  final ChatModel chat;
+  const Chat({super.key, required this.chat});
 
   @override
   Widget build(BuildContext context) {
-    final chatController = Get.put(ChatController(user: user));
+    final chatController = Get.put(ChatController(chat: chat));
     final socketController = Get.find<SocketController>();
 
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -24,99 +25,132 @@ class Chat extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: isDarkMode ? TalklinerThemeColors.gray800 : Colors.white,
+        backgroundColor:
+            isDarkMode ? TalklinerThemeColors.gray800 : Colors.white,
         elevation: 0,
         toolbarHeight: 72,
         titleSpacing: 0,
         title: Obx(
           () => Row(
             children: [
-            IconButton(
-              icon: Icon(Icons.arrow_back, color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800),
-              onPressed: () => Navigator.of(context).pop(),
-              splashRadius: 24,
-            ),
-            const SizedBox(width: 4),
-            UserAvatar(user: user),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    user.displayName,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: isDarkMode ? TalklinerThemeColors.gray050 : Colors.black87,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Available",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray600,
-                          fontWeight: FontWeight.w400,
-                        ),
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color:
+                      isDarkMode
+                          ? TalklinerThemeColors.gray050
+                          : TalklinerThemeColors.gray800,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+                splashRadius: 24,
+              ),
+              const SizedBox(width: 4),
+              if (chat.chatType == ChatType.individual)
+                UserAvatar(user: chat.participants[0].user!),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      chat.chatType == ChatType.individual
+                          ? chat.participants[0].user!.displayName
+                          : chat.name!,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color:
+                            isDarkMode
+                                ? TalklinerThemeColors.gray050
+                                : Colors.black87,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Available",
+                          style: TextStyle(
+                            fontSize: 13,
+                            color:
+                                isDarkMode
+                                    ? TalklinerThemeColors.gray050
+                                    : TalklinerThemeColors.gray600,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.call_outlined,
-                color: 
-                isDarkMode ? 
-                (socketController.isConnected.value ? TalklinerThemeColors.gray020 : TalklinerThemeColors.gray900) : 
-                (socketController.isConnected.value ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray050),
+              IconButton(
+                icon: Icon(
+                  Icons.call_outlined,
+                  color:
+                      isDarkMode
+                          ? (socketController.isConnected.value
+                              ? TalklinerThemeColors.gray020
+                              : TalklinerThemeColors.gray900)
+                          : (socketController.isConnected.value
+                              ? TalklinerThemeColors.gray900
+                              : TalklinerThemeColors.gray050),
+                ),
+                onPressed: () {
+                  if (socketController.isConnected.value) {
+                    // Get.toNamed(Routes.outgoingCall, arguments: user);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: 'You are not connected to the internet',
+                    );
+                  }
+                },
+                splashRadius: 24,
               ),
-              onPressed: () {
-                if(socketController.isConnected.value) {
-                  Get.toNamed(Routes.outgoingCall, arguments: user);
-                } else {
-                  Fluttertoast.showToast(msg: 'You are not connected to the internet');
-                }
-              },
-              splashRadius: 24,
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.videocam_outlined,
-                color: isDarkMode ? 
-                (socketController.isConnected.value ? TalklinerThemeColors.gray020 : TalklinerThemeColors.gray900) : 
-                (socketController.isConnected.value ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray050),
+              IconButton(
+                icon: Icon(
+                  Icons.videocam_outlined,
+                  color:
+                      isDarkMode
+                          ? (socketController.isConnected.value
+                              ? TalklinerThemeColors.gray020
+                              : TalklinerThemeColors.gray900)
+                          : (socketController.isConnected.value
+                              ? TalklinerThemeColors.gray900
+                              : TalklinerThemeColors.gray050),
+                ),
+                onPressed: () {
+                  if (socketController.isConnected.value) {
+                    // Get.toNamed(Routes.outgoingCall, arguments: user);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: 'You are not connected to the internet',
+                    );
+                  }
+                },
+                splashRadius: 24,
               ),
-              onPressed: () {
-                if(socketController.isConnected.value) {
-                  // Get.toNamed(Routes.outgoingCall, arguments: user);
-                } else {
-                  Fluttertoast.showToast(msg: 'You are not connected to the internet');
-                }
-              },
-              splashRadius: 24,
-            ),
-            IconButton(
-              icon: Icon(Icons.more_vert, color: isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray800),
-              onPressed: () {},
-              splashRadius: 24,
-            ),
-            const SizedBox(width: 8),
-          ],
-        )),
+              IconButton(
+                icon: Icon(
+                  Icons.more_vert,
+                  color:
+                      isDarkMode
+                          ? TalklinerThemeColors.gray050
+                          : TalklinerThemeColors.gray800,
+                ),
+                onPressed: () {},
+                splashRadius: 24,
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
       ),
       backgroundColor: isDarkMode ? TalklinerThemeColors.gray800 : Colors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: MessagesContainer()),
-            MessageInput(),
-          ],
+          children: [Expanded(child: MessagesContainer()), MessageInput()],
         ),
       ),
     );

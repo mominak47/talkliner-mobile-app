@@ -144,10 +144,10 @@ class _MessageInputState extends State<MessageInput> {
                 if (!isMessageEmpty)
                   ElevatedButton(
                     onPressed: () {
-                      chatController.sendMessage(
-                        chatController.user.id,
-                        textController.text,
-                      );
+                      // chatController.sendMessage(
+                      //   chatController.user.id,
+                      //   textController.text,
+                      // );
                       textController.clear();
                     },
                     style: ElevatedButton.styleFrom(

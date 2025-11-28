@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:talkliner/app/models/recent_item.dart';
+import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
 
 class RecentsController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final ApiService apiService = ApiService();
   final RxBool isLoading = false.obs;
-  final RxList<RecentItem> recents = <RecentItem>[].obs;
+  final RxList<ChatModel> recents = <ChatModel>[].obs;
 
   final GetStorage _storage = GetStorage();
 
@@ -32,10 +32,10 @@ class RecentsController extends GetxController
     super.onClose();
   }
 
-  List<RecentItem> get userRecents =>
+  List<ChatModel> get userRecents =>
       recents.where((r) => r.chatType != 'group').toList();
 
-  List<RecentItem> get groupRecents =>
+  List<ChatModel> get groupRecents =>
       recents.where((r) => r.chatType == 'group').toList();
 
   Future<void> fetchRecents({bool shouldShowLoading = false}) async {
@@ -47,7 +47,7 @@ class RecentsController extends GetxController
       if (response.statusCode == 200) {
         final List<dynamic> recentList = response.body['data']['chats'] ?? [];
         recents.assignAll(
-          recentList.map((recent) => RecentItem.fromJson(recent)).toList(),
+          recentList.map((recent) => ChatModel.fromJson(recent)).toList(),
         );
         saveInfoInLocalStorage();
       } else {
@@ -75,7 +75,7 @@ class RecentsController extends GetxController
     final recentList = _storage.read('recents') ?? [];
     recents.assignAll(
       (recentList as List<dynamic>)
-          .map((recent) => RecentItem.fromJson(recent))
+          .map((recent) => ChatModel.fromJson(recent))
           .toList(),
     );
   }

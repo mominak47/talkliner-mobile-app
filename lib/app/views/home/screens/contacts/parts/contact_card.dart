@@ -69,9 +69,12 @@ class ContactCard extends StatelessWidget {
                     Icon(
                       isSelected ? LucideIcons.volume2 : LucideIcons.volumeX,
                       size: 16,
-                      color: isSelected ? (
-                        isDarkMode ? TalklinerThemeColors.gray200 : Colors.black
-                      ) : Colors.red,
+                      color:
+                          isSelected
+                              ? (isDarkMode
+                                  ? TalklinerThemeColors.gray200
+                                  : Colors.black)
+                              : Colors.red,
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -79,7 +82,10 @@ class ContactCard extends StatelessWidget {
                           user.status.substring(1),
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDarkMode ? TalklinerThemeColors.gray200 : Colors.grey,
+                        color:
+                            isDarkMode
+                                ? TalklinerThemeColors.gray200
+                                : Colors.grey,
                       ),
                     ),
                   ],
@@ -89,10 +95,20 @@ class ContactCard extends StatelessWidget {
           ),
           IconButton(
             onPressed: onTap,
-            icon: Icon( onTapIcon, color: isSelected ? (
-              isDarkMode ? Colors.black : Colors.white) : TalklinerThemeColors.gray080),
+            icon: Icon(
+              onTapIcon,
+              color:
+                  isSelected
+                      ? (isDarkMode ? Colors.black : Colors.white)
+                      : TalklinerThemeColors.gray080,
+            ),
             style: IconButton.styleFrom(
-              backgroundColor: isSelected ? TalklinerThemeColors.primary500 : (isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray040)
+              backgroundColor:
+                  isSelected
+                      ? TalklinerThemeColors.primary500
+                      : (isDarkMode
+                          ? TalklinerThemeColors.gray800
+                          : TalklinerThemeColors.gray040),
             ),
           ),
         ],

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'user_model.dart';
 
-class RecentItem {
+enum ChatType { individual, group }
+
+class ChatModel {
   final String id;
   final String domainId;
-  final String chatType;
+  final ChatType chatType;
   final List<RecentParticipant> participants;
   final String? name;
   final String? description;
@@ -17,7 +19,7 @@ class RecentItem {
   final RecentLastMessage? lastMessage;
   final RecentSettings settings;
 
-  RecentItem({
+  ChatModel({
     required this.id,
     required this.domainId,
     required this.chatType,
@@ -34,11 +36,11 @@ class RecentItem {
     required this.settings,
   });
 
-  factory RecentItem.fromJson(Map<String, dynamic> json) {
-    return RecentItem(
+  factory ChatModel.fromJson(Map<String, dynamic> json) {
+    return ChatModel(
       id: json['_id'] as String,
       domainId: json['domain_id'] as String,
-      chatType: json['chat_type'] as String,
+      chatType: ChatType.values.firstWhere((e) => e.name == json['chat_type']),
       participants:
           (json['participants'] as List<dynamic>)
               .map((e) => RecentParticipant.fromJson(e as Map<String, dynamic>))
@@ -96,13 +98,10 @@ class RecentLastMessage {
     debugPrint(json.toString());
     return RecentLastMessage(
       content: json['content'] ?? '',
-      senderId: json['sender_id'] != null 
-          ? RecentUser.fromJson(json['sender_id'] as Map<String, dynamic>)
-          : RecentUser(
-              id: '',
-              username: '',
-              displayName: '',
-            ),
+      senderId:
+          json['sender_id'] != null
+              ? RecentUser.fromJson(json['sender_id'] as Map<String, dynamic>)
+              : RecentUser(id: '', username: '', displayName: ''),
       timestamp: DateTime.parse(json['timestamp'] as String),
     );
   }
@@ -138,9 +137,10 @@ class RecentParticipant {
       id: json['_id'] as String,
       joinedAt: DateTime.parse(json['joined_at'] as String),
       lastSeen: DateTime.parse(json['last_seen'] as String),
-      user: json['user'] != null 
-          ? UserModel.fromJson(json['user'] as Map<String, dynamic>)
-          : null,
+      user:
+          json['user'] != null
+              ? UserModel.fromJson(json['user'] as Map<String, dynamic>)
+              : null,
     );
   }
 

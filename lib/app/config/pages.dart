@@ -10,43 +10,21 @@ import 'package:talkliner/app/views/profile/user_settings.dart';
 
 class Pages {
   static final List<GetPage> pages = [
-    GetPage(
-      name: Routes.splash,
-      page: () => SplashView(),
-    ),
+    GetPage(name: Routes.splash, page: () => SplashView()),
     // Login Page
-    GetPage(
-      name: Routes.login,
-      page: () => LoginView(),
-    ),
+    GetPage(name: Routes.login, page: () => LoginView()),
     // Settings Page
-    GetPage(
-      name: Routes.settings,
-      page: () => SettingsView(),
-    ),
+    GetPage(name: Routes.settings, page: () => SettingsView()),
     // Home Page
-    GetPage(
-      name: Routes.home,
-      page: () => HomeView(),
-    ),
+    GetPage(name: Routes.home, page: () => HomeView()),
     // User Settings Page
-    GetPage(
-      name: Routes.userSettings,
-      page: () => UserSettings(),
-    ),
+    GetPage(name: Routes.userSettings, page: () => UserSettings()),
     // Chat Page
-    GetPage(
-      name: Routes.chat,
-      page: () => Chat(
-        user: Get.arguments,
-      ),
-    ),
+    GetPage(name: Routes.chat, page: () => Chat(chat: Get.arguments)),
     // Outgoing Call Page
     GetPage(
       name: Routes.outgoingCall,
-      page: () => OutgoingCallScreen(
-        user: Get.arguments
-      ),
+      page: () => OutgoingCallScreen(user: Get.arguments),
     ),
   ];
 }

@@ -10,27 +10,28 @@ import 'package:talkliner/app/views/profile/parts/user_settings_status.dart';
 class UserSettings extends StatelessWidget {
   const UserSettings({super.key});
 
-
   @override
   Widget build(BuildContext context) {
-  final AuthController authController = Get.find<AuthController>();
-  final token = GetStorage().read('authToken');
-  String daysLeftString = '0';
-  // Format in x days left
-  if (token != null) {
-    final daysLeft = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(token['valid_until'])).inDays;
-    daysLeftString = daysLeft.abs().toString();
-  } else {
-    daysLeftString = '0';
-  }
+    final AuthController authController = Get.find<AuthController>();
+    final token = GetStorage().read('authToken');
+    String daysLeftString = '0';
+    // Format in x days left
+    if (token != null) {
+      final daysLeft =
+          DateTime.now()
+              .difference(
+                DateTime.fromMillisecondsSinceEpoch(token['valid_until']),
+              )
+              .inDays;
+      daysLeftString = daysLeft.abs().toString();
+    } else {
+      daysLeftString = '0';
+    }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        centerTitle: false,
-      ),
+      appBar: AppBar(title: const Text('Profile'), centerTitle: false),
       body: Padding(
-        padding: const EdgeInsets.all(16), 
+        padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -46,8 +47,13 @@ class UserSettings extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => authController.logout(),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                     surfaceTintColor: TalklinerThemeColors.primary500,
@@ -58,14 +64,22 @@ class UserSettings extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
-              Text('Version'.tr, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-              Text('1.0.0', style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal)),
+              Text(
+                'Version'.tr,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '1.0.0',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
+              ),
               // Show the valid until date of the token
-              Text('Token valid until: ${daysLeftString} days left'), // Format the date to be more readable
+              Text(
+                'Token valid until: $daysLeftString days left',
+              ), // Format the date to be more readable
             ],
           ),
         ),
-      )
+      ),
     );
   }
 }

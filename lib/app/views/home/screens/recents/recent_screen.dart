@@ -37,10 +37,7 @@ class RecentScreen extends StatelessWidget {
                   RecentItemCard(
                     recentItem: items[index],
                     onTapIconColor: Colors.red,
-                    onTap:
-                        () => Get.to(
-                          () => Chat(user: items[index].participants[0].user!),
-                        ),
+                    onTap: () => Get.to(() => Chat(chat: items[index])),
                     isSelected: false,
                   ),
                   Divider(height: 1),

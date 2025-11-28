@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/app_settings_controller.dart';
 import 'package:talkliner/app/controllers/contacts_controller.dart';
 import 'package:talkliner/app/controllers/home_controller.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
 import 'package:talkliner/app/controllers/push_to_talk_controller.dart';
+import 'package:talkliner/app/controllers/recents_controller.dart';
 import 'package:talkliner/app/models/group_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
@@ -18,11 +18,16 @@ class ContactsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final recents_controller = Get.find<RecentsController>();
     final contactsController = Get.find<ContactsController>();
     final pushToTalkController = Get.find<PushToTalkController>();
     final livekitRoomController = Get.find<LivekitRoomController>();
     final appSettingsController = Get.find<AppSettingsController>();
     final homeController = Get.find<HomeController>();
+
+    void onCardClick(UserModel user) {
+      debugPrint("User clicked: ${user.displayName}");
+    }
 
     Widget buildUsersList() {
       if (contactsController.contacts.isEmpty) {
@@ -67,8 +72,7 @@ class ContactsScreen extends StatelessWidget {
                         }
                       },
                       onLongPress: () {},
-                      onTapCard:
-                          () => Get.toNamed(Routes.chat, arguments: user),
+                      onTapCard: () => onCardClick(user),
                       isSelected:
                           pushToTalkController.selectedUser.value.id ==
                               user.id &&

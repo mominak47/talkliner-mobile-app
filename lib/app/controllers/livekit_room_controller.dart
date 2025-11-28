@@ -105,7 +105,11 @@ class LivekitRoomController extends GetxController {
       debugPrint("Chat ID: $chatId");
       isRoomConnecting.value = true;
 
-      String token = await getLivekitToken("ptt_${type}_$chatId");
+      String roomId = "ptt_${type}_$chatId";
+
+      debugPrint("<<<<<<<< Room ID: $roomId >>>>>>>>>>>>");
+
+      String token = await getLivekitToken(roomId);
       _room = Room(roomOptions: getRoomOptions());
 
       _listener = _room?.createListener();
