@@ -13,14 +13,9 @@ class ApiService extends GetConnect {
     _configureResponseInterceptor();
   }
 
-  void updateBaseUrl() {
-    httpClient.baseUrl = getBaseUrl();
-    debugPrint('[ApiService] Base URL updated to: ${getBaseUrl()}');
-  }
+  void updateBaseUrl() => httpClient.baseUrl = getBaseUrl();
 
-  String getBaseUrl() {
-    return AppConfig().apiUrl();
-  }
+  String getBaseUrl() => AppConfig().apiUrl();
 
   // Configure request interceptor (runs once, applies to all requests)
   void _configureRequestInterceptor() {
@@ -30,6 +25,7 @@ class ApiService extends GetConnect {
         final token = await TokenManager.getToken();
         if (token.isValid) {
           request.headers['Authorization'] = 'Bearer ${token.token}';
+          request.headers['ngrok-skip-browser-warning'] = 'true';
           debugPrint('[ApiService] Request: ${request.method} ${request.url}');
           debugPrint(
             '[ApiService] Auth token added: ${token.token.substring(0, 10)}...',
@@ -86,10 +82,10 @@ class ApiService extends GetConnect {
   }
 
   // Simplified GET request with timeout
-  Future<Response<T>> makeGetRequest<T>(String url) async {
+  makeGetRequest<T>(String url) async {
     updateBaseUrl();
     try {
-      return await get<T>(url).timeout(
+      return get<T>(url).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           return Response(statusCode: 408, statusText: 'Request timeout');
@@ -102,10 +98,10 @@ class ApiService extends GetConnect {
   }
 
   // Simplified POST request with timeout
-  Future<Response<T>> makePostRequest<T>(String url, dynamic body) async {
+  makePostRequest<T>(String url, dynamic body) async {
     updateBaseUrl();
     try {
-      return await post<T>(url, body).timeout(
+      return post<T>(url, body).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           return Response(statusCode: 408, statusText: 'Request timeout');

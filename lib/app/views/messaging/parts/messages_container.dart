@@ -5,6 +5,8 @@ import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/messaging/parts/message_date.dart';
 
+import 'package:talkliner/app/views/messaging/parts/date_divider.dart';
+
 class MessagesContainer extends StatefulWidget {
   const MessagesContainer({super.key});
 
@@ -15,6 +17,7 @@ class MessagesContainer extends StatefulWidget {
 class _MessagesContainerState extends State<MessagesContainer> {
   final ScrollController _scrollController = ScrollController();
   late final ChatController chatController;
+  bool _pageOpened = false;
 
   @override
   void initState() {
@@ -34,6 +37,14 @@ class _MessagesContainerState extends State<MessagesContainer> {
       }
     });
 
+    // Scroll listener for pagination
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels <=
+          _scrollController.position.minScrollExtent + 50) {
+        chatController.loadMoreMessages();
+      }
+    });
+
     // Scroll after first frame (initial load)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scrollController.hasClients) return;
@@ -43,11 +54,18 @@ class _MessagesContainerState extends State<MessagesContainer> {
 
   void _scrollToBottom() {
     if (!_scrollController.hasClients) return;
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOut,
-    );
+
+    if (!_pageOpened) {
+      // Scroll without animation
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      _pageOpened = true;
+    } else {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   @override
@@ -65,8 +83,12 @@ class _MessagesContainerState extends State<MessagesContainer> {
         return TalklinerThemeColors.primary025;
       }
       return message.isMe
-          ? (isDarkMode ? TalklinerThemeColors.primary100 : TalklinerThemeColors.primary050)
-          : (isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray040);
+          ? (isDarkMode
+              ? TalklinerThemeColors.primary100
+              : TalklinerThemeColors.primary050)
+          : (isDarkMode
+              ? TalklinerThemeColors.gray700
+              : TalklinerThemeColors.gray040);
     }
 
     Color getMessageTextColor(MessageModel message) {
@@ -74,72 +96,118 @@ class _MessagesContainerState extends State<MessagesContainer> {
         return TalklinerThemeColors.primary100;
       }
       return message.isMe
-          ? (isDarkMode ? TalklinerThemeColors.primary800 : TalklinerThemeColors.primary700)
-          : (isDarkMode ? TalklinerThemeColors.gray050 : TalklinerThemeColors.gray700);
+          ? (isDarkMode
+              ? TalklinerThemeColors.primary800
+              : TalklinerThemeColors.primary700)
+          : (isDarkMode
+              ? TalklinerThemeColors.gray050
+              : TalklinerThemeColors.gray700);
+    }
+
+    bool shouldShowDateDivider(int index) {
+      if (index == 0) return true;
+      final currentMessage = chatController.messages[index];
+      final previousMessage = chatController.messages[index - 1];
+
+      final currentDate = DateTime(
+        currentMessage.timestamp.year,
+        currentMessage.timestamp.month,
+        currentMessage.timestamp.day,
+      );
+      final previousDate = DateTime(
+        previousMessage.timestamp.year,
+        previousMessage.timestamp.month,
+        previousMessage.timestamp.day,
+      );
+
+      return currentDate != previousDate;
     }
 
     return Obx(
       () => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Container(
-          decoration: BoxDecoration(color: isDarkMode ? TalklinerThemeColors.gray900 : TalklinerThemeColors.gray020),
+          decoration: BoxDecoration(
+            color:
+                isDarkMode
+                    ? TalklinerThemeColors.gray900
+                    : TalklinerThemeColors.gray020,
+          ),
           child: ListView.builder(
             controller: _scrollController,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
             itemCount: chatController.messages.length,
             itemBuilder: (context, index) {
-            final message = chatController.messages[index];
-            final isMe = message.isMe;
-            return Container(
-              margin: EdgeInsets.only(
-                top: index == 0 ? 0 : 8,
-                bottom: 0,
-                left: isMe ? 40 : 0,
-                right: isMe ? 0 : 40,
-              ),
-              alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment:
-                    isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              final message = chatController.messages[index];
+              final isMe = message.isMe;
+              final showDateDivider = shouldShowDateDivider(index);
+
+              return Column(
                 children: [
+                  if (index == 0 && chatController.isLoadingMore.value)
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    ),
+                  if (showDateDivider)
+                    DateDivider(timestamp: message.timestamp),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 14,
+                    margin: EdgeInsets.only(
+                      top: showDateDivider ? 0 : (index == 0 ? 0 : 8),
+                      bottom: 0,
+                      left: isMe ? 40 : 0,
+                      right: isMe ? 0 : 40,
                     ),
-                    decoration: BoxDecoration(
-                      color: getMessageColor(message),
-                      borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(10),
-                        topRight: const Radius.circular(10),
-                        bottomLeft: Radius.circular(isMe ? 10 : 0),
-                        bottomRight: Radius.circular(isMe ? 0 : 10),
-                      ),
-                    ),
-                    child: Text(
-                      message.content,
-                      style: TextStyle(
-                        color: getMessageTextColor(message),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                      ),
+                    alignment:
+                        isMe ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment:
+                          isMe
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: getMessageColor(message),
+                            borderRadius: BorderRadius.only(
+                              topLeft: const Radius.circular(10),
+                              topRight: const Radius.circular(10),
+                              bottomLeft: Radius.circular(isMe ? 10 : 0),
+                              bottomRight: Radius.circular(isMe ? 0 : 10),
+                            ),
+                          ),
+                          child: Text(
+                            message.content,
+                            style: TextStyle(
+                              color: getMessageTextColor(message),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        (message.id == "sending")
+                            ? Text(
+                              "Sending...",
+                              style: TextStyle(
+                                color: TalklinerThemeColors.gray050,
+                                fontSize: 12,
+                              ),
+                            )
+                            : MessageDate(timestamp: message.timestamp),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  (message.id == "sending")
-                      ? Text(
-                        "Sending...",
-                        style: TextStyle(
-                          color: TalklinerThemeColors.gray050,
-                          fontSize: 12,
-                        ),
-                      )
-                      : MessageDate(timestamp: message.timestamp),
                 ],
-              ),
-            );
-          },
-        ),
+              );
+            },
+          ),
         ),
       ),
     );

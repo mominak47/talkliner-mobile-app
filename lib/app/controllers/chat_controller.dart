@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,6 +18,12 @@ class ChatController extends GetxController {
   final isKeyboardVisible = false.obs;
   final isTyping = false.obs;
 
+  // Pagination
+  int currentPage = 1;
+  final isLoadingMore = false.obs;
+  bool hasMoreMessages = true;
+  final int perPage = 50;
+
   final _audioPlayer = AudioPlayer();
 
   // Storage
@@ -28,35 +36,35 @@ class ChatController extends GetxController {
   final AuthController authController = Get.find<AuthController>();
 
   void watchSocketEvent() {
-    socketController.event.listen((event) {
-      if (event == 'new_message') {
-        try {
-          final eventData = socketController.eventData;
-          if (eventData['message'] != null &&
-              eventData['message']['sender_id']['_id'] !=
-                  authController.user.value?.id) {
-            final message = MessageModel.fromJson(eventData['message']);
-            // Check if message already exists to avoid duplicates
-            if (!messages.any((m) => m.id == message.id)) {
-              messages.add(message);
-              // Save to local storage
-              // saveInfoInLocalStorage();
-            }
-          }
-        } catch (e) {
-          debugPrint('ChatController: Error parsing message: $e');
-        }
-      }
+    // socketController.event.listen((event) {
+    //   if (event == 'new_message') {
+    //     try {
+    //       final eventData = socketController.eventData;
+    //       if (eventData['message'] != null &&
+    //           eventData['message']['sender_id']['_id'] !=
+    //               authController.user.value?.id) {
+    //         final message = MessageModel.fromJson(eventData['message']);
+    //         // Check if message already exists to avoid duplicates
+    //         if (!messages.any((m) => m.id == message.id)) {
+    //           messages.add(message);
+    //           // Save to local storage
+    //           // saveInfoInLocalStorage();
+    //         }
+    //       }
+    //     } catch (e) {
+    //       debugPrint('ChatController: Error parsing message: $e');
+    //     }
+    //   }
 
-      if (event == 'USER_TO_USER_EVENT') {
-        final eventData = socketController.eventData;
-        if (eventData['event'] == 'user_typing') {
-          debugPrint('ChatController: User typing: $eventData');
-        } else {
-          debugPrint('ChatController: Unknown event: $eventData');
-        }
-      }
-    });
+    //   if (event == 'USER_TO_USER_EVENT') {
+    //     final eventData = socketController.eventData;
+    //     if (eventData['event'] == 'user_typing') {
+    //       debugPrint('ChatController: User typing: $eventData');
+    //     } else {
+    //       debugPrint('ChatController: Unknown event: $eventData');
+    //     }
+    //   }
+    // });
   }
 
   @override
@@ -65,8 +73,8 @@ class ChatController extends GetxController {
 
     apiService.onInit();
     // getInfoFromLocalStorage();
-    // fetchMessages(user.id);
-    recentsController.fetchRecents();
+    fetchMessages();
+    // recentsController.fetchRecents();
     watchSocketEvent();
 
     ever(
@@ -96,12 +104,24 @@ class ChatController extends GetxController {
     recentsController.fetchRecents();
   }
 
-  Future<void> fetchMessages(String userId) async {
-    final response = await apiService.get('/chats/with/$userId');
-    if (response.statusCode == 200) {
-      debugPrint("[GETX] fetchMessages: ${response.body.toString()}");
+  Future<void> fetchMessages({int page = 1}) async {
+    if (page == 1) {
+      currentPage = 1;
+      hasMoreMessages = true;
+    }
+
+    try {
+      final response = await chat.getMessages(perPage: perPage, page: page);
+      final jsonBody = jsonDecode(response.body);
+      debugPrint("[RRSSD2] jsonBody: ${jsonBody.toString()}");
       final List<dynamic> rawMessages =
-          (response.body['data']?['messages'] as List<dynamic>?) ?? <dynamic>[];
+          (jsonBody['data']?['chat']['messages'] as List<dynamic>?) ??
+          <dynamic>[];
+
+      if (rawMessages.length < perPage) {
+        hasMoreMessages = false;
+      }
+
       final List<MessageModel> parsedMessages =
           rawMessages
               .map<MessageModel>(
@@ -115,39 +135,53 @@ class ChatController extends GetxController {
       final newMessages =
           parsedMessages.where((m) => !existingIds.contains(m.id)).toList();
 
-      if (newMessages.isNotEmpty) {
-        messages.addAll(newMessages.reversed.toList());
+      if (page == 1) {
+        if (newMessages.isNotEmpty) {
+          messages.addAll(newMessages);
+        } else {
+          messages.assignAll(parsedMessages);
+        }
       } else {
-        // If no new messages, still update with server data to ensure consistency
-        messages.assignAll(parsedMessages.reversed.toList());
+        messages.addAll(newMessages);
       }
+
+      // Sort messages by timestamp (oldest first)
+      messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    } catch (e) {
+      debugPrint("[TALKLINER SERVICE] Error fetched messages: $e");
+    } finally {
+      isLoadingMore.value = false;
     }
   }
 
-  Future<void> sendMessage(String userId, String content) async {
-    // Add the message to the messages list
-    // messages.add(
-    //   MessageModel(
-    //     id: "sending",
-    //     senderId: user.id,
-    //     content: content,
-    //     messageType: 'text',
-    //     timestamp: DateTime.now(),
-    //     edited: false,
-    //     isMe: true,
-    //   ),
-    // );
+  Future<void> loadMoreMessages() async {
+    if (isLoadingMore.value || !hasMoreMessages) return;
 
-    final response = await apiService.post('/chats/with/$userId/messages', {
-      "content": content,
-      "message_type": 'text',
-      "file_url": null,
-      "file_name": null,
-      "file_size": null,
-      "reply_to": null,
-    });
-    debugPrint("[GETX] sendMessage: ${response.body.toString()}");
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    isLoadingMore.value = true;
+    currentPage++;
+    debugPrint("Loading more messages: page $currentPage");
+    await fetchMessages(page: currentPage);
+  }
+
+  Future<void> sendMessage(String content) async {
+    try {
+      // Add the message to the messages list
+      messages.add(
+        MessageModel(
+          id: "sending",
+          senderId: authController.user.value!.id,
+          content: content,
+          messageType: 'text',
+          timestamp: DateTime.now(),
+          edited: false,
+          isMe: true,
+        ),
+      );
+
+      final response = await chat.sendMessage(content);
+      final jsonBody = jsonDecode(response.body);
+
+      debugPrint("[Chat Controller] sendMessage: ${jsonBody.toString()}");
       // Play a sound
       _audioPlayer.play(AssetSource('audio/message-sent.mp3'));
       _audioPlayer.setReleaseMode(ReleaseMode.release);
@@ -155,42 +189,10 @@ class ChatController extends GetxController {
       // Delete the message by id
       messages.removeWhere((message) => message.id == "sending");
 
-      messages.add(MessageModel.fromJson(response.body['data']['message']));
-      debugPrint("[GETX] added message: ${messages.toString()}");
+      messages.add(MessageModel.fromJson(jsonBody['data']['message']));
+      debugPrint("[Chat Controller] added message: ${messages.toString()}");
+    } catch (e) {
+      debugPrint("[Chat Controller] Error sending message: $e");
     }
   }
-
-  // void saveInfoInLocalStorage() {
-  //   try {
-  //     final messagesJson = messages.map((m) => m.toJson()).toList();
-  //     debugPrint(
-  //       "Saving To Local Storage : chat_${user.id}: ${messagesJson.length} messages",
-  //     );
-  //     // _storage.write('chat_${user.id}', messagesJson);
-  //   } catch (e) {
-  //     debugPrint("Error saving to local storage: $e");
-  //   }
-  // }
-
-  // void getInfoFromLocalStorage() {
-  //   try {
-  //     final chatList = _storage.read('chat_${user.id}') ?? [];
-  //     if (chatList is List && chatList.isNotEmpty) {
-  //       final loadedMessages =
-  //           chatList
-  //               .map(
-  //                 (chat) => MessageModel.fromJson(chat as Map<String, dynamic>),
-  //               )
-  //               .toList();
-  //       messages.assignAll(loadedMessages);
-  //       debugPrint(
-  //         "Loaded From Local Storage: ${loadedMessages.length} messages",
-  //       );
-  //     } else {
-  //       // debugPrint("No messages found in local storage for chat_${user.id}");
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Error loading from local storage: $e");
-  //   }
-  // }
 }

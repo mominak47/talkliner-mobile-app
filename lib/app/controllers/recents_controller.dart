@@ -34,10 +34,10 @@ class RecentsController extends GetxController
   }
 
   List<ChatModel> get userRecents =>
-      recents.where((r) => r.chatType != 'group').toList();
+      recents.where((r) => r.chatType != ChatType.group).toList();
 
   List<ChatModel> get groupRecents =>
-      recents.where((r) => r.chatType == 'group').toList();
+      recents.where((r) => r.chatType == ChatType.group).toList();
 
   Future<void> fetchRecents({bool shouldShowLoading = false}) async {
     if (shouldShowLoading) {

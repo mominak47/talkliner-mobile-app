@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'user_model.dart';
+import 'package:talkliner/app/services/talkliner_service.dart';
 
 enum ChatType { individual, group }
 
@@ -70,7 +72,7 @@ class ChatModel {
   Map<String, dynamic> toJson() => {
     '_id': id,
     'domain_id': domainId,
-    'chat_type': chatType,
+    'chat_type': chatType.name,
     'participants': participants.map((e) => e.toJson()).toList(),
     'name': name,
     'description': description,
@@ -83,6 +85,42 @@ class ChatModel {
     'last_message': lastMessage?.toJson(),
     'settings': settings.toJson(),
   };
+
+  // Send Message
+  Future<http.Response> sendMessage(String content) async {
+    try {
+      var endpoint = "";
+      if (chatType == ChatType.group) {
+        endpoint = '/chats/${id}/messages';
+        debugPrint("Message: $content : $endpoint");
+      } else if (chatType == ChatType.individual) {
+        RecentParticipant participant = participants.firstWhere(
+          (e) => e.role == Role.member,
+        );
+        endpoint = '/chats/with/${participant.userId.id}';
+        debugPrint("Message: $content : $endpoint");
+      }
+
+      // Chat Object
+      SendMessageObject chatObject = SendMessageObject.fromJson({
+        'content': content,
+        'message_type': 'text',
+        'file_url': '',
+        'file_name': '',
+        'file_size': '',
+        'reply_to': '',
+      });
+
+      return TalklinerService.post(endpoint, body: chatObject.toJson());
+    } catch (e) {
+      debugPrint(e.toString());
+      return http.Response(e.toString(), 500);
+    }
+  }
+
+  // Get Chats
+  getMessages({perPage = 10, page = 1}) =>
+      TalklinerService.get('/chats/$id?per_page=$perPage&page=$page');
 }
 
 class RecentLastMessage {
@@ -148,7 +186,7 @@ class RecentParticipant {
 
   Map<String, dynamic> toJson() => {
     'user_id': userId.toJson(),
-    'role': role,
+    'role': role.name,
     '_id': id,
     'joined_at': joinedAt.toIso8601String(),
     'last_seen': lastSeen.toIso8601String(),
@@ -201,5 +239,43 @@ class RecentSettings {
   Map<String, dynamic> toJson() => {
     'mute_notifications': muteNotifications,
     'auto_delete_messages': autoDeleteMessages,
+  };
+}
+
+class SendMessageObject {
+  final String content;
+  final String messageType;
+  final String fileUrl;
+  final String fileName;
+  final String fileSize;
+  final String replyTo;
+
+  SendMessageObject({
+    required this.content,
+    required this.messageType,
+    required this.fileUrl,
+    required this.fileName,
+    required this.fileSize,
+    required this.replyTo,
+  });
+
+  factory SendMessageObject.fromJson(Map<String, dynamic> json) {
+    return SendMessageObject(
+      content: json['content'] as String,
+      messageType: json['message_type'] as String,
+      fileUrl: json['file_url'] as String,
+      fileName: json['file_name'] as String,
+      fileSize: json['file_size'] as String,
+      replyTo: json['reply_to'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'content': content,
+    'message_type': messageType,
+    'file_url': fileUrl,
+    'file_name': fileName,
+    'file_size': fileSize,
+    'reply_to': replyTo,
   };
 }

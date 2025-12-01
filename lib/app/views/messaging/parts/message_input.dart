@@ -4,10 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
+import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 
 class MessageInput extends StatefulWidget {
-  const MessageInput({super.key});
+  final ChatModel chat;
+  const MessageInput({super.key, required this.chat});
 
   @override
   State<MessageInput> createState() => _MessageInputState();
@@ -73,6 +75,56 @@ class _MessageInputState extends State<MessageInput> {
     chatController.emitUserTyping(false);
     localTimer?.cancel();
     super.dispose();
+  }
+
+  void _showMessageTypePanel() {
+    // Hide Keyboard
+    FocusScope.of(context).unfocus();
+
+    // Show BottomSheet
+    Get.bottomSheet(
+      DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        minChildSize: 0.3,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? TalklinerThemeColors.gray900
+                      : Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Column(
+              children: [
+                // Handle bar
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [Text('Select Language')],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -144,10 +196,7 @@ class _MessageInputState extends State<MessageInput> {
                 if (!isMessageEmpty)
                   ElevatedButton(
                     onPressed: () {
-                      // chatController.sendMessage(
-                      //   chatController.user.id,
-                      //   textController.text,
-                      // );
+                      chatController.sendMessage(textController.text);
                       textController.clear();
                     },
                     style: ElevatedButton.styleFrom(
@@ -173,7 +222,7 @@ class _MessageInputState extends State<MessageInput> {
                               ? TalklinerThemeColors.gray050
                               : TalklinerThemeColors.gray500,
                     ),
-                    onPressed: () {},
+                    onPressed: () => _showMessageTypePanel(),
                     splashRadius: 20,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),

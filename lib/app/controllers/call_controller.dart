@@ -36,7 +36,10 @@ class CallController extends GetxController {
       (resp) => handleIncomingCall(resp),
     );
     socketController.on('audiocall:ended', (resp) => handleCallEnded(resp));
-    socketController.on('audiocall:rejected', (resp) => handleCallRejected(resp));
+    socketController.on(
+      'audiocall:rejected',
+      (resp) => handleCallRejected(resp),
+    );
   }
 
   void sendEvent(type, to, data, Function cb) {
@@ -70,22 +73,23 @@ class CallController extends GetxController {
     // Get Call ID
 
     sendEvent('request', user.id, null, (resp) {
-      CallModel call = CallModel.make(
-        callId: resp['call_id'],
-        roomID: resp['room']?['roomName'] ?? '',
-        roomToken: resp['room']?['token'] ?? '',
-        direction: CallDirection.outgoing,
-        type: CallType.individual,
-        status: CallStatus.calling,
-        participants: [user],
-        sendEvent: sendEvent,
-      );
+      debugPrint('CallController: Response: $resp');
+      // CallModel call = CallModel.make(
+      //   callId: resp['call_id'],
+      //   roomID: resp['room']?['roomName'] ?? '',
+      //   roomToken: resp['room']?['token'] ?? '',
+      //   direction: CallDirection.outgoing,
+      //   type: CallType.individual,
+      //   status: CallStatus.calling,
+      //   participants: [user],
+      //   sendEvent: sendEvent,
+      // );
 
-      // Add to calls list
-      addCall(call);
+      // // Add to calls list
+      // addCall(call);
 
-      // Make it the active call
-      activeCall.value = call;
+      // // Make it the active call
+      // activeCall.value = call;
     });
   }
 
@@ -151,8 +155,10 @@ class CallController extends GetxController {
         Get.back();
       }
 
-      if(resp['initiator_id'] != Get.find<AuthController>().user.value!.id){
-        Fluttertoast.showToast(msg: 'Call ended by ${call.participants.first.displayName}');
+      if (resp['initiator_id'] != Get.find<AuthController>().user.value!.id) {
+        Fluttertoast.showToast(
+          msg: 'Call ended by ${call.participants.first.displayName}',
+        );
       }
 
       // Remove from calls list
@@ -170,7 +176,9 @@ class CallController extends GetxController {
         Get.back();
       }
 
-      Fluttertoast.showToast(msg: 'Call rejected by ${call.participants.first.displayName}');
+      Fluttertoast.showToast(
+        msg: 'Call rejected by ${call.participants.first.displayName}',
+      );
 
       removeCall(call);
     }

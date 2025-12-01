@@ -24,7 +24,7 @@ class Pages {
     // Outgoing Call Page
     GetPage(
       name: Routes.outgoingCall,
-      page: () => OutgoingCallScreen(user: Get.arguments),
+      page: () => OutgoingCallScreen(chat: Get.arguments),
     ),
   ];
 }

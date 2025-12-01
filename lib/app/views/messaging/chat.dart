@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
+import 'package:talkliner/app/views/calling/outgoing_call_screen.dart';
 import 'package:talkliner/app/views/messaging/parts/message_input.dart';
 import 'package:talkliner/app/views/messaging/parts/messages_container.dart';
 import 'package:talkliner/app/views/others/components/user_avatar.dart';
@@ -105,7 +107,8 @@ class Chat extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (socketController.isConnected.value) {
-                    // Get.toNamed(Routes.outgoingCall, arguments: user);
+                    // Get.toNamed(Routes.outgoingCall, arguments: chat);
+                    Get.to(() => OutgoingCallScreen(chat: chat));
                   } else {
                     Fluttertoast.showToast(
                       msg: 'You are not connected to the internet',
@@ -157,7 +160,10 @@ class Chat extends StatelessWidget {
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Expanded(child: MessagesContainer()), MessageInput()],
+          children: [
+            Expanded(child: MessagesContainer()),
+            MessageInput(chat: chat),
+          ],
         ),
       ),
     );

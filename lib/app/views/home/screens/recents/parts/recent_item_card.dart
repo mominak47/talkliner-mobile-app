@@ -6,6 +6,8 @@ import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
+import 'package:intl/intl.dart';
+
 class RecentItemCard extends StatelessWidget {
   const RecentItemCard({
     super.key,
@@ -18,6 +20,32 @@ class RecentItemCard extends StatelessWidget {
   final Color onTapIconColor;
   final VoidCallback onTap;
   final bool isSelected;
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final dateToCheck = DateTime(
+      date.toLocal().year,
+      date.toLocal().month,
+      date.toLocal().day,
+    );
+
+    if (dateToCheck == today) {
+      return 'Today';
+    } else if (dateToCheck == yesterday) {
+      return 'Yesterday';
+    } else {
+      return DateFormat('d MMMM').format(date.toLocal());
+    }
+  }
+
+  // Convert it into local time
+  String _formatTime(DateTime? date) {
+    if (date == null) return '';
+    return DateFormat('h:mm a').format(date.toLocal());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +94,24 @@ class RecentItemCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          UserAvatar(user: recentItem.participants[0].user),
+          if (recentItem.chatType == ChatType.individual)
+            UserAvatar(user: recentItem.participants[0].user),
+          if (recentItem.chatType == ChatType.group)
+            CircleAvatar(
+              radius: 24,
+              backgroundColor:
+                  isDarkMode
+                      ? TalklinerThemeColors.gray030
+                      : TalklinerThemeColors.gray900,
+              child: Text(
+                recentItem.name?.substring(0, 2) ?? '',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: theme.primaryColor,
+                ),
+              ),
+            ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -74,7 +119,9 @@ class RecentItemCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  recentItem.participants[0].userId.displayName,
+                  recentItem.chatType == ChatType.individual
+                      ? recentItem.participants[0].userId.displayName
+                      : (recentItem.name ?? ''),
                   style: TextStyle(
                     color:
                         isDarkMode
@@ -83,6 +130,8 @@ class RecentItemCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     fontSize: 18,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
                 Row(
                   children: [
@@ -127,7 +176,7 @@ class RecentItemCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '01.01.2025',
+                _formatDate(recentItem.lastMessage?.timestamp),
                 style: TextStyle(
                   fontSize: 12,
                   color:
@@ -137,7 +186,7 @@ class RecentItemCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '04:32pm',
+                _formatTime(recentItem.lastMessage?.timestamp),
                 style: TextStyle(
                   fontSize: 12,
                   color:

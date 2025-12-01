@@ -119,7 +119,7 @@ class GroupModel {
 
   ChatModel createChat() {
     ChatModel chat = ChatModel(
-      id: '',
+      id: chatId,
       domainId: domainId,
       chatType: ChatType.group,
       participants: [],
