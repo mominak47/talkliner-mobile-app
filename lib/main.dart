@@ -10,15 +10,26 @@ import 'package:talkliner/app/themes/app_theme.dart';
 
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
 
 Future<void> main() async {
   try {
     // Initialize Flutter bindings
     WidgetsFlutterBinding.ensureInitialized();
 
+    // Initialize database factory for desktop
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+
     // Initialize GetStorage with auto-recovery
     try {
       await GetStorage.init();
+
+      await GetStorage.init("user_cache");
+
       debugPrint('[MAIN] GetStorage initialized successfully');
     } catch (e) {
       debugPrint('[MAIN] GetStorage initialization failed: $e');

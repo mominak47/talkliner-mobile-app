@@ -12,12 +12,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart' as
 import 'package:geolocator_android/geolocator_android.dart' as geolocator_android;
 import 'package:path_provider_android/path_provider_android.dart' as path_provider_android;
 import 'package:shared_preferences_android/shared_preferences_android.dart' as shared_preferences_android;
+import 'package:sqflite_android/sqflite_android.dart' as sqflite_android;
 import 'package:camera_avfoundation/camera_avfoundation.dart' as camera_avfoundation;
 import 'package:flutter_blue_plus_darwin/flutter_blue_plus_darwin.dart' as flutter_blue_plus_darwin;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart' as flutter_local_notifications;
 import 'package:geolocator_apple/geolocator_apple.dart' as geolocator_apple;
 import 'package:path_provider_foundation/path_provider_foundation.dart' as path_provider_foundation;
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart' as shared_preferences_foundation;
+import 'package:sqflite_darwin/sqflite_darwin.dart' as sqflite_darwin;
 import 'package:battery_plus/battery_plus.dart' as battery_plus;
 import 'package:connectivity_plus/connectivity_plus.dart' as connectivity_plus;
 import 'package:device_info_plus/device_info_plus.dart' as device_info_plus;
@@ -32,6 +34,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart' as
 import 'package:geolocator_apple/geolocator_apple.dart' as geolocator_apple;
 import 'package:path_provider_foundation/path_provider_foundation.dart' as path_provider_foundation;
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart' as shared_preferences_foundation;
+import 'package:sqflite_darwin/sqflite_darwin.dart' as sqflite_darwin;
 import 'package:device_info_plus/device_info_plus.dart' as device_info_plus;
 import 'package:flutter_secure_storage_windows/flutter_secure_storage_windows.dart' as flutter_secure_storage_windows;
 import 'package:package_info_plus/package_info_plus.dart' as package_info_plus;
@@ -98,6 +101,15 @@ class _PluginRegistrant {
         );
       }
 
+      try {
+        sqflite_android.SqfliteAndroid.registerWith();
+      } catch (err) {
+        print(
+          '`sqflite_android` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
     } else if (Platform.isIOS) {
       try {
         camera_avfoundation.AVFoundationCamera.registerWith();
@@ -149,6 +161,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`shared_preferences_foundation` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        sqflite_darwin.SqfliteDarwin.registerWith();
+      } catch (err) {
+        print(
+          '`sqflite_darwin` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }
@@ -277,6 +298,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`shared_preferences_foundation` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        sqflite_darwin.SqfliteDarwin.registerWith();
+      } catch (err) {
+        print(
+          '`sqflite_darwin` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:talkliner/app/sql_tables/database_helper.dart';
+import 'package:talkliner/app/models/message_model.dart';
 import 'user_model.dart';
 import 'package:talkliner/app/services/talkliner_service.dart';
 
@@ -22,6 +26,7 @@ class ChatModel {
   final DateTime updatedAt;
   final RecentLastMessage? lastMessage;
   final RecentSettings settings;
+  final List<MessageModel>? messages;
 
   ChatModel({
     required this.id,
@@ -38,6 +43,7 @@ class ChatModel {
     required this.updatedAt,
     this.lastMessage,
     required this.settings,
+    this.messages,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
@@ -52,7 +58,7 @@ class ChatModel {
       name: json['name'] as String?,
       description: json['description'] as String?,
       avatar: json['avatar'] as String?,
-      unreadCount: json['unread_count'] as int,
+      unreadCount: 26, //json['unread_count'] as int,
       isActive: json['is_active'] as bool,
       createdBy: json['created_by'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -66,6 +72,12 @@ class ChatModel {
       settings: RecentSettings.fromJson(
         json['settings'] as Map<String, dynamic>,
       ),
+      messages:
+          json['messages'] != null
+              ? (json['messages'] as List<dynamic>)
+                  .map((e) => MessageModel.fromJson(e as Map<String, dynamic>))
+                  .toList()
+              : null,
     );
   }
 
@@ -85,6 +97,43 @@ class ChatModel {
     'last_message': lastMessage?.toJson(),
     'settings': settings.toJson(),
   };
+
+  // Send Message
+  ChatModel copyWith({
+    String? id,
+    String? domainId,
+    ChatType? chatType,
+    List<RecentParticipant>? participants,
+    String? name,
+    String? description,
+    String? avatar,
+    int? unreadCount,
+    bool? isActive,
+    String? createdBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    RecentLastMessage? lastMessage,
+    RecentSettings? settings,
+    List<MessageModel>? messages,
+  }) {
+    return ChatModel(
+      id: id ?? this.id,
+      domainId: domainId ?? this.domainId,
+      chatType: chatType ?? this.chatType,
+      participants: participants ?? this.participants,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      avatar: avatar ?? this.avatar,
+      unreadCount: unreadCount ?? this.unreadCount,
+      isActive: isActive ?? this.isActive,
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      lastMessage: lastMessage ?? this.lastMessage,
+      settings: settings ?? this.settings,
+      messages: messages ?? this.messages,
+    );
+  }
 
   // Send Message
   Future<http.Response> sendMessage(String content) async {
@@ -119,8 +168,34 @@ class ChatModel {
   }
 
   // Get Chats
-  getMessages({perPage = 10, page = 1}) =>
-      TalklinerService.get('/chats/$id?per_page=$perPage&page=$page');
+  Future<Map<String, dynamic>?> getMessages({perPage = 10, page = 1}) async {
+    debugPrint("[Chat_model.dart] : getMessages for : $id");
+    var response = await TalklinerService.get(
+      '/chats/$id?per_page=$perPage&page=$page',
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load messages');
+    }
+
+    // If content type is json
+    if (response.headers['content-type']?.contains('application/json') ??
+        false) {
+      Map<String, dynamic> jsonBody = jsonDecode(response.body);
+
+      List<MessageModel?> messages = [];
+      if (jsonBody['data']['chat']['messages'] != null) {
+        messages =
+            (jsonBody['data']['chat']['messages'] as List)
+                .map((e) => MessageModel.fromJson(e as Map<String, dynamic>))
+                .toList();
+      }
+
+      return jsonBody['data']['chat'];
+    }
+
+    throw Exception('[Chat_model.dart] : Failed to load messages');
+  }
 }
 
 class RecentLastMessage {
@@ -135,7 +210,6 @@ class RecentLastMessage {
   });
 
   factory RecentLastMessage.fromJson(Map<String, dynamic> json) {
-    debugPrint(json.toString());
     return RecentLastMessage(
       content: json['content'] ?? '',
       senderId:

@@ -112,41 +112,45 @@ class ChatController extends GetxController {
 
     try {
       final response = await chat.getMessages(perPage: perPage, page: page);
-      final jsonBody = jsonDecode(response.body);
-      debugPrint("[RRSSD2] jsonBody: ${jsonBody.toString()}");
-      final List<dynamic> rawMessages =
-          (jsonBody['data']?['chat']['messages'] as List<dynamic>?) ??
-          <dynamic>[];
 
-      if (rawMessages.length < perPage) {
-        hasMoreMessages = false;
-      }
+      debugPrint("Messages :: ${response.toString()}");
 
-      final List<MessageModel> parsedMessages =
-          rawMessages
-              .map<MessageModel>(
-                (dynamic message) =>
-                    MessageModel.fromJson(message as Map<String, dynamic>),
-              )
-              .toList();
+      // debugPrint("[RRSSD2] response: ${response.toString()}");
+      // final jsonBody = jsonDecode(response.body);
+      // debugPrint("[RRSSD2] jsonBody: ${jsonBody.toString()}");
+      // final List<dynamic> rawMessages =
+      //     (jsonBody['data']?['chat']['messages'] as List<dynamic>?) ??
+      //     <dynamic>[];
 
-      // Merge with existing local messages to avoid duplicates
-      final existingIds = messages.map((m) => m.id).toSet();
-      final newMessages =
-          parsedMessages.where((m) => !existingIds.contains(m.id)).toList();
+      // if (rawMessages.length < perPage) {
+      //   hasMoreMessages = false;
+      // }
 
-      if (page == 1) {
-        if (newMessages.isNotEmpty) {
-          messages.addAll(newMessages);
-        } else {
-          messages.assignAll(parsedMessages);
-        }
-      } else {
-        messages.addAll(newMessages);
-      }
+      // final List<MessageModel> parsedMessages =
+      //     rawMessages
+      //         .map<MessageModel>(
+      //           (dynamic message) =>
+      //               MessageModel.fromJson(message as Map<String, dynamic>),
+      //         )
+      //         .toList();
 
-      // Sort messages by timestamp (oldest first)
-      messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+      // // Merge with existing local messages to avoid duplicates
+      // final existingIds = messages.map((m) => m.id).toSet();
+      // final newMessages =
+      //     parsedMessages.where((m) => !existingIds.contains(m.id)).toList();
+
+      // if (page == 1) {
+      //   if (newMessages.isNotEmpty) {
+      //     messages.addAll(newMessages);
+      //   } else {
+      //     messages.assignAll(parsedMessages);
+      //   }
+      // } else {
+      //   messages.addAll(newMessages);
+      // }
+
+      // // Sort messages by timestamp (oldest first)
+      // messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
     } catch (e) {
       debugPrint("[TALKLINER SERVICE] Error fetched messages: $e");
     } finally {
