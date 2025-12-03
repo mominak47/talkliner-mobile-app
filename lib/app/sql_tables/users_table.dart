@@ -1,14 +1,28 @@
+import 'dart:convert';
+
 import 'package:flutter/rendering.dart';
 import 'package:talkliner/app/sql_tables/database_helper.dart';
 import 'package:talkliner/app/models/user_model.dart';
 
-class ChatTable {
+class UsersTable {
   static const String tableName = 'users';
   final DatabaseHelper dbHelper = DatabaseHelper();
 
   // Contructor
-  ChatTable() {
+  UsersTable() {
     dbHelper.database;
+  }
+
+  getUser(String id) async {
+    var user = await dbHelper.table(tableName).where('id', id).get();
+    if (user.isNotEmpty) {
+      // Mutable User
+      var mutableUser = Map<String, dynamic>.from(user[0]);
+      mutableUser['settings'] = jsonDecode(mutableUser['settings']);
+
+      return mutableUser;
+    }
+    return null;
   }
 
   format(UserModel user) {
@@ -17,7 +31,7 @@ class ChatTable {
       'domain_id': user.domainId,
       'username': user.username,
       'display_name': user.displayName,
-      'settings': user.settings.toJson().toString(),
+      'settings': user.settings.toJson(),
       'is_online': user.isOnline,
       'status': user.status,
       'fcm_token': user.fcmToken,
@@ -31,10 +45,10 @@ class ChatTable {
     // Check if chat already exists
     final result = await dbHelper.table(tableName).where('id', user.id).get();
     if (result.isNotEmpty) {
-      debugPrint("[SQL] UPDATE Chat : id = ${user.id}");
+      debugPrint("[SQL] UPDATE User : id = ${user.id}");
       return update(user);
     } else {
-      debugPrint("[SQL] INSERT Chat : id = ${user.id}");
+      debugPrint("[SQL] INSERT User : id = ${user.id}");
       // Insert
       return dbHelper.insert(tableName, format(user));
     }
@@ -44,9 +58,10 @@ class ChatTable {
     // Check if chat already exists
     final result = await dbHelper.table(tableName).where('id', user.id).get();
     if (result.isNotEmpty) {
-      debugPrint("[SQL] UPDATE Chat : id = ${user.id}");
+      debugPrint("[SQL] UPDATE User : id = ${user.id}");
       var insertObject = format(user);
       insertObject.remove('id');
+
       // Update`
       return dbHelper
           .table(tableName)

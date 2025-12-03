@@ -23,7 +23,7 @@ class RecentsController extends GetxController
     super.onInit();
     tabController = TabController(length: 3, vsync: this);
     apiService.onInit();
-    getChatsFromCache();
+    getChatsFromDatabase();
     // Use WidgetsBinding to ensure this runs after the build phase
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchRecents();
@@ -43,29 +43,24 @@ class RecentsController extends GetxController
       recents.where((r) => r.chatType == ChatType.group).toList();
 
   Future<void> fetchRecents({bool shouldShowLoading = false}) async {
-    getChatsFromCache();
-
-    if (shouldShowLoading) {
-      isLoading.value = true;
-    }
+    if (shouldShowLoading) isLoading.value = true;
 
     final response = await apiService.get('/chats');
     try {
       if (response.statusCode == 200) {
         final List<dynamic> recentList = response.body['data']['chats'] ?? [];
-        recents.assignAll(
-          recentList.map((recent) => ChatModel.fromJson(recent)).toList(),
-        );
-        saveInfoInLocalStorage();
+        final List<ChatModel> recentModels =
+            recentList.map((recent) => ChatModel.fromJson(recent)).toList();
+        // recents.assignAll(recentModels);
+        saveInfoInLocalStorage(recentModels);
+        getChatsFromDatabase();
       } else {
         debugPrint(response.body.toString());
       }
     } catch (e) {
       debugPrint(e.toString());
     } finally {
-      if (shouldShowLoading) {
-        isLoading.value = false;
-      }
+      if (shouldShowLoading) isLoading.value = false;
     }
   }
 
@@ -81,48 +76,20 @@ class RecentsController extends GetxController
     return recents.firstWhereOrNull((chat) => chat.id == chatId);
   }
 
-  void saveInfoInLocalStorage() async {
+  void saveInfoInLocalStorage(List<ChatModel> recents) async {
     if (recents.isEmpty) return;
     debugPrint("Saving To Local Storage: ${recents.length} chats");
 
-    await ChatTable().insertBatch(recents);
+    for (var chat in recents) {
+      await ChatTable().insert(chat);
+    }
   }
 
-  Future<int> getChatsFromCache() async {
-    var chats = await DatabaseHelper().table('chats').get();
-
-    debugPrint("Loading From Cache ${chats.toString()}");
-
-    // final time = _storage.read('recents_chat_ids_time');
-
-    // if (time == null) {
-    //   return 0;
-    // }
-
-    // // If time is older than 1 minute
-    // if (time <
-    //     DateTime.now()
-    //         .subtract(const Duration(minutes: 1))
-    //         .millisecondsSinceEpoch) {
-    //   return 0;
-    // }
-
-    // debugPrint("Loading From Cache");
-
-    // final recentList = _storage.read('recents_chat_ids') ?? [];
-
-    // List<ChatModel> chats = [];
-
-    // recentList.forEach((chatId) {
-    //   var chat = ChatCache().getChat(chatId);
-    //   if (chat != null) {
-    //     chats.add(chat);
-    //   }
-    // });
-
-    // recents.assignAll(chats);
-    // debugPrint("[RecentsController] : getChatsFromCache");
-
-    return 0; //chats.length;
+  getChatsFromDatabase() async {
+    var chats = await ChatTable().getChats();
+    debugPrint("⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️");
+    debugPrint("➡️Loading From Cache ${chats.toString()}⬅️");
+    debugPrint("⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️");
+    if (chats != null && chats.isNotEmpty) recents.assignAll(chats);
   }
 }

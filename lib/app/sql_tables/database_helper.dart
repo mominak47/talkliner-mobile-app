@@ -1,5 +1,6 @@
+import 'dart:convert';
+
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -47,11 +48,7 @@ class DatabaseHelper {
           created_by TEXT NOT NULL,
           created_at TEXT NOT NULL,
           updated_at TEXT NOT NULL,
-          mute_notifications INTEGER DEFAULT 0,
-          auto_delete_messages INTEGER DEFAULT 0,
-          last_message_content TEXT,
-          last_message_sender_id TEXT,
-          last_message_timestamp TEXT
+          settings TEXT NOT NULL
       )
     ''');
 
@@ -108,11 +105,27 @@ class DatabaseHelper {
     ''');
   }
 
-  Future<void> deleteDatabase(String path) =>
-      databaseFactory.deleteDatabase(path);
+  Future<void> deleteDatabase(String path) async {
+    await databaseFactory.deleteDatabase(path);
+  }
+
   // Start Query Builder
   QueryBuilder table(String table) {
     return QueryBuilder(table, this);
+  }
+
+  // Helper to sanitize data (convert bool to int)
+  // Convert object to json_encode
+  Map<String, dynamic> _sanitizeData(Map<String, dynamic> data) {
+    return data.map((key, value) {
+      if (value is bool) {
+        return MapEntry(key, value ? 1 : 0);
+      }
+      if (value is Map) {
+        return MapEntry(key, jsonEncode(value));
+      }
+      return MapEntry(key, value);
+    });
   }
 
   // Raw Insert (kept for compatibility or direct use)
@@ -120,7 +133,7 @@ class DatabaseHelper {
     final db = await database;
     return await db.insert(
       table,
-      values,
+      _sanitizeData(values),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -134,8 +147,10 @@ class QueryBuilder {
   final List<String> _whereClauses = [];
   final List<dynamic> _whereArgs = [];
   String? _orderBy;
+  String? _groupBy;
   int? _limit;
   int? _offset;
+  bool _distinct = false;
 
   QueryBuilder(this._table, this._dbHelper);
 
@@ -144,6 +159,18 @@ class QueryBuilder {
     if (columns != '*') {
       _selects = columns.split(',').map((e) => e.trim()).toList();
     }
+    return this;
+  }
+
+  // Distinct
+  QueryBuilder distinct([bool distinct = true]) {
+    _distinct = distinct;
+    return this;
+  }
+
+  // Group By
+  QueryBuilder groupBy(String groupBy) {
+    _groupBy = groupBy;
     return this;
   }
 
@@ -179,9 +206,11 @@ class QueryBuilder {
     final db = await _dbHelper.database;
     return await db.query(
       _table,
+      distinct: _distinct,
       columns: _selects.contains('*') ? null : _selects,
       where: _whereClauses.isNotEmpty ? _whereClauses.join(' AND ') : null,
       whereArgs: _whereArgs.isNotEmpty ? _whereArgs : null,
+      groupBy: _groupBy,
       orderBy: _orderBy,
       limit: _limit,
       offset: _offset,
@@ -203,7 +232,7 @@ class QueryBuilder {
     final db = await _dbHelper.database;
     return await db.insert(
       _table,
-      data,
+      _dbHelper._sanitizeData(data),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -216,7 +245,7 @@ class QueryBuilder {
       for (var data in dataList) {
         batch.insert(
           _table,
-          data,
+          _dbHelper._sanitizeData(data),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
@@ -229,7 +258,7 @@ class QueryBuilder {
     final db = await _dbHelper.database;
     return await db.update(
       _table,
-      data,
+      _dbHelper._sanitizeData(data),
       where: _whereClauses.isNotEmpty ? _whereClauses.join(' AND ') : null,
       whereArgs: _whereArgs.isNotEmpty ? _whereArgs : null,
     );

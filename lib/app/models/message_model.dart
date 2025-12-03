@@ -32,12 +32,18 @@ class MessageModel {
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     final dynamic senderField = json['sender_id'];
-    final String parsedSenderId = senderField is Map<String, dynamic>
-        ? senderField['_id'] as String
-        : senderField as String;
+    final String parsedSenderId =
+        senderField is Map<String, dynamic>
+            ? senderField['_id'] as String
+            : senderField as String;
+
+    final isMe =
+        json['is_me'] == 1
+            ? true
+            : parsedSenderId == Get.find<AuthController>().user.value?.id;
 
     return MessageModel(
-      id: json['_id'] as String,
+      id: json['id'] ?? json['_id'] as String,
       senderId: parsedSenderId,
       content: json['content'] as String,
       messageType: json['message_type'] as String,
@@ -46,26 +52,27 @@ class MessageModel {
       fileSize: json['file_size'] as int?,
       timestamp: DateTime.parse(json['timestamp'] as String),
       edited: json['edited'] as bool,
-      editedAt: json['edited_at'] != null
-          ? DateTime.tryParse(json['edited_at'] as String)
-          : null,
+      editedAt:
+          json['edited_at'] != null
+              ? DateTime.tryParse(json['edited_at'] as String)
+              : null,
       replyTo: json['reply_to'] as String?,
-      isMe: parsedSenderId == Get.find<AuthController>().user.value?.id,
+      isMe: isMe,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        '_id': id,
-        'sender_id': senderId,
-        'content': content,
-        'message_type': messageType,
-        'file_url': fileUrl,
-        'file_name': fileName,
-        'file_size': fileSize,
-        'timestamp': timestamp.toIso8601String(),
-        'edited': edited,
-        'edited_at': editedAt?.toIso8601String(),
-        'reply_to': replyTo,
-        'is_me': isMe,
-      };
+    '_id': id,
+    'sender_id': senderId,
+    'content': content,
+    'message_type': messageType,
+    'file_url': fileUrl,
+    'file_name': fileName,
+    'file_size': fileSize,
+    'timestamp': timestamp.toIso8601String(),
+    'edited': edited,
+    'edited_at': editedAt?.toIso8601String(),
+    'reply_to': replyTo,
+    'is_me': isMe,
+  };
 }

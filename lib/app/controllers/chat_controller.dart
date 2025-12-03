@@ -10,6 +10,8 @@ import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
+import 'package:talkliner/app/sql_tables/chat_table.dart';
+import 'package:talkliner/app/sql_tables/messages_table.dart';
 
 class ChatController extends GetxController {
   final ChatModel chat;
@@ -72,8 +74,8 @@ class ChatController extends GetxController {
     super.onInit();
 
     apiService.onInit();
-    // getInfoFromLocalStorage();
-    fetchMessages();
+    getMessagesFromStorage();
+    // fetchMessages();
     // recentsController.fetchRecents();
     watchSocketEvent();
 
@@ -111,46 +113,16 @@ class ChatController extends GetxController {
     }
 
     try {
-      final response = await chat.getMessages(perPage: perPage, page: page);
+      final messages_response = await chat.getMessages(
+        perPage: perPage,
+        page: page,
+      );
 
-      debugPrint("Messages :: ${response.toString()}");
+      for (var message in messages_response) {
+        await MessagesTable().insert(message, chat.id);
+      }
 
-      // debugPrint("[RRSSD2] response: ${response.toString()}");
-      // final jsonBody = jsonDecode(response.body);
-      // debugPrint("[RRSSD2] jsonBody: ${jsonBody.toString()}");
-      // final List<dynamic> rawMessages =
-      //     (jsonBody['data']?['chat']['messages'] as List<dynamic>?) ??
-      //     <dynamic>[];
-
-      // if (rawMessages.length < perPage) {
-      //   hasMoreMessages = false;
-      // }
-
-      // final List<MessageModel> parsedMessages =
-      //     rawMessages
-      //         .map<MessageModel>(
-      //           (dynamic message) =>
-      //               MessageModel.fromJson(message as Map<String, dynamic>),
-      //         )
-      //         .toList();
-
-      // // Merge with existing local messages to avoid duplicates
-      // final existingIds = messages.map((m) => m.id).toSet();
-      // final newMessages =
-      //     parsedMessages.where((m) => !existingIds.contains(m.id)).toList();
-
-      // if (page == 1) {
-      //   if (newMessages.isNotEmpty) {
-      //     messages.addAll(newMessages);
-      //   } else {
-      //     messages.assignAll(parsedMessages);
-      //   }
-      // } else {
-      //   messages.addAll(newMessages);
-      // }
-
-      // // Sort messages by timestamp (oldest first)
-      // messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+      getMessagesFromStorage();
     } catch (e) {
       debugPrint("[TALKLINER SERVICE] Error fetched messages: $e");
     } finally {
@@ -194,9 +166,32 @@ class ChatController extends GetxController {
       messages.removeWhere((message) => message.id == "sending");
 
       messages.add(MessageModel.fromJson(jsonBody['data']['message']));
-      debugPrint("[Chat Controller] added message: ${messages.toString()}");
+
+      // Add message to database
+      await MessagesTable().insert(messages.last, chat.id);
+
+      debugPrint(
+        "[Chat Controller] added message: ${messages.last.toString()}",
+      );
     } catch (e) {
       debugPrint("[Chat Controller] Error sending message: $e");
+    }
+  }
+
+  getMessagesFromStorage() async {
+    try {
+      final messagesResponse = await MessagesTable().getMessages(chat.id, 50);
+      messages.clear();
+      for (var message in messagesResponse) {
+        messages.add(MessageModel.fromJson(message));
+      }
+      messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+      debugPrint(
+        "[Chat Controller] getMessagesFromStorage: ${messagesResponse.toString()}",
+      );
+    } catch (e) {
+      debugPrint("[Chat Controller] Error fetching messages: $e");
     }
   }
 }

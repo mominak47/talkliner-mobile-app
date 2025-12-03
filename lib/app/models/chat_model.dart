@@ -48,7 +48,7 @@ class ChatModel {
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-      id: json['_id'] as String,
+      id: json['id'] as String? ?? json['_id'] as String,
       domainId: json['domain_id'] as String,
       chatType: ChatType.values.firstWhere((e) => e.name == json['chat_type']),
       participants:
@@ -103,7 +103,7 @@ class ChatModel {
     String? id,
     String? domainId,
     ChatType? chatType,
-    List<RecentParticipant>? participants,
+    List<RecentParticipant>? participants, //
     String? name,
     String? description,
     String? avatar,
@@ -168,7 +168,7 @@ class ChatModel {
   }
 
   // Get Chats
-  Future<Map<String, dynamic>?> getMessages({perPage = 10, page = 1}) async {
+  Future<List<MessageModel>> getMessages({perPage = 10, page = 1}) async {
     debugPrint("[Chat_model.dart] : getMessages for : $id");
     var response = await TalklinerService.get(
       '/chats/$id?per_page=$perPage&page=$page',
@@ -183,12 +183,13 @@ class ChatModel {
         false) {
       Map<String, dynamic> jsonBody = jsonDecode(response.body);
 
-      List<MessageModel?> messages = [];
+      List<MessageModel> messages = [];
       if (jsonBody['data']['chat']['messages'] != null) {
         messages =
             (jsonBody['data']['chat']['messages'] as List)
                 .map((e) => MessageModel.fromJson(e as Map<String, dynamic>))
                 .toList();
+        return messages;
       }
 
       return jsonBody['data']['chat'];
@@ -245,10 +246,12 @@ class RecentParticipant {
   });
 
   factory RecentParticipant.fromJson(Map<String, dynamic> json) {
+    String id = json['id'] ?? json['_id'] as String;
+
     return RecentParticipant(
       userId: RecentUser.fromJson(json['user_id'] as Map<String, dynamic>),
       role: Role.values.firstWhere((e) => e.name == json['role']),
-      id: json['_id'] as String,
+      id: id,
       joinedAt: DateTime.parse(json['joined_at'] as String),
       lastSeen: DateTime.parse(json['last_seen'] as String),
       user:

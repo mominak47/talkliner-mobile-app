@@ -94,7 +94,8 @@ class RecentItemCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (recentItem.chatType == ChatType.individual)
+          if (recentItem.chatType == ChatType.individual &&
+              recentItem.participants.isNotEmpty)
             UserAvatar(user: recentItem.participants[0].user),
           if (recentItem.chatType == ChatType.group)
             CircleAvatar(
@@ -119,7 +120,8 @@ class RecentItemCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  recentItem.chatType == ChatType.individual
+                  recentItem.chatType == ChatType.individual &&
+                          recentItem.participants.isNotEmpty
                       ? recentItem.participants[0].userId.displayName
                       : (recentItem.name ?? ''),
                   style: TextStyle(
@@ -154,7 +156,10 @@ class RecentItemCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        recentItem.lastMessage?.content ?? '',
+                        (recentItem.messages != null &&
+                                recentItem.messages!.isNotEmpty)
+                            ? recentItem.messages!.first.content
+                            : '',
                         style: TextStyle(
                           fontSize: 14,
                           color:
@@ -176,7 +181,9 @@ class RecentItemCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                _formatDate(recentItem.lastMessage?.timestamp),
+                (recentItem.messages != null && recentItem.messages!.isNotEmpty)
+                    ? _formatDate(recentItem.messages!.first.timestamp)
+                    : '',
                 style: TextStyle(
                   fontSize: 12,
                   color:
@@ -186,7 +193,9 @@ class RecentItemCard extends StatelessWidget {
                 ),
               ),
               Text(
-                _formatTime(recentItem.lastMessage?.timestamp),
+                (recentItem.messages != null && recentItem.messages!.isNotEmpty)
+                    ? _formatTime(recentItem.messages!.first.timestamp)
+                    : '',
                 style: TextStyle(
                   fontSize: 12,
                   color:

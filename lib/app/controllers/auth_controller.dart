@@ -5,6 +5,7 @@ import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/auth_service.dart';
 import 'package:talkliner/app/cachemanagers/token_manager.dart';
+import 'package:talkliner/app/sql_tables/database_helper.dart';
 
 class AuthController extends GetxController {
   final AuthService authService = Get.find<AuthService>();
@@ -65,6 +66,8 @@ class AuthController extends GetxController {
       isLoggedIn.value = true;
       debugPrint('[AuthController] Login successful');
 
+      // Clear Database
+      DatabaseHelper().deleteDatabase('talkliner-client.db');
       await Get.offAllNamed(Routes.home);
     } on AuthException catch (e) {
       error.value = e.message;

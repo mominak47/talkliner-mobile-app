@@ -20,6 +20,9 @@ class Chat extends StatelessWidget {
     final chatController = Get.put(ChatController(chat: chat));
     final socketController = Get.find<SocketController>();
 
+    // chatController.getMessagesFromStorage();
+    chatController.fetchMessages();
+
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -45,7 +48,8 @@ class Chat extends StatelessWidget {
                 splashRadius: 24,
               ),
               const SizedBox(width: 4),
-              if (chat.chatType == ChatType.individual)
+              if (chat.chatType == ChatType.individual &&
+                  chat.participants.isNotEmpty)
                 UserAvatar(user: chat.participants[0].user!),
               if (chat.chatType == ChatType.group)
                 CircleAvatar(
@@ -63,7 +67,8 @@ class Chat extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      chat.chatType == ChatType.individual
+                      chat.chatType == ChatType.individual &&
+                              chat.participants.isNotEmpty
                           ? chat.participants[0].user!.displayName
                           : chat.name!,
                       style: TextStyle(

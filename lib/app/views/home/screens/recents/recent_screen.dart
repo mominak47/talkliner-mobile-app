@@ -17,8 +17,7 @@ class RecentScreen extends StatelessWidget {
     final recentsController = Get.find<RecentsController>();
     final layoutController = Get.find<LayoutController>();
 
-    // Get Fresh Chats from the API
-    recentsController.fetchRecents();
+    recentsController.getChatsFromDatabase();
 
     Widget buildRecentsList(List<dynamic> items) {
       return RefreshIndicator(
