@@ -9,15 +9,24 @@ import 'package:talkliner/app/views/home/screens/recents/parts/recent_item_card.
 
 import 'package:talkliner/app/views/messaging/chat.dart';
 
-class RecentScreen extends StatelessWidget {
+class RecentScreen extends StatefulWidget {
   const RecentScreen({super.key});
+
+  @override
+  State<RecentScreen> createState() => _RecentScreenState();
+}
+
+class _RecentScreenState extends State<RecentScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Get.find<RecentsController>().getChatsFromDatabase();
+  }
 
   @override
   Widget build(BuildContext context) {
     final recentsController = Get.find<RecentsController>();
     final layoutController = Get.find<LayoutController>();
-
-    recentsController.getChatsFromDatabase();
 
     Widget buildRecentsList(List<dynamic> items) {
       return RefreshIndicator(

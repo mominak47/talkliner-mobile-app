@@ -67,7 +67,8 @@ class AuthController extends GetxController {
       debugPrint('[AuthController] Login successful');
 
       // Clear Database
-      DatabaseHelper().deleteDatabase('talkliner-client.db');
+      DatabaseHelper().emptyAllTables();
+
       await Get.offAllNamed(Routes.home);
     } on AuthException catch (e) {
       error.value = e.message;

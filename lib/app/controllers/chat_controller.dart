@@ -181,15 +181,16 @@ class ChatController extends GetxController {
   getMessagesFromStorage() async {
     try {
       final messagesResponse = await MessagesTable().getMessages(chat.id, 50);
+
       messages.clear();
       for (var message in messagesResponse) {
         messages.add(MessageModel.fromJson(message));
       }
       messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-      debugPrint(
-        "[Chat Controller] getMessagesFromStorage: ${messagesResponse.toString()}",
-      );
+      // debugPrint(
+      //   "[Chat Controller] getMessagesFromStorage: ${messagesResponse[0].toString()}",
+      // );
     } catch (e) {
       debugPrint("[Chat Controller] Error fetching messages: $e");
     }

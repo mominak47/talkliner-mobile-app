@@ -86,6 +86,7 @@ class RecentsController extends GetxController
   }
 
   getChatsFromDatabase() async {
+    debugPrint("WE ARE GETTING FROM CACHE");
     var chats = await ChatTable().getChats();
     debugPrint("⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️");
     debugPrint("➡️Loading From Cache ${chats.toString()}⬅️");

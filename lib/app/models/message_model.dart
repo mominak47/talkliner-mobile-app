@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
+import 'package:talkliner/app/models/user_model.dart';
 
 class MessageModel {
   final String id;
@@ -14,6 +15,9 @@ class MessageModel {
   final DateTime? editedAt;
   final String? replyTo;
   final bool isMe;
+  final UserModel? sender;
+  final String? displayName;
+  final String? profilePicture;
 
   MessageModel({
     required this.id,
@@ -28,6 +32,9 @@ class MessageModel {
     this.editedAt,
     this.replyTo,
     required this.isMe,
+    this.sender,
+    this.displayName,
+    this.profilePicture,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -51,13 +58,19 @@ class MessageModel {
       fileName: json['file_name'] as String?,
       fileSize: json['file_size'] as int?,
       timestamp: DateTime.parse(json['timestamp'] as String),
-      edited: json['edited'] as bool,
+      edited: json['edited'] == 1 ? true : false,
       editedAt:
           json['edited_at'] != null
               ? DateTime.tryParse(json['edited_at'] as String)
               : null,
       replyTo: json['reply_to'] as String?,
       isMe: isMe,
+      sender:
+          json['sender'] != null
+              ? UserModel.fromJson(json['sender'] as Map<String, dynamic>)
+              : null,
+      displayName: json['display_name'] as String?,
+      profilePicture: json['profile_picture'] as String?,
     );
   }
 

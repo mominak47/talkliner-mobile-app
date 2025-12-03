@@ -75,6 +75,21 @@ class ChatTable {
     return mutableChats.isNotEmpty ? mutableChats : null;
   }
 
+  getChatParticipants(String chatId) async {
+    final db = await dbHelper.database;
+    // Make a join SQL code for chats and participants
+    final _sql = "SELECT * FROM participants WHERE chat_id = '$chatId'";
+    var results = await db.rawQuery(_sql);
+    // Create mutable copy
+    var participants = results.map((e) => e['user_id'] as String).toList();
+
+    var users = await UsersTable().getUsersByIds(participants);
+
+    var mutableUsers = users.map((e) => UserModel.fromJson(e)).toList();
+
+    return mutableUsers.isNotEmpty ? mutableUsers : null;
+  }
+
   insert(ChatModel chat) async {
     // Check if chat already exists
     final result = await dbHelper.table(tableName).where('id', chat.id).get();

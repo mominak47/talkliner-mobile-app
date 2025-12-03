@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
+import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/message_model.dart';
+import 'package:talkliner/app/models/user_model.dart';
+import 'package:talkliner/app/sql_tables/chat_table.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/messaging/parts/message_date.dart';
 
 import 'package:talkliner/app/views/messaging/parts/date_divider.dart';
 
 class MessagesContainer extends StatefulWidget {
-  const MessagesContainer({super.key});
+  final ChatModel chat;
+  const MessagesContainer({super.key, required this.chat});
 
   @override
   State<MessagesContainer> createState() => _MessagesContainerState();
@@ -17,14 +21,18 @@ class MessagesContainer extends StatefulWidget {
 class _MessagesContainerState extends State<MessagesContainer> {
   final ScrollController _scrollController = ScrollController();
   late final ChatController chatController;
-  bool _pageOpened = false;
+  List<UserModel> participants = [];
 
   @override
   void initState() {
     super.initState();
     chatController = Get.find<ChatController>();
+
+    getParticipants();
+
     // Auto-scroll when messages list changes
     ever(chatController.messages, (_) {
+      // When a new message is added, it appears at index 0 (bottom), so we scroll to 0
       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     });
 
@@ -39,33 +47,30 @@ class _MessagesContainerState extends State<MessagesContainer> {
 
     // Scroll listener for pagination
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels <=
-          _scrollController.position.minScrollExtent + 50) {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 50) {
         // chatController.loadMoreMessages();
       }
     });
+  }
 
-    // Scroll after first frame (initial load)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scrollController.hasClients) return;
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    });
+  void getParticipants() async {
+    var participants = await ChatTable().getChatParticipants(widget.chat.id);
+    if (participants != null) {
+      setState(() {
+        participants = participants;
+      });
+    }
   }
 
   void _scrollToBottom() {
     if (!_scrollController.hasClients) return;
 
-    if (!_pageOpened) {
-      // Scroll without animation
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      _pageOpened = true;
-    } else {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-      );
-    }
+    _scrollController.animateTo(
+      0.0, // 0.0 is the bottom in a reversed list
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
@@ -105,9 +110,19 @@ class _MessagesContainerState extends State<MessagesContainer> {
     }
 
     bool shouldShowDateDivider(int index) {
-      if (index == 0) return true;
-      final currentMessage = chatController.messages[index];
-      final previousMessage = chatController.messages[index - 1];
+      // In reversed list, index is 0 at the bottom (newest).
+      // We want to compare current message with the one *before* it chronologically.
+      // Chronologically previous message is at index + 1 in the reversed list.
+
+      // If it's the last item in the reversed list (oldest message), show date.
+      if (index == chatController.messages.length - 1) return true;
+
+      final currentMessage =
+          chatController.messages[chatController.messages.length - 1 - index];
+      final previousMessage =
+          chatController.messages[chatController.messages.length -
+              1 -
+              (index + 1)];
 
       final currentDate = DateTime(
         currentMessage.timestamp.year,
@@ -123,6 +138,47 @@ class _MessagesContainerState extends State<MessagesContainer> {
       return currentDate != previousDate;
     }
 
+    Widget _showUser(message) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        decoration: BoxDecoration(
+          color:
+              isDarkMode
+                  ? TalklinerThemeColors.gray800
+                  : TalklinerThemeColors.gray050,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 8,
+              backgroundColor:
+                  isDarkMode
+                      ? TalklinerThemeColors.gray050
+                      : TalklinerThemeColors.gray100,
+              child: Icon(
+                Icons.person,
+                color:
+                    isDarkMode
+                        ? TalklinerThemeColors.gray500
+                        : TalklinerThemeColors.gray050,
+                size: 8,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              message.displayName ?? "Unknown",
+              style: TextStyle(
+                color: TalklinerThemeColors.gray200,
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Obx(
       () => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -135,27 +191,25 @@ class _MessagesContainerState extends State<MessagesContainer> {
           ),
           child: ListView.builder(
             controller: _scrollController,
+            reverse: true,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
             itemCount: chatController.messages.length,
             itemBuilder: (context, index) {
-              final message = chatController.messages[index];
+              // Reverse index mapping: 0 -> last item (newest)
+              final message =
+                  chatController.messages[chatController.messages.length -
+                      1 -
+                      index];
               final isMe = message.isMe;
               final showDateDivider = shouldShowDateDivider(index);
 
               return Column(
                 children: [
-                  if (index == 0 && chatController.isLoadingMore.value)
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
-                    ),
                   if (showDateDivider)
                     DateDivider(timestamp: message.timestamp),
                   Container(
                     margin: EdgeInsets.only(
-                      top: showDateDivider ? 0 : (index == 0 ? 0 : 8),
+                      top: showDateDivider ? 0 : 8, // Adjusted margin logic
                       bottom: 0,
                       left: isMe ? 40 : 0,
                       right: isMe ? 0 : 40,
@@ -182,13 +236,24 @@ class _MessagesContainerState extends State<MessagesContainer> {
                               bottomRight: Radius.circular(isMe ? 0 : 10),
                             ),
                           ),
-                          child: Text(
-                            message.content,
-                            style: TextStyle(
-                              color: getMessageTextColor(message),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              !isMe && widget.chat.chatType == ChatType.group
+                                  ? _showUser(message)
+                                  : const SizedBox(),
+                              !isMe && widget.chat.chatType == ChatType.group
+                                  ? const SizedBox(height: 8)
+                                  : const SizedBox(),
+                              Text(
+                                message.content,
+                                style: TextStyle(
+                                  color: getMessageTextColor(message),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -204,6 +269,14 @@ class _MessagesContainerState extends State<MessagesContainer> {
                       ],
                     ),
                   ),
+                  if (index == chatController.messages.length - 1 &&
+                      chatController.isLoadingMore.value)
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    ),
                 ],
               );
             },

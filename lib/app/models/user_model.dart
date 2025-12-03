@@ -76,8 +76,10 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    String id = json['id'] ?? json['_id'] ?? '';
+
     return UserModel(
-      id: json['_id'] ?? '',
+      id: id,
       domainId: json['domain_id'] ?? '',
       username: json['username'] ?? '',
       displayName: json['display_name'] ?? '',

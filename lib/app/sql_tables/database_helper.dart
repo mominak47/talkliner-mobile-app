@@ -69,20 +69,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // Participants Table
-    await db.execute('''
-      CREATE TABLE participants (
-          id TEXT PRIMARY KEY,
-          chat_id TEXT NOT NULL,
-          user_id TEXT NOT NULL,
-          role TEXT NOT NULL,
-          joined_at TEXT NOT NULL,
-          last_seen TEXT NOT NULL,
-          FOREIGN KEY (chat_id) REFERENCES chats (id) ON DELETE CASCADE,
-          FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-      )
-    ''');
-
     // Messages Table
     await db.execute('''
       CREATE TABLE messages (
@@ -103,6 +89,29 @@ class DatabaseHelper {
           FOREIGN KEY (sender_id) REFERENCES users (id) ON DELETE SET NULL
       )
     ''');
+
+    // Participants Table
+    await db.execute('''
+      CREATE TABLE participants (
+          id TEXT PRIMARY KEY,
+          chat_id TEXT NOT NULL,
+          user_id TEXT NOT NULL,
+          role TEXT NOT NULL,
+          joined_at TEXT NOT NULL,
+          last_seen TEXT NOT NULL,
+          FOREIGN KEY (chat_id) REFERENCES chats (id) ON DELETE CASCADE,
+          FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+      )
+    ''');
+  }
+
+  // Empty All Tables
+  Future<void> emptyAllTables() async {
+    final db = await database;
+    await db.delete('chats');
+    await db.delete('users');
+    await db.delete('messages');
+    await db.delete('participants');
   }
 
   Future<void> deleteDatabase(String path) async {

@@ -166,7 +166,7 @@ class Chat extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: MessagesContainer()),
+            Expanded(child: MessagesContainer(chat: chat)),
             MessageInput(chat: chat),
           ],
         ),

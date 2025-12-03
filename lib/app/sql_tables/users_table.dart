@@ -18,11 +18,25 @@ class UsersTable {
     if (user.isNotEmpty) {
       // Mutable User
       var mutableUser = Map<String, dynamic>.from(user[0]);
+      mutableUser['id'] = id;
       mutableUser['settings'] = jsonDecode(mutableUser['settings']);
 
       return mutableUser;
     }
     return null;
+  }
+
+  getUsersByIds(List<String> ids) async {
+    var users = [];
+
+    for (var id in ids) {
+      var user = await getUser(id);
+      if (user != null) {
+        users.add(user);
+      }
+    }
+
+    return users;
   }
 
   format(UserModel user) {

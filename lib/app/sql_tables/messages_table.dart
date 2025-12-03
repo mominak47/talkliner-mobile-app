@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/rendering.dart';
 import 'package:talkliner/app/models/message_model.dart';
+import 'package:talkliner/app/sql_tables/chat_table.dart';
 import 'package:talkliner/app/sql_tables/database_helper.dart';
+import 'package:talkliner/app/sql_tables/users_table.dart';
 
 class MessagesTable {
   static const String tableName = 'messages';
@@ -14,23 +16,60 @@ class MessagesTable {
   }
 
   getMessages(String chatId, int perPage) async {
-    var messages =
-        await dbHelper
-            .table(tableName)
-            .where('chat_id', chatId)
-            .orderBy('timestamp', 'desc')
-            .limit(perPage)
-            .groupBy('id')
-            .get();
+    var sql = """
+SELECT 
+    messages.id,
+    messages.chat_id,
+    messages.sender_id,
+    messages.content,
+    messages.message_type,
+    messages.file_url,
+    messages.is_me,
+    messages.timestamp,
+    messages.edited,
+    messages.edited_at,
+    messages.reply_to,
+    users.display_name,
+    users.profile_picture
+FROM 
+    messages
+LEFT JOIN 
+    users ON messages.sender_id = users.id
+WHERE 
+    messages.chat_id = '$chatId'
+ORDER BY 
+    messages.timestamp DESC
+LIMIT 
+    $perPage
+    """;
+
+    var db = await DatabaseHelper().database;
+
+    var messages = await db.rawQuery(sql);
 
     var newMessages =
         messages.map((e) => Map<String, dynamic>.from(e)).toList();
 
-    newMessages.forEach((element) {
-      element['edited'] = element['edited'] == 1 ? true : false;
-    });
-
     return newMessages;
+    // var messages =
+    //     await dbHelper
+    //         .table(tableName)
+    //         .where('chat_id', chatId)
+    //         .orderBy('timestamp', 'desc')
+    //         .limit(perPage)
+    //         .groupBy('id')
+    //         .get();
+
+    // var newMessages =
+    //     messages.map((e) => Map<String, dynamic>.from(e)).toList();
+
+    // var participants = await ChatTable().getChatParticipants(chatId);
+
+    // for (var message in newMessages) {
+    //   message['edited'] = message['edited'] == 1 ? true : false;
+    // }
+
+    // return newMessages;
   }
 
   getMessage(String id) async {
@@ -49,7 +88,7 @@ class MessagesTable {
     return {
       'id': message.id,
       'chat_id': chatId,
-      'sender_id': jsonEncode(message.senderId),
+      'sender_id': message.senderId,
       'content': message.content,
       'message_type': message.messageType,
       'file_url': message.fileUrl,
