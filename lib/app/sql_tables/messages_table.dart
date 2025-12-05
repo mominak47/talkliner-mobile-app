@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/rendering.dart';
 import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/sql_tables/chat_table.dart';
-import 'package:talkliner/app/sql_tables/database_helper.dart';
+import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/sql_tables/users_table.dart';
 
 class MessagesTable {

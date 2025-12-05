@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:talkliner/app/debugging/ansicolor.dart';
 import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
-import 'package:talkliner/app/sql_tables/database_helper.dart';
+import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/sql_tables/messages_table.dart';
 import 'package:talkliner/app/sql_tables/participants_table.dart';

@@ -11,8 +11,19 @@ import 'package:talkliner/app/views/home/screens/pushtotalk/widgets/push_to_talk
 import 'package:talkliner/app/views/home/screens/recents/recent_screen.dart';
 import 'package:talkliner/app/views/home/widgets/navigation_bar.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  @override
+  void initState() {
+    super.initState();
+    debugPrint("Home View Init");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +42,12 @@ class HomeView extends StatelessWidget {
     return Obx(
       () => Scaffold(
         appBar:
-            homeController.showAppBar.value
-                ? homeController.getAppBar()
-                : null,
+            homeController.showAppBar.value ? homeController.getAppBar() : null,
         body: SafeArea(
           child: Stack(
             children: [
               screens[homeController.currentIndex.value],
-             
+
               if (appSettingsController.showFloatingPushToTalkButton.value &&
                   homeController.currentIndex.value != 2)
                 Positioned(

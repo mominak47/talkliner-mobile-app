@@ -1,6 +1,6 @@
 import 'package:flutter/rendering.dart';
 import 'package:talkliner/app/models/chat_model.dart';
-import 'package:talkliner/app/sql_tables/database_helper.dart';
+import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/sql_tables/users_table.dart';
 
 class ParticipantsTable {

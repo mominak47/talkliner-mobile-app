@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/controllers/contacts_controller.dart';
 import 'package:talkliner/app/controllers/layout_controller.dart';
+import 'package:talkliner/app/controllers/recents_controller.dart';
 import 'package:talkliner/app/views/home/widgets/signalbars_widget.dart';
 
 class HomeController extends GetxController {
@@ -50,6 +51,11 @@ class HomeController extends GetxController {
         Get.find<ContactsController>().fetchGroups();
       } else {
         showCustomAppBar.value = false;
+      }
+
+      if (index == 0) {
+        debugPrint("Fetching Recents");
+        Get.find<RecentsController>().fetchRecents();
       }
     });
   }

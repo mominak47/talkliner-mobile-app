@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/cachemanagers/chat_cache.dart';
 import 'package:talkliner/app/sql_tables/chat_table.dart';
-import 'package:talkliner/app/sql_tables/database_helper.dart';
+import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/api_service.dart';

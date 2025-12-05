@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:talkliner/app/sql_tables/database_helper.dart';
+import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/models/message_model.dart';
 import 'user_model.dart';
 import 'package:talkliner/app/services/talkliner_service.dart';

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/rendering.dart';
-import 'package:talkliner/app/sql_tables/database_helper.dart';
+import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/models/user_model.dart';
 
 class UsersTable {
