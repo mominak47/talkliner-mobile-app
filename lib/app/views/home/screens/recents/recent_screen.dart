@@ -45,7 +45,10 @@ class _RecentScreenState extends State<RecentScreen> {
                   RecentItemCard(
                     recentItem: items[index],
                     onTapIconColor: Colors.red,
-                    onTap: () => Get.to(() => Chat(chat: items[index])),
+                    onTap:
+                        () => Get.to(() => Chat(chat: items[index]))?.then(
+                          (_) => recentsController.getChatsFromDatabase(),
+                        ),
                     isSelected: false,
                   ),
                   Divider(height: 1),
@@ -118,7 +121,6 @@ class _RecentScreenState extends State<RecentScreen> {
                       ],
                     ),
                   ),
-                  Divider(height: 1),
                   Expanded(
                     child: TabBarView(
                       controller: recentsController.tabController,
@@ -181,7 +183,7 @@ class _RecentScreenState extends State<RecentScreen> {
                   isSelected
                       ? TalklinerThemeColors.gray700
                       : isLightMode
-                      ? TalklinerThemeColors.gray800
+                      ? TalklinerThemeColors.gray400
                       : TalklinerThemeColors.gray020,
               fontSize: 14,
               fontWeight: FontWeight.bold,

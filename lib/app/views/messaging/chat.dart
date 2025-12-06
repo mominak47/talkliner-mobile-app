@@ -33,7 +33,6 @@ class _ChatState extends State<Chat> {
   @override
   void dispose() {
     super.dispose();
-    RecentsController().getChatsFromDatabase();
   }
 
   Widget getProfilePicture(chat) {

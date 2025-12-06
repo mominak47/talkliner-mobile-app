@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:talkliner/app/cachemanagers/chat_cache.dart';
+import 'package:talkliner/app/services/talkliner_service.dart';
 import 'package:talkliner/app/sql_tables/chat_table.dart';
 import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/models/chat_model.dart';
@@ -14,8 +15,6 @@ class RecentsController extends GetxController
   final RxBool isLoading = false.obs;
   final RxList<ChatModel> recents = <ChatModel>[].obs;
 
-  final GetStorage _storage = GetStorage('chat_cache');
-
   late TabController tabController;
 
   @override
@@ -27,6 +26,13 @@ class RecentsController extends GetxController
     // Use WidgetsBinding to ensure this runs after the build phase
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchRecents();
+    });
+
+    // Listen to database changes
+    DatabaseHelper().onDatabaseChanged.listen((table) {
+      if (['chats', 'messages', 'users', 'participants'].contains(table)) {
+        getChatsFromDatabase();
+      }
     });
   }
 
@@ -44,16 +50,15 @@ class RecentsController extends GetxController
 
   Future<void> fetchRecents({bool shouldShowLoading = false}) async {
     if (shouldShowLoading) isLoading.value = true;
-
-    final response = await apiService.get('/chats');
     try {
+      final response = await TalklinerService.get('/chats');
       if (response.statusCode == 200) {
-        final List<dynamic> recentList = response.body['data']['chats'] ?? [];
+        var body = jsonDecode(response.body);
+        final List<dynamic> recentList = body['data']['chats'] ?? [];
+
         final List<ChatModel> recentModels =
             recentList.map((recent) => ChatModel.fromJson(recent)).toList();
-        // recents.assignAll(recentModels);
         saveInfoInLocalStorage(recentModels);
-        getChatsFromDatabase();
       } else {
         debugPrint(response.body.toString());
       }

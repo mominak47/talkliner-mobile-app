@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class UserAvatar extends StatelessWidget {
   final UserModel? user;
@@ -68,8 +69,8 @@ class UserAvatar extends StatelessWidget {
 
     return Container(
       clipBehavior: Clip.none,
-      width: (1/3) * size,
-      height: (1/3) * size,
+      width: (1 / 3) * size,
+      height: (1 / 3) * size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: backgroundColor,
@@ -82,10 +83,17 @@ class UserAvatar extends StatelessWidget {
 
   Container getTypingIndicator() {
     return Container(
-      width: (1/3) * size,
-      height: (1/3) * size,
-      decoration: BoxDecoration(color: TalklinerThemeColors.primary500, shape: BoxShape.circle),
-      child: Icon(LucideIcons.pencil, size: (5.0 / 24.0) * size, color: Colors.white),
+      width: (1 / 3) * size,
+      height: (1 / 3) * size,
+      decoration: BoxDecoration(
+        color: TalklinerThemeColors.primary500,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        LucideIcons.pencil,
+        size: (5.0 / 24.0) * size,
+        color: Colors.white,
+      ),
     );
   }
 
@@ -96,13 +104,14 @@ class UserAvatar extends StatelessWidget {
 
     RxBool typingState = false.obs;
 
-
     socketController.event.listen((event) {
-      if(event == 'USER_TO_USER_EVENT') {
-          if(socketController.eventData['event'] == 'user_typing') {
-            typingState.value = socketController.eventData['data']['state'];
-            debugPrint("User Typing: ${typingState.value} : ${socketController.eventData['data']['text']}");
-          }
+      if (event == 'USER_TO_USER_EVENT') {
+        if (socketController.eventData['event'] == 'user_typing') {
+          typingState.value = socketController.eventData['data']['state'];
+          debugPrint(
+            "User Typing: ${typingState.value} : ${socketController.eventData['data']['text']}",
+          );
+        }
       }
     });
 
@@ -113,23 +122,64 @@ class UserAvatar extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(size / 2),
             clipBehavior: Clip.hardEdge,
-            child: Image.network(user!.profilePicture!, width: size, height: size),
+            child: CachedNetworkImage(
+              imageUrl: user!.profilePicture!,
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+              placeholder:
+                  (context, url) => CircleAvatar(
+                    radius: size / 2,
+                    backgroundColor:
+                        isDarkMode
+                            ? TalklinerThemeColors.gray700
+                            : backgroundColor,
+                    child: Text(
+                      getInitials(),
+                      style: TextStyle(
+                        fontSize: (1 / 3) * size,
+                        color: textColor,
+                      ),
+                    ),
+                  ),
+              errorWidget:
+                  (context, url, error) => CircleAvatar(
+                    radius: size / 2,
+                    backgroundColor:
+                        isDarkMode
+                            ? TalklinerThemeColors.gray700
+                            : backgroundColor,
+                    child: Text(
+                      getInitials(),
+                      style: TextStyle(
+                        fontSize: (1 / 3) * size,
+                        color: textColor,
+                      ),
+                    ),
+                  ),
+            ),
           ),
         if (user?.profilePicture == null)
           CircleAvatar(
             radius: size / 2,
-            backgroundColor: isDarkMode ? TalklinerThemeColors.gray700 : backgroundColor,
+            backgroundColor:
+                isDarkMode ? TalklinerThemeColors.gray700 : backgroundColor,
             child: Text(
               getInitials(),
-              style: TextStyle(fontSize: (1/3) * size, color: textColor),
+              style: TextStyle(fontSize: (1 / 3) * size, color: textColor),
             ),
           ),
         if (indicator)
-          Obx(() => Positioned(
-            bottom: 0,
-            right: 0,
-            child: typingState.value ? getTypingIndicator() : getStatusIndicator(whoIsSpeaking ?? ""),
-          )),
+          Obx(
+            () => Positioned(
+              bottom: 0,
+              right: 0,
+              child:
+                  typingState.value
+                      ? getTypingIndicator()
+                      : getStatusIndicator(whoIsSpeaking ?? ""),
+            ),
+          ),
       ],
     );
   }

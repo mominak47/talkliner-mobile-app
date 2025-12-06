@@ -106,7 +106,7 @@ LIMIT
         await dbHelper.table(tableName).where('id', message.id).get();
     if (result.isNotEmpty) {
       debugPrint("[SQL] UPDATE Message : id = ${message.id}");
-      return update(message, chatId);
+      // return update(message, chatId);
     } else {
       debugPrint("[SQL] INSERT Message : id = ${message.id}");
       // Insert

@@ -35,7 +35,7 @@ class DateDivider extends StatelessWidget {
           color:
               isDarkMode
                   ? TalklinerThemeColors.gray800
-                  : TalklinerThemeColors.gray100,
+                  : TalklinerThemeColors.gray040,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
@@ -44,7 +44,7 @@ class DateDivider extends StatelessWidget {
             color:
                 isDarkMode
                     ? TalklinerThemeColors.gray300
-                    : TalklinerThemeColors.gray600,
+                    : TalklinerThemeColors.gray200,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),

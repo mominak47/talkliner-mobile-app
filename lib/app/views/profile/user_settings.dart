@@ -52,7 +52,7 @@ class UserSettings extends StatelessWidget {
                       vertical: 12,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
@@ -62,8 +62,32 @@ class UserSettings extends StatelessWidget {
                   ),
                   child: Text('Logout'.tr),
                 ),
+                // Button Clear Cache
               ),
-              SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    surfaceTintColor: TalklinerThemeColors.primary500,
+                    foregroundColor: Colors.red,
+                    elevation: 0,
+                  ),
+                  child: Text('Clear Cache'.tr),
+                ),
+                // Button Clear Cache
+              ),
+              Divider(),
               Text(
                 'Version'.tr,
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),

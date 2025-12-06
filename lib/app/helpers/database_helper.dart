@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -13,6 +14,14 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   factory DatabaseHelper() => _instance;
+
+  // Stream controller for database changes
+  final _dbChangeController = StreamController<String>.broadcast();
+  Stream<String> get onDatabaseChanged => _dbChangeController.stream;
+
+  void notifyTableChanged(String table) {
+    _dbChangeController.add(table);
+  }
 
   // Get Database Instance
   Future<Database> get database async {
@@ -144,11 +153,13 @@ class DatabaseHelper {
   // Raw Insert (kept for compatibility or direct use)
   Future<int> insert(String table, Map<String, dynamic> values) async {
     final db = await database;
-    return await db.insert(
+    var res = await db.insert(
       table,
       _sanitizeData(values),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    notifyTableChanged(table);
+    return res;
   }
 }
 
@@ -243,11 +254,13 @@ class QueryBuilder {
   // Insert
   Future<int> insert(Map<String, dynamic> data) async {
     final db = await _dbHelper.database;
-    return await db.insert(
+    var res = await db.insert(
       _table,
       _dbHelper._sanitizeData(data),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    _dbHelper.notifyTableChanged(_table);
+    return res;
   }
 
   // Insert Batch
@@ -264,27 +277,32 @@ class QueryBuilder {
       }
       await batch.commit(noResult: true);
     });
+    _dbHelper.notifyTableChanged(_table);
   }
 
   // Update
   Future<int> update(Map<String, dynamic> data) async {
     final db = await _dbHelper.database;
-    return await db.update(
+    var res = await db.update(
       _table,
       _dbHelper._sanitizeData(data),
       where: _whereClauses.isNotEmpty ? _whereClauses.join(' AND ') : null,
       whereArgs: _whereArgs.isNotEmpty ? _whereArgs : null,
     );
+    _dbHelper.notifyTableChanged(_table);
+    return res;
   }
 
   // Delete
   Future<int> delete() async {
     final db = await _dbHelper.database;
-    return await db.delete(
+    var res = await db.delete(
       _table,
       where: _whereClauses.isNotEmpty ? _whereClauses.join(' AND ') : null,
       whereArgs: _whereArgs.isNotEmpty ? _whereArgs : null,
     );
+    _dbHelper.notifyTableChanged(_table);
+    return res;
   }
 
   // Count

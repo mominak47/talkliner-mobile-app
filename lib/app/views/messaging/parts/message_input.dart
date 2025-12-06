@@ -203,6 +203,7 @@ class _MessageInputState extends State<MessageInput> {
                       backgroundColor: TalklinerThemeColors.primary500,
                       shape: CircleBorder(),
                       padding: EdgeInsets.all(12),
+                      elevation: 0,
                     ),
                     child: SvgPicture.asset(
                       'assets/images/send-horizontal-filled.svg',

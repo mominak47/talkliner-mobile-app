@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,8 @@ class CallController extends GetxController {
 
   bool isWatcherLoaded = false;
 
+  AudioPlayer audioPlayer = AudioPlayer();
+
   @override
   void onInit() {
     super.onInit();
@@ -28,6 +31,12 @@ class CallController extends GetxController {
         isWatcherLoaded = true;
       }
     });
+  }
+
+  @override
+  void onClose() {
+    audioPlayer.dispose();
+    super.onClose();
   }
 
   void watchEvents() {
@@ -135,14 +144,29 @@ class CallController extends GetxController {
         sendEvent: sendEvent,
       );
 
+      // Play ringtone
+      playRingtone();
+
       // Show Popup
-      call.showPopup();
+      call.showPopup(
+        () => {
+          // Stop Audio
+          audioPlayer.stop(),
+        },
+      );
 
       // Add to calls list
       addCall(call);
 
       debugPrint('CallController: Incoming call: $call');
     }
+  }
+
+  void playRingtone() {
+    // Play ringtone in a loop
+    audioPlayer.setVolume(1.0);
+    audioPlayer.play(AssetSource('audio/talkliner-ringtone.mp3'));
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
   }
 
   // Handle Call Ended

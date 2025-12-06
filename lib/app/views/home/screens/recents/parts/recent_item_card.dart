@@ -144,12 +144,12 @@ class RecentItemCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Icon(
-                      isMyMessage
+                      recentItem.lastMessage?.senderId.id == user?.id
                           ? LucideIcons.arrowDownRight
                           : LucideIcons.arrowUpRight,
                       size: 16,
                       color:
-                          isMyMessage
+                          recentItem.lastMessage?.senderId.id == user?.id
                               ? TalklinerThemeColors.green500
                               : TalklinerThemeColors.primary500,
                     ),

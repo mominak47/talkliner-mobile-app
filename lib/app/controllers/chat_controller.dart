@@ -3,15 +3,14 @@ import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
 import 'package:talkliner/app/controllers/recents_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/services/api_service.dart';
-import 'package:talkliner/app/sql_tables/chat_table.dart';
 import 'package:talkliner/app/sql_tables/messages_table.dart';
+import 'package:talkliner/app/helpers/database_helper.dart';
 
 class ChatController extends GetxController {
   final ChatModel chat;
@@ -28,46 +27,13 @@ class ChatController extends GetxController {
 
   final _audioPlayer = AudioPlayer();
 
-  // Storage
-  final GetStorage _storage = GetStorage();
-
   final RecentsController recentsController = Get.find<RecentsController>();
 
   ChatController({required this.chat});
   final SocketController socketController = Get.find<SocketController>();
   final AuthController authController = Get.find<AuthController>();
 
-  void watchSocketEvent() {
-    // socketController.event.listen((event) {
-    //   if (event == 'new_message') {
-    //     try {
-    //       final eventData = socketController.eventData;
-    //       if (eventData['message'] != null &&
-    //           eventData['message']['sender_id']['_id'] !=
-    //               authController.user.value?.id) {
-    //         final message = MessageModel.fromJson(eventData['message']);
-    //         // Check if message already exists to avoid duplicates
-    //         if (!messages.any((m) => m.id == message.id)) {
-    //           messages.add(message);
-    //           // Save to local storage
-    //           // saveInfoInLocalStorage();
-    //         }
-    //       }
-    //     } catch (e) {
-    //       debugPrint('ChatController: Error parsing message: $e');
-    //     }
-    //   }
-
-    //   if (event == 'USER_TO_USER_EVENT') {
-    //     final eventData = socketController.eventData;
-    //     if (eventData['event'] == 'user_typing') {
-    //       debugPrint('ChatController: User typing: $eventData');
-    //     } else {
-    //       debugPrint('ChatController: Unknown event: $eventData');
-    //     }
-    //   }
-    // });
-  }
+  void watchSocketEvent() {}
 
   @override
   void onInit() {
@@ -78,6 +44,13 @@ class ChatController extends GetxController {
     // fetchMessages();
     // recentsController.fetchRecents();
     watchSocketEvent();
+
+    // Listen to database changes
+    DatabaseHelper().onDatabaseChanged.listen((table) {
+      if (['messages'].contains(table)) {
+        getMessagesFromStorage();
+      }
+    });
 
     ever(
       messages,
@@ -113,12 +86,12 @@ class ChatController extends GetxController {
     }
 
     try {
-      final messages_response = await chat.getMessages(
+      final messagesResponse = await chat.getMessages(
         perPage: perPage,
         page: page,
       );
 
-      for (var message in messages_response) {
+      for (var message in messagesResponse) {
         await MessagesTable().insert(message, chat.id);
       }
 

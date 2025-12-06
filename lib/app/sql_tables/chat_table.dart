@@ -113,7 +113,7 @@ class ChatTable {
       // Insert Participants
       update_participants(chat);
       // // Insert Messages
-      // update_messages(chat);
+      update_messages(chat, chat.id);
       // // Update Chat
 
       var insertObject = format(chat);
@@ -144,7 +144,15 @@ class ChatTable {
     }
   }
 
-  update_messages(List<MessageModel> messages) async {}
+  update_messages(ChatModel chat, String chatId) async {
+    var messages = chat.messages;
+    // Loop
+    if (messages != null && messages.isNotEmpty) {
+      for (var message in messages) {
+        MessagesTable().insert(message, chatId);
+      }
+    }
+  }
 
   insertBatch(List<ChatModel> chats) async {
     List<Map<String, dynamic>> dataList = [];

@@ -5,7 +5,8 @@ import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/others/components/user_avatar.dart';
-enum CallType{
+
+enum CallType {
   individual,
   group;
 
@@ -77,7 +78,6 @@ class CallModel {
   List<UserModel> participants;
   Function sendEvent;
 
-
   CallModel({
     required this.id,
     required this.direction,
@@ -91,37 +91,35 @@ class CallModel {
     required this.sendEvent,
   });
 
+  void watchEvents() {}
 
-  void watchEvents(){
-  }
-  
-  void updateStatus(String status){
+  void updateStatus(String status) {
     status = status;
     updatedAt = DateTime.now().toIso8601String();
   }
 
-  void endCall(Function cb){
+  void endCall(Function cb) {
     debugPrint('CallModel: Ending call: $id');
     sendEvent('end', participants.first.id, null, (response) {
       cb(response);
     });
   }
 
-  void rejectCall(Function cb){
+  void rejectCall(Function cb) {
     sendEvent('reject', participants.first.id, null, (response) {
       cb(response);
     });
   }
 
-  void updateRoomID(String roomID){
+  void updateRoomID(String roomID) {
     this.roomID = roomID;
   }
 
-  void updateRoomToken(String roomToken){
+  void updateRoomToken(String roomToken) {
     this.roomToken = roomToken;
   }
 
-  void showPopup(){
+  void showPopup(Function? cb) {
     bool isDarkMode = Theme.of(Get.context!).brightness == Brightness.dark;
 
     UserModel user = participants.first;
@@ -156,8 +154,7 @@ class CallModel {
             backgroundColor: TalklinerThemeColors.green500,
             child: IconButton(
               iconSize: 24,
-              onPressed: () {
-              },
+              onPressed: () {},
               icon: Icon(LucideIcons.check, color: Colors.white),
             ),
           ),
@@ -179,24 +176,26 @@ class CallModel {
           ),
         ],
       ),
-    );
+    ).then((val) {
+      if (cb != null) {
+        cb();
+      }
+      print("Call Modal Closed");
+    });
   }
 
-
-  factory CallModel.make(
-    {
-      required String callId,
-      required CallDirection direction,
-      required CallType type,
-      String? roomID,
-      String? roomToken,
-      required CallStatus status,
-      String? createdAt,
-      String? updatedAt,
-      required List<UserModel> participants,
-      required Function sendEvent,
-    }
-  ){
+  factory CallModel.make({
+    required String callId,
+    required CallDirection direction,
+    required CallType type,
+    String? roomID,
+    String? roomToken,
+    required CallStatus status,
+    String? createdAt,
+    String? updatedAt,
+    required List<UserModel> participants,
+    required Function sendEvent,
+  }) {
     CallModel call = CallModel(
       id: callId,
       direction: direction,

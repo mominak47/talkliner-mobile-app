@@ -139,43 +139,25 @@ class _MessagesContainerState extends State<MessagesContainer> {
     }
 
     Widget _showUser(message) {
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        decoration: BoxDecoration(
-          color:
-              isDarkMode
-                  ? TalklinerThemeColors.gray800
-                  : TalklinerThemeColors.gray050,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 8,
-              backgroundColor:
+      return Column(
+        children: [
+          CircleAvatar(
+            radius: 8,
+            backgroundColor:
+                isDarkMode
+                    ? TalklinerThemeColors.gray050
+                    : TalklinerThemeColors.gray100,
+            child: Icon(
+              Icons.person,
+              color:
                   isDarkMode
-                      ? TalklinerThemeColors.gray050
-                      : TalklinerThemeColors.gray100,
-              child: Icon(
-                Icons.person,
-                color:
-                    isDarkMode
-                        ? TalklinerThemeColors.gray500
-                        : TalklinerThemeColors.gray050,
-                size: 8,
-              ),
+                      ? TalklinerThemeColors.gray500
+                      : TalklinerThemeColors.gray050,
+              size: 8,
             ),
-            const SizedBox(width: 8),
-            Text(
-              message.displayName ?? "Unknown",
-              style: TextStyle(
-                color: TalklinerThemeColors.gray200,
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
+          ),
+          SizedBox(height: 20),
+        ],
       );
     }
 
@@ -216,56 +198,67 @@ class _MessagesContainerState extends State<MessagesContainer> {
                     ),
                     alignment:
                         isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Column(
-                      crossAxisAlignment:
-                          isMe
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 14,
-                          ),
-                          decoration: BoxDecoration(
-                            color: getMessageColor(message),
-                            borderRadius: BorderRadius.only(
-                              topLeft: const Radius.circular(10),
-                              topRight: const Radius.circular(10),
-                              bottomLeft: Radius.circular(isMe ? 10 : 0),
-                              bottomRight: Radius.circular(isMe ? 0 : 10),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              !isMe && widget.chat.chatType == ChatType.group
-                                  ? _showUser(message)
-                                  : const SizedBox(),
-                              !isMe && widget.chat.chatType == ChatType.group
-                                  ? const SizedBox(height: 8)
-                                  : const SizedBox(),
-                              Text(
-                                message.content,
-                                style: TextStyle(
-                                  color: getMessageTextColor(message),
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
+                        !isMe && widget.chat.chatType == ChatType.group
+                            ? _showUser(message)
+                            : const SizedBox(),
+                        !isMe && widget.chat.chatType == ChatType.group
+                            ? const SizedBox(width: 4)
+                            : const SizedBox(),
+                        Column(
+                          crossAxisAlignment:
+                              isMe
+                                  ? CrossAxisAlignment.end
+                                  : CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              constraints: BoxConstraints(
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.7,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 14,
+                              ),
+                              decoration: BoxDecoration(
+                                color: getMessageColor(message),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: const Radius.circular(10),
+                                  topRight: const Radius.circular(10),
+                                  bottomLeft: Radius.circular(isMe ? 10 : 0),
+                                  bottomRight: Radius.circular(isMe ? 0 : 10),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        (message.id == "sending")
-                            ? Text(
-                              "Sending...",
-                              style: TextStyle(
-                                color: TalklinerThemeColors.gray050,
-                                fontSize: 12,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    message.content,
+                                    style: TextStyle(
+                                      color: getMessageTextColor(message),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            )
-                            : MessageDate(timestamp: message.timestamp),
+                            ),
+                            const SizedBox(height: 4),
+                            (message.id == "sending")
+                                ? Text(
+                                  "Sending...",
+                                  style: TextStyle(
+                                    color: TalklinerThemeColors.gray050,
+                                    fontSize: 12,
+                                  ),
+                                )
+                                : MessageDate(timestamp: message.timestamp),
+                          ],
+                        ),
                       ],
                     ),
                   ),

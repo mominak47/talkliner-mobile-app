@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/models/message_model.dart';
 import 'user_model.dart';
 import 'package:talkliner/app/services/talkliner_service.dart';
@@ -63,12 +62,6 @@ class ChatModel {
       createdBy: json['created_by'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
-      lastMessage:
-          json['last_message'] != null
-              ? RecentLastMessage.fromJson(
-                json['last_message'] as Map<String, dynamic>,
-              )
-              : null,
       settings: RecentSettings.fromJson(
         json['settings'] as Map<String, dynamic>,
       ),
@@ -94,7 +87,6 @@ class ChatModel {
     'created_by': createdBy,
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
-    'last_message': lastMessage?.toJson(),
     'settings': settings.toJson(),
   };
 
@@ -112,7 +104,6 @@ class ChatModel {
     String? createdBy,
     DateTime? createdAt,
     DateTime? updatedAt,
-    RecentLastMessage? lastMessage,
     RecentSettings? settings,
     List<MessageModel>? messages,
   }) {
@@ -129,7 +120,6 @@ class ChatModel {
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      lastMessage: lastMessage ?? this.lastMessage,
       settings: settings ?? this.settings,
       messages: messages ?? this.messages,
     );

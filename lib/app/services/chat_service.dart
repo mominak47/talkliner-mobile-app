@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/models/message_model.dart';
+import 'package:talkliner/app/sql_tables/chat_table.dart';
+import 'package:talkliner/app/sql_tables/messages_table.dart';
 
 class ChatService {
   // Storage
@@ -9,17 +11,8 @@ class ChatService {
     String chatId,
     MessageModel message,
   ) async {
-    final GetStorage storage = GetStorage();
     debugPrint('Appending message to chat: $chatId, $message');
-    var storageKey = 'chat_$chatId';
 
-    var chat = storage.read(storageKey);
-    if (chat != null) {
-      // Check if message already exists
-      if (!chat.messages.any((m) => m.id == message.id)) {
-        chat.messages.add(message);
-        storage.write(storageKey, chat);
-      }
-    }
+    MessagesTable().insert(message, chatId);
   }
 }
