@@ -56,8 +56,6 @@ class RecentItemCard extends StatelessWidget {
 
     final user = authController.user.value;
 
-    final bool isMyMessage = recentItem.lastMessage?.senderId.id == user?.id;
-
     return ElevatedButton(
       onPressed: onTap,
       onLongPress: () {
@@ -100,16 +98,13 @@ class RecentItemCard extends StatelessWidget {
           if (recentItem.chatType == ChatType.group)
             CircleAvatar(
               radius: 24,
-              backgroundColor:
-                  isDarkMode
-                      ? TalklinerThemeColors.gray030
-                      : TalklinerThemeColors.gray900,
+              backgroundColor: TalklinerThemeColors.gray050,
               child: Text(
                 recentItem.name?.substring(0, 2) ?? '',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: theme.primaryColor,
+                  color: TalklinerThemeColors.gray900,
                 ),
               ),
             ),

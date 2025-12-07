@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
+import 'package:talkliner/app/views/calling/call_screen.dart';
 import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
 enum CallType {
@@ -93,14 +94,20 @@ class CallModel {
 
   void watchEvents() {}
 
-  void updateStatus(String status) {
-    status = status;
+  void updateStatus(CallStatus _status) {
+    status = _status;
     updatedAt = DateTime.now().toIso8601String();
   }
 
   void endCall(Function cb) {
     debugPrint('CallModel: Ending call: $id');
     sendEvent('end', participants.first.id, null, (response) {
+      cb(response);
+    });
+  }
+
+  void acceptCall(Function cb) {
+    sendEvent('accept', participants.first.id, null, (response) {
       cb(response);
     });
   }
@@ -119,7 +126,7 @@ class CallModel {
     this.roomToken = roomToken;
   }
 
-  void showPopup(Function? cb) {
+  void showPopup(Function? cb, Function? successCallback) {
     bool isDarkMode = Theme.of(Get.context!).brightness == Brightness.dark;
 
     UserModel user = participants.first;
@@ -154,7 +161,15 @@ class CallModel {
             backgroundColor: TalklinerThemeColors.green500,
             child: IconButton(
               iconSize: 24,
-              onPressed: () {},
+              onPressed: () {
+                acceptCall((response) {
+                  debugPrint('CallModel: Call accepted: $response');
+                  Get.back(result: 'accepted');
+                  if (successCallback != null) {
+                    successCallback(response);
+                  }
+                });
+              },
               icon: Icon(LucideIcons.check, color: Colors.white),
             ),
           ),
@@ -166,10 +181,8 @@ class CallModel {
               onPressed: () {
                 rejectCall((response) {
                   debugPrint('CallModel: Call rejected: $response');
+                  Get.back();
                 });
-                Get.back();
-                // Get parent of the class
-                Get.find<CallController>().removeCall(this);
               },
               icon: Icon(LucideIcons.x, color: Colors.white),
             ),
@@ -177,8 +190,10 @@ class CallModel {
         ],
       ),
     ).then((val) {
-      if (cb != null) {
-        cb();
+      if (val != 'accepted') {
+        if (cb != null) {
+          cb();
+        }
       }
       print("Call Modal Closed");
     });

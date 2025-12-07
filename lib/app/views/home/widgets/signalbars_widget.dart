@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:talkliner/app/config/app_config.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -334,6 +335,18 @@ class SignalBarsWidget extends StatelessWidget {
                                   // Stats Cards Row
                                   Text(
                                     "Current Latency: ${currentLatency.toInt()}ms, Average Latency: ${avgLatency.toInt()}ms, Connection Quality: ${_getQualityText(quality)}",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.normal,
+                                      color:
+                                          isDarkMode
+                                              ? Colors.white.withOpacity(0.5)
+                                              : Colors.black.withOpacity(0.5),
+                                    ),
+                                  ),
+                                  // API URL
+                                  Text(
+                                    "API URL: ${AppConfig().socketUrl()}",
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.normal,
