@@ -62,7 +62,9 @@ class PushToTalkButton extends StatelessWidget {
   Color get _buttonBackgroundColor {
     switch (state) {
       case PushToTalkButtonState.notSelected:
-        return isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray030;
+        return isDarkMode
+            ? TalklinerThemeColors.gray700
+            : TalklinerThemeColors.gray030;
       case PushToTalkButtonState.inactive:
         return TalklinerThemeColors.primary025;
       case PushToTalkButtonState.active:
@@ -72,7 +74,9 @@ class PushToTalkButton extends StatelessWidget {
       case PushToTalkButtonState.disabled:
         return TalklinerThemeColors.gray030;
       case PushToTalkButtonState.connectingRoom:
-        return isDarkMode ? TalklinerThemeColors.gray700 : TalklinerThemeColors.gray030;
+        return isDarkMode
+            ? TalklinerThemeColors.gray700
+            : TalklinerThemeColors.gray030;
     }
   }
 
@@ -172,22 +176,42 @@ class PushToTalkButton extends StatelessWidget {
   dynamic get _buttonCustomIcon {
     switch (state) {
       case PushToTalkButtonState.active:
-        return SvgPicture.asset('assets/images/ptt_wave_white.svg', width: 80, height: 80);
+        return SvgPicture.asset(
+          'assets/images/ptt_wave_white.svg',
+          width: 80,
+          height: 80,
+        );
       case PushToTalkButtonState.inactive:
-        return Icon(LucideIcons.mic, color: TalklinerThemeColors.primaryMain, size: 60);
+        return Icon(
+          LucideIcons.mic,
+          color: TalklinerThemeColors.primaryMain,
+          size: 60,
+        );
       case PushToTalkButtonState.busy:
-        return SvgPicture.asset('assets/images/ptt_wave_primary.svg', width: 80, height: 80);
+        return SvgPicture.asset(
+          'assets/images/ptt_wave_primary.svg',
+          width: 80,
+          height: 80,
+        );
       case PushToTalkButtonState.disabled:
-        return SvgPicture.asset('assets/images/ptt_disabled.svg', width: 80, height: 80);
+        return SvgPicture.asset(
+          'assets/images/ptt_disabled.svg',
+          width: 80,
+          height: 80,
+        );
       case PushToTalkButtonState.connectingRoom:
-        return Icon(LucideIcons.volumeX, color: TalklinerThemeColors.gray050, size: 80);
+        return Icon(
+          LucideIcons.volumeX,
+          color: TalklinerThemeColors.gray050,
+          size: 80,
+        );
       default:
         return null;
     }
   }
 
   List<BoxShadow> get _buttonBoxShadow {
-    if(!doWeNeedShadows){
+    if (!doWeNeedShadows) {
       return [];
     }
     switch (state) {
@@ -217,7 +241,7 @@ class PushToTalkButton extends StatelessWidget {
   }
 
   Color get _buttonBorderColor {
-    if(!doWeNeedBorder){
+    if (!doWeNeedBorder) {
       return Colors.transparent;
     }
     switch (state) {
@@ -243,12 +267,16 @@ class PushToTalkButton extends StatelessWidget {
         text: _buttonText,
         fontWeight: FontWeight.w600,
         prefixIconIsSvg: true,
-        prefixIcon: Icon(LucideIcons.mic, color: TalklinerThemeColors.gray050, size: 24),
+        prefixIcon: Icon(
+          LucideIcons.mic,
+          color: TalklinerThemeColors.gray050,
+          size: 24,
+        ),
         prefixIconHeight: 24,
         prefixIconColor: _buttonIconColor,
         textColor: _buttonTextStyle.color!,
         backgroundColor: _buttonBackgroundColor,
-        height: 60,
+        height: 80,
         // Events
         onTapDown: onTapDown, // Start transmission on press
         onTapUp: onTapUp, // Stop transmission on release

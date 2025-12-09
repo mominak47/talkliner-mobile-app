@@ -9,6 +9,8 @@ import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/messaging/parts/message_date.dart';
 
 import 'package:talkliner/app/views/messaging/parts/date_divider.dart';
+import 'package:talkliner/app/views/messaging/types/call_message.dart';
+import 'package:talkliner/app/views/messaging/types/text_message.dart';
 
 class MessagesContainer extends StatefulWidget {
   final ChatModel chat;
@@ -83,32 +85,6 @@ class _MessagesContainerState extends State<MessagesContainer> {
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    Color getMessageColor(MessageModel message) {
-      if (message.id == "sending") {
-        return TalklinerThemeColors.primary025;
-      }
-      return message.isMe
-          ? (isDarkMode
-              ? TalklinerThemeColors.primary100
-              : TalklinerThemeColors.primary050)
-          : (isDarkMode
-              ? TalklinerThemeColors.gray700
-              : TalklinerThemeColors.gray040);
-    }
-
-    Color getMessageTextColor(MessageModel message) {
-      if (message.id == "sending") {
-        return TalklinerThemeColors.primary100;
-      }
-      return message.isMe
-          ? (isDarkMode
-              ? TalklinerThemeColors.primary800
-              : TalklinerThemeColors.primary700)
-          : (isDarkMode
-              ? TalklinerThemeColors.gray050
-              : TalklinerThemeColors.gray700);
-    }
-
     bool shouldShowDateDivider(int index) {
       // In reversed list, index is 0 at the bottom (newest).
       // We want to compare current message with the one *before* it chronologically.
@@ -161,6 +137,21 @@ class _MessagesContainerState extends State<MessagesContainer> {
       );
     }
 
+    Widget _showMessage(MessageModel message) {
+      if (message.messageType == 'text') {
+        return TextMessage(message: message);
+      }
+
+      switch (message.messageType) {
+        case 'text':
+          return TextMessage(message: message);
+        case 'call':
+          return CallMessage(message: message);
+        default:
+          return Container();
+      }
+    }
+
     return Obx(
       () => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -209,56 +200,7 @@ class _MessagesContainerState extends State<MessagesContainer> {
                         !isMe && widget.chat.chatType == ChatType.group
                             ? const SizedBox(width: 4)
                             : const SizedBox(),
-                        Column(
-                          crossAxisAlignment:
-                              isMe
-                                  ? CrossAxisAlignment.end
-                                  : CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.7,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 14,
-                              ),
-                              decoration: BoxDecoration(
-                                color: getMessageColor(message),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: const Radius.circular(10),
-                                  topRight: const Radius.circular(10),
-                                  bottomLeft: Radius.circular(isMe ? 10 : 0),
-                                  bottomRight: Radius.circular(isMe ? 0 : 10),
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    message.content,
-                                    style: TextStyle(
-                                      color: getMessageTextColor(message),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            (message.id == "sending")
-                                ? Text(
-                                  "Sending...",
-                                  style: TextStyle(
-                                    color: TalklinerThemeColors.gray050,
-                                    fontSize: 12,
-                                  ),
-                                )
-                                : MessageDate(timestamp: message.timestamp),
-                          ],
-                        ),
+                        _showMessage(message),
                       ],
                     ),
                   ),

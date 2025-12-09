@@ -166,7 +166,7 @@ class _ChatState extends State<Chat> {
                 ),
                 onPressed: () {
                   if (socketController.isConnected.value) {
-                    // Get.toNamed(Routes.outgoingCall, arguments: user);
+                    Get.to(() => OutgoingCallScreen(chat: chat, isVideo: true));
                   } else {
                     Fluttertoast.showToast(
                       msg: 'You are not connected to the internet',

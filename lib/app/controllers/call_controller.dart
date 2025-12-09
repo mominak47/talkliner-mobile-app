@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:talkliner/app/config/app_config.dart';
@@ -13,6 +16,22 @@ import 'package:talkliner/app/views/calling/call_screen.dart';
 class CallController extends GetxController {
   // Calls List
   final RxList<CallModel> calls = <CallModel>[].obs;
+
+  static const platform = MethodChannel('com.steigenberg.talkliner/pip');
+
+  Future<void> _updateAutoPip(bool enable) async {
+    try {
+      if (Platform.isAndroid) {
+        if (enable) {
+          await platform.invokeMethod('enableAutoPip');
+        } else {
+          await platform.invokeMethod('disableAutoPip');
+        }
+      }
+    } catch (e) {
+      debugPrint("Failed to update PIP state: $e");
+    }
+  }
 
   // Remove
   final RxString outGoingCallStatus = 'Requesting...'.obs;
@@ -29,6 +48,12 @@ class CallController extends GetxController {
   EventsListener<RoomEvent>? listener;
 
   final RxBool isMuted = false.obs;
+  final RxBool isSpeakerOn = false.obs;
+  final RxString durationString = '00:00'.obs;
+  Timer? _callTimer;
+  int _callDurationSeconds = 0;
+
+  final RxBool isVideoEnabled = false.obs;
 
   @override
   void onInit() {
@@ -43,7 +68,9 @@ class CallController extends GetxController {
 
   @override
   void onClose() {
+    _updateAutoPip(false);
     audioPlayer.dispose();
+    _callTimer?.cancel();
     room?.dispose();
     super.onClose();
   }
@@ -81,8 +108,11 @@ class CallController extends GetxController {
     }
   }
 
-  void startOutgoingCall(UserModel user) {
+  void startOutgoingCall(UserModel user, {bool isVideo = false}) {
     debugPrint('CallController: Starting outgoing call to ${user.displayName}');
+
+    // Update video state
+    isVideoEnabled.value = isVideo;
 
     // Check if the call already exists
     if (calls.any(
@@ -94,8 +124,7 @@ class CallController extends GetxController {
     }
 
     // Get Call ID
-
-    sendEvent('request', user.id, null, (resp) {
+    sendEvent('request', user.id, {'isVideo': isVideo}, (resp) {
       debugPrint('CallController: Response: $resp');
       CallModel call = CallModel.make(
         callId: resp['call_id'],
@@ -146,12 +175,18 @@ class CallController extends GetxController {
 
   Future<void> connectToRoom(String token) async {
     try {
+      // Initialize timer display state immediately
+      durationString.value = '00:00';
+
       room = Room(
         roomOptions: RoomOptions(
           adaptiveStream: true,
           dynacast: true,
           defaultAudioPublishOptions: const AudioPublishOptions(
             name: 'audio_track',
+          ),
+          defaultVideoPublishOptions: const VideoPublishOptions(
+            name: 'video_track',
           ),
         ),
       );
@@ -166,6 +201,21 @@ class CallController extends GetxController {
       // Enable microphone
       await room!.localParticipant?.setMicrophoneEnabled(true);
       isMuted.value = false;
+
+      // Enable Camera if video is enabled
+      await room!.localParticipant?.setCameraEnabled(isVideoEnabled.value);
+
+      if (isVideoEnabled.value) {
+        _updateAutoPip(true);
+      }
+
+      // Start Timer
+      startTimer();
+
+      // Check initial speaker state (default is usually earpiece or system default, but we can enforce)
+      // For now, let's assume default and user can toggle.
+      // Or we can try to detecting it.
+      // Hardware.instance.setSpeakerphoneOn(false); // Default to earpiece?
 
       debugPrint('CallController: Connected to LiveKit room');
 
@@ -186,6 +236,8 @@ class CallController extends GetxController {
       await room!.disconnect();
       room = null;
     }
+    _updateAutoPip(false);
+    stopTimer();
     audioPlayer.stop();
   }
 
@@ -203,6 +255,59 @@ class CallController extends GetxController {
     }
   }
 
+  CameraPosition cameraPosition = CameraPosition.front;
+
+  void toggleVideo() async {
+    if (room != null && room!.localParticipant != null) {
+      isVideoEnabled.value = !isVideoEnabled.value;
+      await room!.localParticipant?.setCameraEnabled(isVideoEnabled.value);
+      _updateAutoPip(isVideoEnabled.value);
+    }
+  }
+
+  void flipCamera() async {
+    if (room != null && room!.localParticipant != null) {
+      final publication =
+          room!.localParticipant!.videoTrackPublications.firstOrNull;
+      if (publication?.track is LocalVideoTrack) {
+        final track = publication!.track as LocalVideoTrack;
+        final newPosition =
+            cameraPosition == CameraPosition.front
+                ? CameraPosition.back
+                : CameraPosition.front;
+
+        await track.restartTrack(
+          CameraCaptureOptions(cameraPosition: newPosition),
+        );
+        cameraPosition = newPosition;
+      }
+    }
+  }
+
+  void toggleSpeaker() async {
+    isSpeakerOn.value = !isSpeakerOn.value;
+    await Hardware.instance.setSpeakerphoneOn(isSpeakerOn.value);
+  }
+
+  void startTimer() {
+    _callDurationSeconds = 0;
+    durationString.value = '00:00';
+    _callTimer?.cancel();
+    _callTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _callDurationSeconds++;
+      int minutes = _callDurationSeconds ~/ 60;
+      int seconds = _callDurationSeconds % 60;
+      durationString.value =
+          '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    });
+  }
+
+  void stopTimer() {
+    _callTimer?.cancel();
+    _callTimer = null;
+    durationString.value = '';
+  }
+
   // End Call
   void endCall(call) {
     call.endCall((resp) {
@@ -217,6 +322,9 @@ class CallController extends GetxController {
 
       // Remove from active call
       activeCall.value = null;
+
+      // Close Call Screen
+      Get.back();
     });
   }
 
@@ -306,6 +414,14 @@ class CallController extends GetxController {
       // Remove from calls list
       removeCall(call);
       disconnectRoom();
+
+      // If this was the active call, close the screen
+      // Assuming CallScreen is the top route or we want to exit it
+      if (Get.currentRoute == '/CallScreen' || !Get.isDialogOpen!) {
+        // Identifying if we are on CallScreen is tricky without named routes.
+        // But usually we want to pop if the active call ended.
+        Get.back();
+      }
     }
   }
 

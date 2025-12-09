@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get/get.dart';
+import 'package:livekit_client/livekit_client.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/controllers/call_controller.dart';
+import 'package:talkliner/app/models/call_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
-class CallScreen extends StatelessWidget {
+class CallScreen extends StatefulWidget {
   const CallScreen({super.key});
+
+  @override
+  State<CallScreen> createState() => _CallScreenState();
+}
+
+class _CallScreenState extends State<CallScreen> {
+  double xPosition = 20;
+  double yPosition = 50;
 
   @override
   Widget build(BuildContext context) {
@@ -16,86 +27,240 @@ class CallScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDarkMode ? TalklinerThemeColors.gray900 : Colors.white,
-      body: SafeArea(
-        child: Obx(() {
-          final call = callController.activeCall.value;
+      body: Obx(() {
+        final call = callController.activeCall.value;
+        final room = callController.room;
 
-          if (call == null) {
-            return Center(child: Text("No Active Call"));
+        if (call == null) {
+          return Center(child: Text("No Active Call"));
+        }
+
+        final user = call.participants.first;
+
+        // Helper to find video track
+        VideoTrack? getRemoteVideoTrack() {
+          if (room != null && room.remoteParticipants.isNotEmpty) {
+            final participant = room.remoteParticipants.values.first;
+            final track = participant.videoTrackPublications.firstOrNull?.track;
+            return track;
           }
+          return null;
+        }
 
-          final user = call.participants.first;
+        VideoTrack? getLocalVideoTrack() {
+          if (room != null && room.localParticipant != null) {
+            final track =
+                room
+                    .localParticipant!
+                    .videoTrackPublications
+                    .firstOrNull
+                    ?.track;
+            return track;
+          }
+          return null;
+        }
 
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Spacer(),
-              UserAvatar(user: user, size: 120, indicator: false),
-              SizedBox(height: 24),
-              Text(
-                user.displayName,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                call.status.displayName,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: isDarkMode ? Colors.white70 : Colors.black54,
+        return Stack(
+          children: [
+            // Remote Video or Avatar
+            Positioned.fill(
+              child:
+                  getRemoteVideoTrack() != null
+                      ? VideoTrackRenderer(
+                        getRemoteVideoTrack()!,
+                        fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                      )
+                      : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Spacer(),
+                          UserAvatar(user: user, size: 120, indicator: false),
+                          SizedBox(height: 24),
+                          Text(
+                            user.displayName,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          (call.status != CallStatus.accepted)
+                              ? Text(
+                                call.status.displayName,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      isDarkMode
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                ),
+                              )
+                              : SizedBox(),
+                          if (callController.durationString.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                callController.durationString.value,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      isDarkMode
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                ),
+                              ),
+                            ),
+                          Spacer(),
+                          SizedBox(height: 100), // Space for controls
+                        ],
+                      ),
+            ),
+
+            // Local Video (PIP) - Draggable
+            if (getLocalVideoTrack() != null &&
+                callController.isVideoEnabled.value)
+              Positioned(
+                top: yPosition,
+                right: xPosition,
+                child: GestureDetector(
+                  onPanUpdate: (details) {
+                    setState(() {
+                      yPosition += details.delta.dy;
+                      xPosition -=
+                          details.delta.dx; // Right-aligned, so subtract dx
+                    });
+                  },
+                  child: Container(
+                    width: 120,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: VideoTrackRenderer(
+                        getLocalVideoTrack()!,
+                        fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              Spacer(),
-              // Controls
-              Padding(
-                padding: const EdgeInsets.only(bottom: 48.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // Mute
-                    IconButton(
-                      onPressed: callController.toggleMute,
-                      style: IconButton.styleFrom(
-                        backgroundColor:
-                            callController.isMuted.value
-                                ? Colors.white
-                                : Colors.transparent,
-                        padding: EdgeInsets.all(12),
-                      ),
-                      icon: Icon(
+
+            // Controls
+            Positioned(
+              bottom: 48,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Mute
+                  FloatingActionButton(
+                    heroTag: 'mute_btn',
+                    backgroundColor:
                         callController.isMuted.value
-                            ? LucideIcons.micOff
-                            : LucideIcons.mic,
-                        size: 32,
-                        color:
-                            callController.isMuted.value
-                                ? Colors.black
-                                : (isDarkMode ? Colors.white : Colors.black),
-                      ),
+                            ? TalklinerThemeColors.red300
+                            : isDarkMode
+                            ? TalklinerThemeColors.gray900
+                            : Colors.white,
+                    shape: CircleBorder(),
+                    elevation: 0,
+                    onPressed: callController.toggleMute,
+                    child: Icon(
+                      callController.isMuted.value
+                          ? LucideIcons.micOff
+                          : LucideIcons.mic,
+                      size: 32,
+                      color:
+                          callController.isMuted.value
+                              ? Colors.white
+                              : (isDarkMode ? Colors.white : Colors.black),
                     ),
-                    // End Call
+                  ),
+
+                  // Video Toggle
+                  FloatingActionButton(
+                    heroTag: 'video_btn',
+                    backgroundColor:
+                        !callController.isVideoEnabled.value
+                            ? TalklinerThemeColors.red300
+                            : isDarkMode
+                            ? TalklinerThemeColors.gray900
+                            : Colors.white,
+                    shape: CircleBorder(),
+                    elevation: 0,
+                    onPressed: callController.toggleVideo,
+                    child: Icon(
+                      callController.isVideoEnabled.value
+                          ? LucideIcons.video
+                          : LucideIcons.videoOff,
+                      size: 32,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+
+                  // Flip Camera
+                  if (callController.isVideoEnabled.value)
                     FloatingActionButton(
-                      backgroundColor: Colors.red,
-                      onPressed: () => callController.endCall(call),
-                      child: Icon(LucideIcons.phoneOff, color: Colors.white),
-                    ),
-                    // Speaker (Placeholder)
-                    IconButton(
-                      onPressed: () {
-                        // Placeholder for speaker
-                      },
-                      icon: Icon(
-                        LucideIcons.volume2,
+                      heroTag: 'flip_btn',
+                      backgroundColor:
+                          isDarkMode
+                              ? TalklinerThemeColors.gray900
+                              : Colors.white,
+                      shape: CircleBorder(),
+                      elevation: 0,
+                      onPressed: callController.flipCamera,
+                      child: Icon(
+                        Icons.cameraswitch_outlined,
                         size: 32,
                         color: isDarkMode ? Colors.white : Colors.black,
                       ),
                     ),
-                  ],
-                ),
+
+                  // End Call
+                  FloatingActionButton(
+                    heroTag: 'end_btn',
+                    backgroundColor: TalklinerThemeColors.red300,
+                    shape: CircleBorder(),
+                    elevation: 0,
+                    onPressed: () => callController.endCall(call),
+                    child: Icon(LucideIcons.phoneOff, color: Colors.white),
+                  ),
+                  // Speaker
+                  FloatingActionButton(
+                    heroTag: 'speaker_btn',
+                    backgroundColor:
+                        callController.isSpeakerOn.value
+                            ? TalklinerThemeColors.primary500
+                            : isDarkMode
+                            ? TalklinerThemeColors.gray900
+                            : Colors.white,
+                    shape: CircleBorder(),
+
+                    elevation: 0,
+                    onPressed: callController.toggleSpeaker,
+                    child: Icon(
+                      LucideIcons.volume2,
+                      size: 32,
+                      color:
+                          callController.isSpeakerOn.value
+                              ? Colors.white
+                              : (isDarkMode ? Colors.white : Colors.black),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          );
-        }),
-      ),
+            ),
+          ],
+        );
+      }),
     );
   }
 }

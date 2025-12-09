@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
 import 'package:talkliner/app/models/user_model.dart';
 
+enum MessageType { text, image, video, file, call }
+
 class MessageModel {
   final String id;
   final String senderId;

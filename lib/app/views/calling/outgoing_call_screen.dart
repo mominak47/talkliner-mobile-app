@@ -9,7 +9,13 @@ import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
 class OutgoingCallScreen extends StatelessWidget {
   final ChatModel chat;
-  const OutgoingCallScreen({super.key, required this.chat});
+  final bool isVideo;
+
+  const OutgoingCallScreen({
+    super.key,
+    required this.chat,
+    this.isVideo = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +23,7 @@ class OutgoingCallScreen extends StatelessWidget {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     UserModel user = chat.participants[0].user!;
 
-    callController.startOutgoingCall(user);
+    callController.startOutgoingCall(user, isVideo: isVideo);
 
     String getName() {
       if (chat.chatType == ChatType.group) {
