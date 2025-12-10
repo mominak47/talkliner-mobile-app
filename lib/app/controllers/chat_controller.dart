@@ -61,6 +61,10 @@ class ChatController extends GetxController {
     );
   }
 
+  ChatModel? getCurrentChat() {
+    return chat;
+  }
+
   void emitUserTyping(bool state) {
     try {
       // socketController.emitTo(user, 'user_typing', {

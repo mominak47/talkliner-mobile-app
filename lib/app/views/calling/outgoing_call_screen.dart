@@ -3,11 +3,12 @@ import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/models/chat_model.dart';
-import 'package:talkliner/app/models/user_model.dart';
+
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/others/components/user_avatar.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
-class OutgoingCallScreen extends StatelessWidget {
+class OutgoingCallScreen extends StatefulWidget {
   final ChatModel chat;
   final bool isVideo;
 
@@ -18,18 +19,39 @@ class OutgoingCallScreen extends StatelessWidget {
   });
 
   @override
+  State<OutgoingCallScreen> createState() => _OutgoingCallScreenState();
+}
+
+class _OutgoingCallScreenState extends State<OutgoingCallScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WakelockPlus.enable();
+    final CallController callController = Get.find<CallController>();
+    final user = widget.chat.participants[0].user!;
+    // Start the call only once when the screen is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      callController.startOutgoingCall(user, isVideo: widget.isVideo);
+    });
+  }
+
+  @override
+  void dispose() {
+    WakelockPlus.disable();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final CallController callController = Get.find<CallController>();
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    UserModel user = chat.participants[0].user!;
-
-    callController.startOutgoingCall(user, isVideo: isVideo);
+    // user is accessed through widget.chat
 
     String getName() {
-      if (chat.chatType == ChatType.group) {
-        return chat.name!;
+      if (widget.chat.chatType == ChatType.group) {
+        return widget.chat.name!;
       } else {
-        return chat.participants[0].user!.displayName;
+        return widget.chat.participants[0].user!.displayName;
       }
     }
 
@@ -41,7 +63,7 @@ class OutgoingCallScreen extends StatelessWidget {
               Spacer(),
               Center(
                 child:
-                    (chat.chatType == ChatType.group)
+                    (widget.chat.chatType == ChatType.group)
                         ? CircleAvatar(
                           radius: 50,
                           backgroundColor:
@@ -49,7 +71,10 @@ class OutgoingCallScreen extends StatelessWidget {
                                   ? Colors.white
                                   : TalklinerThemeColors.gray030,
                           child: Text(
-                            chat.name!.split(" ").map((e) => e[0]).join(""),
+                            widget.chat.name!
+                                .split(" ")
+                                .map((e) => e[0])
+                                .join(""),
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -57,7 +82,7 @@ class OutgoingCallScreen extends StatelessWidget {
                           ),
                         )
                         : UserAvatar(
-                          user: chat.participants[0].user,
+                          user: widget.chat.participants[0].user,
                           size: 100,
                           indicator: false,
                         ),

@@ -15,6 +15,9 @@ class RecentsController extends GetxController
   final RxBool isLoading = false.obs;
   final RxList<ChatModel> recents = <ChatModel>[].obs;
 
+  final RxString searchQuery = ''.obs;
+  final RxBool isSearching = false.obs;
+
   late TabController tabController;
 
   @override
@@ -42,11 +45,35 @@ class RecentsController extends GetxController
     super.onClose();
   }
 
+  void toggleSearch() {
+    isSearching.value = !isSearching.value;
+    if (!isSearching.value) {
+      searchQuery.value = '';
+    }
+  }
+
+  void search(String query) {
+    searchQuery.value = query;
+  }
+
+  List<ChatModel> get filteredRecents {
+    if (searchQuery.value.isEmpty) return recents;
+    return recents.where((chat) {
+      final name = chat.name?.toLowerCase() ?? '';
+      final otherName =
+          chat.participants.isNotEmpty
+              ? chat.participants[0].userId.displayName.toLowerCase()
+              : '';
+      final query = searchQuery.value.toLowerCase();
+      return name.contains(query) || otherName.contains(query);
+    }).toList();
+  }
+
   List<ChatModel> get userRecents =>
-      recents.where((r) => r.chatType != ChatType.group).toList();
+      filteredRecents.where((r) => r.chatType != ChatType.group).toList();
 
   List<ChatModel> get groupRecents =>
-      recents.where((r) => r.chatType == ChatType.group).toList();
+      filteredRecents.where((r) => r.chatType == ChatType.group).toList();
 
   Future<void> fetchRecents({bool shouldShowLoading = false}) async {
     if (shouldShowLoading) isLoading.value = true;

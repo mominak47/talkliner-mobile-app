@@ -164,11 +164,11 @@ class CallModel {
               onPressed: () {
                 acceptCall((response) {
                   debugPrint('CallModel: Call accepted: $response');
-                  Get.back(result: 'accepted');
                   if (successCallback != null) {
                     successCallback(response);
                   }
                 });
+                Get.back(result: 'accepted');
               },
               icon: Icon(LucideIcons.check, color: Colors.white),
             ),
@@ -181,8 +181,8 @@ class CallModel {
               onPressed: () {
                 rejectCall((response) {
                   debugPrint('CallModel: Call rejected: $response');
-                  Get.back();
                 });
+                Get.back();
               },
               icon: Icon(LucideIcons.x, color: Colors.white),
             ),

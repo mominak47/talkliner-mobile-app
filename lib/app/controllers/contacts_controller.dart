@@ -14,6 +14,34 @@ class ContactsController extends GetxController
   final ApiService apiService = ApiService();
 
   final RxString searchQuery = "".obs;
+  final RxBool isSearching = false.obs;
+
+  void toggleSearch() {
+    isSearching.value = !isSearching.value;
+    if (!isSearching.value) {
+      searchQuery.value = '';
+    }
+  }
+
+  List<UserModel> get filteredContacts {
+    if (searchQuery.value.isEmpty) return contacts;
+    return contacts
+        .where(
+          (u) => u.displayName.toLowerCase().contains(
+            searchQuery.value.toLowerCase(),
+          ),
+        )
+        .toList();
+  }
+
+  List<GroupModel> get filteredGroups {
+    if (searchQuery.value.isEmpty) return groups;
+    return groups
+        .where(
+          (g) => g.name.toLowerCase().contains(searchQuery.value.toLowerCase()),
+        )
+        .toList();
+  }
 
   // Tab bar index
   final RxString selectedTabBar = "users".obs;
@@ -40,6 +68,9 @@ class ContactsController extends GetxController
         fetchGroups();
       }
     });
+
+    // Reset search when tab changes or data refreshes?
+    // Usually keep search query or clear it. Let's keep it simple.
   }
 
   @override
@@ -53,7 +84,10 @@ class ContactsController extends GetxController
 
   void searchContact(String query) => searchQuery.value = query;
 
-  void clearSearch() => searchQuery.value = "";
+  void clearSearch() {
+    searchQuery.value = "";
+    isSearching.value = false;
+  }
 
   void changeTabBar(String tabBar) => selectedTabBar.value = tabBar;
 

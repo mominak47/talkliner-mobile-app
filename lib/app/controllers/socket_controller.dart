@@ -161,7 +161,6 @@ class SocketController extends GetxController {
 
     // On any event
     _socket!.onAny((event, data) {
-      print("Event: $event");
       if (event == 'new_message') {
         ChatService.appendMessageToChat(
           data['chat_id'],

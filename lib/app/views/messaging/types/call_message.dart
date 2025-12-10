@@ -22,8 +22,10 @@ class CallMessage extends StatelessWidget {
         }
         return TalklinerThemeColors.gray800;
       }
-
-      return TalklinerThemeColors.gray020;
+      if (isMe) {
+        return TalklinerThemeColors.primary100;
+      }
+      return TalklinerThemeColors.gray030;
     }
 
     return Column(

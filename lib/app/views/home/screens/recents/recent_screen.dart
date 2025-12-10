@@ -76,64 +76,100 @@ class _RecentScreenState extends State<RecentScreen> {
                       horizontal: 16,
                       vertical: 8,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: AnimatedBuilder(
-                            animation: recentsController.tabController,
-                            builder: (context, child) {
-                              return SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    _buildTabButton(
-                                      context,
-                                      title: "All",
-                                      index: 0,
-                                      controller:
+                    child: Obx(
+                      () => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child:
+                                recentsController.isSearching.value
+                                    ? TextField(
+                                      autofocus: true,
+                                      onChanged:
+                                          (val) =>
+                                              recentsController.search(val),
+                                      decoration: InputDecoration(
+                                        hintText: 'Search chats...',
+                                        border: InputBorder.none,
+                                        hintStyle: TextStyle(
+                                          color: TalklinerThemeColors.gray400,
+                                        ),
+                                      ),
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
+                                    )
+                                    : AnimatedBuilder(
+                                      animation:
                                           recentsController.tabController,
-                                      icon: LucideIcons.messageCircle,
+                                      builder: (context, child) {
+                                        return SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: [
+                                              _buildTabButton(
+                                                context,
+                                                title: "All",
+                                                index: 0,
+                                                controller:
+                                                    recentsController
+                                                        .tabController,
+                                                icon: LucideIcons.messageCircle,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              _buildTabButton(
+                                                context,
+                                                title: "users".tr,
+                                                index: 1,
+                                                controller:
+                                                    recentsController
+                                                        .tabController,
+                                                icon: LucideIcons.user,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              _buildTabButton(
+                                                context,
+                                                title: "groups".tr,
+                                                index: 2,
+                                                controller:
+                                                    recentsController
+                                                        .tabController,
+                                                icon: LucideIcons.users,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    const SizedBox(width: 8),
-                                    _buildTabButton(
-                                      context,
-                                      title: "users".tr,
-                                      index: 1,
-                                      controller:
-                                          recentsController.tabController,
-                                      icon: LucideIcons.user,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildTabButton(
-                                      context,
-                                      title: "groups".tr,
-                                      index: 2,
-                                      controller:
-                                          recentsController.tabController,
-                                      icon: LucideIcons.users,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(LucideIcons.search),
-                        ),
-                      ],
+                          IconButton(
+                            onPressed: () {
+                              recentsController.toggleSearch();
+                            },
+                            icon: Icon(
+                              recentsController.isSearching.value
+                                  ? LucideIcons.x
+                                  : LucideIcons.search,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Expanded(
-                    child: TabBarView(
-                      controller: recentsController.tabController,
-                      children: [
-                        buildRecentsList(recentsController.recents),
-                        buildRecentsList(recentsController.userRecents),
-                        buildRecentsList(recentsController.groupRecents),
-                      ],
+                    child: Obx(
+                      () => TabBarView(
+                        controller: recentsController.tabController,
+                        children: [
+                          buildRecentsList(recentsController.filteredRecents),
+                          buildRecentsList(recentsController.userRecents),
+                          buildRecentsList(recentsController.groupRecents),
+                        ],
+                      ),
                     ),
                   ),
                 ],

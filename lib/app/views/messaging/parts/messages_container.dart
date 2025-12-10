@@ -54,6 +54,13 @@ class _MessagesContainerState extends State<MessagesContainer> {
         // chatController.loadMoreMessages();
       }
     });
+
+    // On swipe down
+    _scrollController.addListener(() {
+      // if (_scrollController.position.pixels <= 50) {
+      FocusScope.of(context).unfocus();
+      // }
+    });
   }
 
   void getParticipants() async {

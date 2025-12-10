@@ -90,7 +90,6 @@ class RecentItemCard extends StatelessWidget {
         elevation: 0,
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (recentItem.chatType == ChatType.individual &&
               recentItem.participants.isNotEmpty)
@@ -112,7 +111,6 @@ class RecentItemCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   recentItem.chatType == ChatType.individual &&
@@ -172,24 +170,21 @@ class RecentItemCard extends StatelessWidget {
             ),
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 (recentItem.messages != null && recentItem.messages!.isNotEmpty)
-                    ? _formatDate(recentItem.messages!.first.timestamp)
-                    : '',
-                style: TextStyle(
-                  fontSize: 12,
-                  color:
-                      isDarkMode
-                          ? TalklinerThemeColors.gray050
-                          : TalklinerThemeColors.gray300,
-                ),
-              ),
-              Text(
-                (recentItem.messages != null && recentItem.messages!.isNotEmpty)
-                    ? _formatTime(recentItem.messages!.first.timestamp)
+                    ? () {
+                      final date = recentItem.messages!.first.timestamp;
+                      if (date == null) return '';
+                      final now = DateTime.now();
+                      final difference = now.difference(date.toLocal());
+                      if (difference.inHours >= 24) {
+                        return _formatDate(date);
+                      } else {
+                        return _formatTime(date);
+                      }
+                    }()
                     : '',
                 style: TextStyle(
                   fontSize: 12,

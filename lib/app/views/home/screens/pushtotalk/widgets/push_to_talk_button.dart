@@ -277,6 +277,7 @@ class PushToTalkButton extends StatelessWidget {
         textColor: _buttonTextStyle.color!,
         backgroundColor: _buttonBackgroundColor,
         height: 80,
+        fontSize: 20,
         // Events
         onTapDown: onTapDown, // Start transmission on press
         onTapUp: onTapUp, // Stop transmission on release

@@ -13,6 +13,7 @@ import 'package:talkliner/app/models/call_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/calling/call_screen.dart';
+import 'package:vibration/vibration.dart';
 
 class CallController extends GetxController {
   // Calls List
@@ -56,6 +57,10 @@ class CallController extends GetxController {
 
   final RxBool isVideoEnabled = false.obs;
 
+  final RxDouble currentLatency = 0.0.obs;
+  final Rx<ConnectionQuality> connectionQuality = ConnectionQuality.unknown.obs;
+  Timer? _statsTimer;
+
   @override
   void onInit() {
     super.onInit();
@@ -72,8 +77,54 @@ class CallController extends GetxController {
     _updateAutoPip(false);
     audioPlayer.dispose();
     _callTimer?.cancel();
+    stopStatsTimer();
     room?.dispose();
     super.onClose();
+  }
+
+  void startStatsTimer() {
+    _statsTimer?.cancel();
+    _statsTimer = Timer.periodic(Duration(seconds: 2), (timer) async {
+      if (room != null && room!.localParticipant != null) {
+        try {
+          // Attempt to get stats from the first audio track
+          var audioInfo =
+              room!.localParticipant!.audioTrackPublications.firstOrNull;
+          if (audioInfo != null && audioInfo.track != null) {
+            // Use dynamic to bypass potential analyzer issues if the method is from a mixin or extension not visible
+            dynamic track = audioInfo.track;
+            try {
+              var stats = await track.getSenderStats();
+              if (stats != null) {
+                // roundTripTime is usually in seconds in WebRTC but LiveKit might normalize.
+                // Checking if it's a number.
+                // SenderStats usually has roundTripTime property.
+                var rtt = stats.roundTripTime;
+                if (rtt != null) {
+                  currentLatency.value =
+                      (rtt is double
+                          ? rtt
+                          : double.tryParse(rtt.toString()) ?? 0) *
+                      1000;
+                }
+              }
+            } catch (e) {
+              // Method might not exist or other error
+              // debugPrint('getSenderStats error: $e');
+            }
+          }
+
+          connectionQuality.value = room!.localParticipant!.connectionQuality;
+        } catch (e) {
+          debugPrint('Stats error: $e');
+        }
+      }
+    });
+  }
+
+  void stopStatsTimer() {
+    _statsTimer?.cancel();
+    _statsTimer = null;
   }
 
   void watchEvents() {
@@ -225,7 +276,7 @@ class CallController extends GetxController {
       });
 
       // Stop Ringtone if playing
-      audioPlayer.stop();
+      stopRingtone();
     } catch (e) {
       debugPrint('CallController: Failed to connect to room: $e');
       Fluttertoast.showToast(msg: 'Failed to connect to call');
@@ -296,7 +347,7 @@ class CallController extends GetxController {
     }
     _updateAutoPip(false);
     stopTimer();
-    audioPlayer.stop();
+    stopRingtone();
   }
 
   void toggleMute() async {
@@ -380,10 +431,9 @@ class CallController extends GetxController {
 
       // Remove from active call
       activeCall.value = null;
-
-      // Close Call Screen
-      Get.back();
     });
+    // Close Call Screen
+    Get.back();
   }
 
   void addCall(CallModel call) {
@@ -420,12 +470,12 @@ class CallController extends GetxController {
       call.showPopup(
         () {
           // Stop Audio
-          audioPlayer.stop();
+          stopRingtone();
           // Get parent of the class
           Get.find<CallController>().removeCall(call);
         },
         (response) {
-          audioPlayer.stop();
+          stopRingtone();
           if (response != null && response['roomAccessToken'] != null) {
             String? token = response['roomAccessToken']['token'];
             if (token != null) {
@@ -446,17 +496,48 @@ class CallController extends GetxController {
     }
   }
 
-  void playRingtone() {
+  Timer? _vibrationTimer;
+
+  void playRingtone() async {
     // Play ringtone in a loop
     audioPlayer.setVolume(1.0);
     audioPlayer.play(AssetSource('audio/talkliner-ringtone.mp3'));
     audioPlayer.setReleaseMode(ReleaseMode.loop);
+
+    // Vibrate
+    // Using a manual timer loop is more robust across platforms than custom patterns
+    // which can fail with CoreHaptics errors on iOS.
+    if ((await Vibration.hasVibrator()) == true) {
+      _vibrationTimer?.cancel();
+      // Vibrate immediately
+      try {
+        Vibration.vibrate();
+      } catch (e) {
+        debugPrint("$e");
+      }
+
+      // Repeat every 2 seconds
+      _vibrationTimer = Timer.periodic(Duration(seconds: 2), (timer) {
+        try {
+          Vibration.vibrate();
+        } catch (e) {
+          debugPrint("Vibration error: $e");
+        }
+      });
+    }
+  }
+
+  void stopRingtone() {
+    audioPlayer.stop();
+    Vibration.cancel();
+    _vibrationTimer?.cancel();
+    _vibrationTimer = null;
   }
 
   // Handle Call Ended
   void handleCallEnded(resp) {
     debugPrint('CallController: Call ended: $resp');
-    if (resp['call_id'] != null) {
+    if (resp['call_id'] != null && calls.isNotEmpty) {
       CallModel call = calls.firstWhere((c) => c.id == resp['call_id']);
 
       while (Get.isDialogOpen! || Get.isBottomSheetOpen!) {

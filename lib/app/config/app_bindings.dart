@@ -12,6 +12,7 @@ import 'package:talkliner/app/controllers/recents_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/services/api_service.dart';
 import 'package:talkliner/app/services/auth_service.dart';
+import 'package:talkliner/app/services/notification_service.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -20,9 +21,10 @@ class AppBindings extends Bindings {
     Get.put<LayoutController>(LayoutController());
     Get.put<ApiService>(ApiService());
     Get.put<AuthService>(AuthService());
+    Get.put<NotificationService>(NotificationService());
     Get.put<AuthController>(AuthController());
     Get.put<AppSettingsController>(AppSettingsController());
-    
+
     // Feature controllers
     Get.put<HomeController>(HomeController());
     Get.put<SocketController>(SocketController());

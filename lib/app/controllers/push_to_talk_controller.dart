@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
@@ -110,6 +111,9 @@ class PushToTalkController extends GetxController {
       isPTTActive.value = true;
       playAudio('audio/connect.mp3', volume: 1.0);
       livekitRoomController.speak();
+
+      // Vibrate
+      HapticFeedback.heavyImpact();
       debugPrint('PTT started successfully');
     } catch (e) {
       debugPrint("Error starting PTT: $e");
@@ -123,6 +127,8 @@ class PushToTalkController extends GetxController {
       if (getPTTButtonState() != PushToTalkButtonState.notSelected) {
         playAudio('audio/disconnect.mp3', volume: 1.0);
       }
+      // Vibrate
+      HapticFeedback.lightImpact();
       debugPrint('PTT stopped successfully');
     } catch (e) {
       debugPrint("Error stopping PTT: $e");

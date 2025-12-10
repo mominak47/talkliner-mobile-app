@@ -136,7 +136,7 @@ class ChatModel {
         RecentParticipant participant = participants.firstWhere(
           (e) => e.role == Role.member,
         );
-        endpoint = '/chats/with/${participant.userId.id}';
+        endpoint = '/chats/with/${participant.userId.id}/messages';
         debugPrint("Message: $content : $endpoint");
       }
 

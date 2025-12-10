@@ -19,6 +19,22 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final MapController flutterMapController = MapController();
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getCurrentLocation();
+    });
+  }
+
+  AnimationController? _animationController;
+
+  @override
+  void dispose() {
+    _animationController?.dispose();
+    super.dispose();
+  }
+
   void _animatedMapMove(LatLng destLocation, double destZoom) {
     // Create some parameters for the animation
     final latTween = Tween<double>(
@@ -34,10 +50,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       end: destZoom,
     );
 
-    final controller = AnimationController(
+    _animationController?.dispose();
+    _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
+
+    final controller = _animationController!;
 
     final Animation<double> animation = CurvedAnimation(
       parent: controller,
@@ -52,10 +71,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     });
 
     animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.dispose();
-      } else if (status == AnimationStatus.dismissed) {
-        controller.dispose();
+      if (status == AnimationStatus.completed ||
+          status == AnimationStatus.dismissed) {
+        // We don't need to dispose here if we dispose in new call or dispose(),
+        // but it's good practice to clean up if simple one-off.
+        // However, if we dispose here, _animationController field might point to disposed object.
+        // Better to just let it stay until next move or screen dispose.
+        // Or set _animationController = null?
+        // Let's simpler: Just dispose in dispose() and when creating new one.
       }
     });
 
@@ -96,7 +119,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     Position position = await Geolocator.getCurrentPosition();
-    _animatedMapMove(LatLng(position.latitude, position.longitude), 15.0);
+    LatLng newLocation = LatLng(position.latitude, position.longitude);
+
+    // Update map view
+    _animatedMapMove(newLocation, 15.0);
+
+    // Update marker
+    final mapController = Get.find<mapController2.MapController>();
+    mapController.clearMarkers();
+    mapController.addMarker(newLocation);
   }
 
   @override
@@ -104,8 +135,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final mapController = Get.find<mapController2.MapController>();
     final callController = Get.find<CallController>();
 
-    // Add a marker to the map
-    mapController.addMarker(LatLng(37.774929, -122.419416));
+    // Add a marker to the map <- Removed hardcoded marker logic from here
 
     Widget showMapControls() {
       bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -149,6 +179,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 color: isDarkMode ? Colors.white : Colors.black,
               ),
             ),
+            SizedBox(height: 30),
             FloatingActionButton(
               heroTag: 'map_layers',
               onPressed: () {},
@@ -185,21 +216,23 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
               subdomains: ['a', 'b', 'c'],
             ),
-            MarkerLayer(
-              markers:
-                  mapController
-                      .getMarkers()
-                      .map(
-                        (marker) => Marker(
-                          point: marker,
-                          child: Icon(
-                            Icons.location_on,
-                            color: TalklinerThemeColors.primary500,
-                            size: 60,
+            Obx(
+              () => MarkerLayer(
+                markers:
+                    mapController
+                        .getMarkers()
+                        .map(
+                          (marker) => Marker(
+                            point: marker,
+                            child: Icon(
+                              Icons.location_on,
+                              color: TalklinerThemeColors.primary500,
+                              size: 60,
+                            ),
                           ),
-                        ),
-                      )
-                      .toList(),
+                        )
+                        .toList(),
+              ),
             ),
             showMapControls(),
             Obx(

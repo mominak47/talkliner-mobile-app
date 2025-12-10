@@ -68,13 +68,13 @@ class ContactsScreen extends StatelessWidget {
           () => ListView.builder(
             padding: EdgeInsets.zero,
             physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: contactsController.contacts.length,
+            itemCount: contactsController.filteredContacts.length,
             itemBuilder: (context, index) {
-              if (index == (contactsController.contacts.length - 1) &&
+              if (index == (contactsController.filteredContacts.length - 1) &&
                   appSettingsController.showFloatingPushToTalkButton.value) {
                 return const SizedBox(height: 100);
               }
-              UserModel user = contactsController.contacts[index];
+              UserModel user = contactsController.filteredContacts[index];
               return Column(
                 children: [
                   Obx(
@@ -113,7 +113,7 @@ class ContactsScreen extends StatelessWidget {
     }
 
     Widget buildGroupsList() {
-      if (contactsController.groups.isEmpty) {
+      if (contactsController.filteredGroups.isEmpty) {
         return const Center(child: Text("No groups"));
       }
 
@@ -128,14 +128,14 @@ class ContactsScreen extends StatelessWidget {
           () => ListView.builder(
             padding: EdgeInsets.zero,
             physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: contactsController.groups.length,
+            itemCount: contactsController.filteredGroups.length,
             itemBuilder: (context, index) {
-              if (index == contactsController.groups.length &&
+              if (index == contactsController.filteredGroups.length &&
                   appSettingsController.showFloatingPushToTalkButton.value &&
                   homeController.currentIndex.value != 2) {
                 return const SizedBox(height: 100);
               }
-              GroupModel group = contactsController.groups[index];
+              GroupModel group = contactsController.filteredGroups[index];
               return Column(
                 children: [
                   Obx(
@@ -181,44 +181,77 @@ class ContactsScreen extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: AnimatedBuilder(
-                  animation: contactsController.tabController,
-                  builder: (context, child) {
-                    return Row(
-                      children: [
-                        _buildTabButton(
-                          context,
-                          title: "users".tr,
-                          index: 0,
-                          controller: contactsController.tabController,
-                          icon: LucideIcons.users,
-                          onOpened: () => contactsController.refreshContacts(),
-                        ),
-                        const SizedBox(width: 12),
-                        _buildTabButton(
-                          context,
-                          title: "groups".tr,
-                          index: 1,
-                          controller: contactsController.tabController,
-                          icon: LucideIcons.users,
-                          onOpened: () => contactsController.refreshGroups(),
-                        ),
-                      ],
-                    );
-                  },
+          child: Obx(
+            () => Row(
+              children: [
+                Expanded(
+                  child:
+                      contactsController.isSearching.value
+                          ? TextField(
+                            autofocus: true,
+                            onChanged:
+                                (val) => contactsController.searchContact(val),
+                            decoration: InputDecoration(
+                              hintText: 'Search contacts...',
+                              border: InputBorder.none,
+                              hintStyle: TextStyle(
+                                color: TalklinerThemeColors.gray400,
+                              ),
+                            ),
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black,
+                            ),
+                          )
+                          : AnimatedBuilder(
+                            animation: contactsController.tabController,
+                            builder: (context, child) {
+                              return Row(
+                                children: [
+                                  _buildTabButton(
+                                    context,
+                                    title: "users".tr,
+                                    index: 0,
+                                    controller:
+                                        contactsController.tabController,
+                                    icon: LucideIcons.users,
+                                    onOpened:
+                                        () =>
+                                            contactsController
+                                                .refreshContacts(),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  _buildTabButton(
+                                    context,
+                                    title: "groups".tr,
+                                    index: 1,
+                                    controller:
+                                        contactsController.tabController,
+                                    icon: LucideIcons.users,
+                                    onOpened:
+                                        () =>
+                                            contactsController.refreshGroups(),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
                 ),
-              ),
-              IconButton(
-                onPressed: () {
-                  // TODO: Implement search functionality
-                },
-                icon: const Icon(LucideIcons.search),
-                color: TalklinerThemeColors.gray900,
-              ),
-            ],
+                IconButton(
+                  onPressed: () {
+                    contactsController.toggleSearch();
+                  },
+                  icon: Icon(
+                    contactsController.isSearching.value
+                        ? LucideIcons.x
+                        : LucideIcons.search,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Expanded(
