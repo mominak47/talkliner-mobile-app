@@ -11,6 +11,7 @@ import 'package:talkliner/app/controllers/auth_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/call_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
+import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/calling/call_screen.dart';
 
 class CallController extends GetxController {
@@ -229,6 +230,63 @@ class CallController extends GetxController {
       debugPrint('CallController: Failed to connect to room: $e');
       Fluttertoast.showToast(msg: 'Failed to connect to call');
     }
+  }
+
+  Widget getCallInProgressWidget() {
+    String title =
+        activeCall.value?.type == CallType.individual
+            ? activeCall.value?.participants?.first?.displayName ?? ''
+            : 'Group Call';
+    return GestureDetector(
+      onTap: () => Get.to(() => CallScreen()),
+      child: Container(
+        padding: EdgeInsets.all(8.0),
+        width: double.infinity,
+        color: TalklinerThemeColors.green500,
+        child: Row(
+          spacing: 10,
+          children: [
+            Icon(Icons.phone, color: TalklinerThemeColors.gray900),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: TalklinerThemeColors.gray900,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  durationString.value,
+                  style: TextStyle(color: TalklinerThemeColors.gray900),
+                ),
+              ],
+            ),
+            Expanded(child: SizedBox()),
+            ElevatedButton(
+              onPressed: () {
+                endCall(activeCall.value!);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TalklinerThemeColors.gray020,
+              ),
+              child: Row(
+                spacing: 10,
+                children: [
+                  Icon(Icons.phone, color: TalklinerThemeColors.red300),
+                  Text(
+                    "End Call".tr,
+                    style: TextStyle(color: TalklinerThemeColors.red300),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> disconnectRoom() async {

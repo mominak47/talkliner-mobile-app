@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/controllers/layout_controller.dart';
 import 'package:talkliner/app/controllers/recents_controller.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
@@ -27,6 +28,7 @@ class _RecentScreenState extends State<RecentScreen> {
   Widget build(BuildContext context) {
     final recentsController = Get.find<RecentsController>();
     final layoutController = Get.find<LayoutController>();
+    final callController = Get.find<CallController>();
 
     Widget buildRecentsList(List<dynamic> items) {
       return RefreshIndicator(
@@ -66,6 +68,9 @@ class _RecentScreenState extends State<RecentScreen> {
               : Column(
                 children: [
                   ...layoutController.doAction('recent_screen'),
+                  callController.activeCall.value != null
+                      ? callController.getCallInProgressWidget()
+                      : SizedBox(),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,

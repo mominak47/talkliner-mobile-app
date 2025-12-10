@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/controllers/app_settings_controller.dart';
+import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/controllers/contacts_controller.dart';
 import 'package:talkliner/app/controllers/home_controller.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
@@ -25,6 +26,7 @@ class ContactsScreen extends StatelessWidget {
     final livekitRoomController = Get.find<LivekitRoomController>();
     final appSettingsController = Get.find<AppSettingsController>();
     final homeController = Get.find<HomeController>();
+    final callController = Get.find<CallController>();
 
     void onUserCardClick(UserModel user) {
       ChatModel? chat;
@@ -171,6 +173,12 @@ class ContactsScreen extends StatelessWidget {
 
     return Column(
       children: [
+        Obx(
+          () =>
+              callController.activeCall.value != null
+                  ? callController.getCallInProgressWidget()
+                  : SizedBox(),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(

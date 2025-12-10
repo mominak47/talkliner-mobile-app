@@ -14,6 +14,18 @@ class CallMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isMe = message.isMe;
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    Color getBackgroundColorOfSubMessage() {
+      if (isDarkMode) {
+        if (isMe) {
+          return TalklinerThemeColors.primary200;
+        }
+        return TalklinerThemeColors.gray800;
+      }
+
+      return TalklinerThemeColors.gray020;
+    }
+
     return Column(
       crossAxisAlignment:
           isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -22,7 +34,7 @@ class CallMessage extends StatelessWidget {
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.7,
           ),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: MessageHelper.getMessageColor(message, isDarkMode),
             borderRadius: BorderRadius.only(
@@ -35,26 +47,48 @@ class CallMessage extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color:
-                  isDarkMode
-                      ? TalklinerThemeColors.gray800
-                      : TalklinerThemeColors.gray020,
-              borderRadius: BorderRadius.circular(10),
+              color: getBackgroundColorOfSubMessage(),
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(10),
+                topRight: const Radius.circular(10),
+                bottomLeft: Radius.circular(isMe ? 10 : 0),
+                bottomRight: Radius.circular(isMe ? 0 : 10),
+              ),
             ),
             child: Row(
               children: [
-                Icon(LucideIcons.phoneCall),
+                Icon(
+                  LucideIcons.phoneCall,
+                  size: 20,
+                  color: MessageHelper.getMessageTextColor(message, isDarkMode),
+                ),
                 SizedBox(width: 8),
-                Text(
-                  "Audio Call",
-                  style: TextStyle(
-                    color: MessageHelper.getMessageTextColor(
-                      message,
-                      isDarkMode,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Audio Call",
+                      style: TextStyle(
+                        color: MessageHelper.getMessageTextColor(
+                          message,
+                          isDarkMode,
+                        ),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
                     ),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
+                    // Total Duration
+                    Text(
+                      "10:32",
+                      style: TextStyle(
+                        color: MessageHelper.getMessageTextColor(
+                          message,
+                          isDarkMode,
+                        ),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

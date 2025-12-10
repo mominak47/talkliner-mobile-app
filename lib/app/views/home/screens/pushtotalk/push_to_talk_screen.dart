@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
 import 'package:talkliner/app/controllers/push_to_talk_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
@@ -19,6 +20,7 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
   final socketController = Get.find<SocketController>();
   final pushToTalkController = Get.find<PushToTalkController>();
   final livekitRoomController = Get.find<LivekitRoomController>();
+  final callController = Get.find<CallController>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,9 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
             // Top section with contact info and control buttons
             Column(
               children: [
+                callController.activeCall.value != null
+                    ? callController.getCallInProgressWidget()
+                    : SizedBox(),
                 SelectedUser(),
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -40,12 +45,18 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
                       // Volume control button
                       IconButton(
                         style: IconButton.styleFrom(
-                          backgroundColor: isDarkMode ? TalklinerThemeColors.gray800 : TalklinerThemeColors.gray020,
+                          backgroundColor:
+                              isDarkMode
+                                  ? TalklinerThemeColors.gray800
+                                  : TalklinerThemeColors.gray020,
                           shape: const CircleBorder(),
                         ),
                         icon: Icon(
                           LucideIcons.volume2,
-                          color: isDarkMode ? TalklinerThemeColors.gray100 : TalklinerThemeColors.gray700,
+                          color:
+                              isDarkMode
+                                  ? TalklinerThemeColors.gray100
+                                  : TalklinerThemeColors.gray700,
                           size: 24,
                         ),
                         onPressed: () {
@@ -77,7 +88,6 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
                 // Text("Is Room Connecting: ${livekitRoomController.isRoomConnecting.value.toString()}"),
                 // Text("Is Connected: ${livekitRoomController.isConnected.value.toString()}"),
                 // Text("Is Room Connecting: ${livekitRoomController.isRoomConnecting.value.toString()}"),
-       
                 SizedBox(
                   child: PushToTalkButton(
                     isDarkMode: Theme.of(context).brightness == Brightness.dark,

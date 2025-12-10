@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/controllers/map_controller.dart'
     as mapController2;
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
@@ -101,6 +102,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final mapController = Get.find<mapController2.MapController>();
+    final callController = Get.find<CallController>();
 
     // Add a marker to the map
     mapController.addMarker(LatLng(37.774929, -122.419416));
@@ -200,6 +202,17 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       .toList(),
             ),
             showMapControls(),
+            Obx(
+              () => Positioned(
+                top: 0,
+                right: 0,
+                left: 0,
+                child:
+                    callController.activeCall.value != null
+                        ? callController.getCallInProgressWidget()
+                        : SizedBox(),
+              ),
+            ),
           ],
         ),
       ],
