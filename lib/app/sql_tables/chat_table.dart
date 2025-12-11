@@ -34,14 +34,22 @@ class ChatTable {
     };
   }
 
-  getChats() async {
+  getChatById(String id) async {
     final db = await dbHelper.database;
     // Make a join SQL code for chats and participants
-    final _sql = "SELECT * FROM chats";
+    final _sql = "SELECT * FROM chats WHERE id = '$id'";
     var results = await db.rawQuery(_sql);
     // Create mutable copy
     var chats = results.map((e) => Map<String, dynamic>.from(e)).toList();
 
+    List<ChatModel> _chats = await _processChats(chats);
+
+    return _chats.isNotEmpty ? _chats.first : null;
+  }
+
+  Future<List<ChatModel>> _processChats(
+    List<Map<String, dynamic>> chats,
+  ) async {
     for (var chat in chats) {
       var participants = await ParticipantsTable().getParticipants(chat['id']);
       chat['participants'] = participants;
@@ -72,7 +80,18 @@ class ChatTable {
           });
         }).toList();
 
-    return mutableChats.isNotEmpty ? mutableChats : null;
+    return mutableChats;
+  }
+
+  getChats() async {
+    final db = await dbHelper.database;
+    // Make a join SQL code for chats and participants
+    final _sql = "SELECT * FROM chats";
+    var results = await db.rawQuery(_sql);
+    // Create mutable copy
+    var chats = results.map((e) => Map<String, dynamic>.from(e)).toList();
+
+    return _processChats(chats);
   }
 
   getChatParticipants(String chatId) async {

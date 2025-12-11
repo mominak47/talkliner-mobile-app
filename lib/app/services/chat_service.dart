@@ -3,10 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
+import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/services/notification_service.dart';
 import 'package:talkliner/app/sql_tables/chat_table.dart';
 import 'package:talkliner/app/sql_tables/messages_table.dart';
+import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
+import 'package:talkliner/app/views/messaging/chat.dart';
+import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
 class ChatService {
   // Storage
@@ -20,15 +24,57 @@ class ChatService {
     var currentRoute = Get.currentRoute;
     HapticFeedback.heavyImpact();
 
+    // Get chat by chat ID
+    ChatModel? chat = await ChatTable().getChatById(chatId);
+
     void showToast() {
-      Fluttertoast.showToast(
-        msg: "${message.displayName}: ${message.content}",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-        fontSize: 16.0,
+      bool isDarkMode = Theme.of(Get.context!).brightness == Brightness.dark;
+
+      String? user_name = null;
+
+      if (chat != null) {
+        user_name = chat.name;
+      }
+
+      Widget getProfilePic(ChatModel chat) {
+        Widget profilePicture = SizedBox();
+        bool isDarkMode = Theme.of(Get.context!).brightness == Brightness.dark;
+        if (chat.chatType == ChatType.individual &&
+            chat.participants.isNotEmpty) {
+          profilePicture = UserAvatar(user: chat.participants[0].user!);
+        }
+
+        if (chat.chatType == ChatType.group) {
+          profilePicture = CircleAvatar(
+            radius: 24,
+            backgroundColor:
+                isDarkMode
+                    ? TalklinerThemeColors.gray900
+                    : TalklinerThemeColors.gray020,
+            child: Icon(Icons.group, color: TalklinerThemeColors.gray050),
+          );
+        }
+
+        return profilePicture;
+      }
+
+      Get.snackbar(
+        user_name ?? "New Message",
+        message.content,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor:
+            isDarkMode ? Colors.black : TalklinerThemeColors.gray020,
+        colorText: isDarkMode ? Colors.white : Colors.black,
+        icon: getProfilePic(chat!),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        duration: const Duration(seconds: 3),
+        onTap: (snackbar) {
+          if (chat != null) {
+            // Hide snackbar
+            Get.closeCurrentSnackbar();
+            Get.to(() => Chat(chat: chat));
+          }
+        },
       );
     }
 

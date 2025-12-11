@@ -136,7 +136,6 @@ class _LoginViewState extends State<LoginView> {
                         ],
                       ),
                       const SizedBox(height: 40),
-                      Text(settingsController.apiUrl.value),
                       // Logo
                       Center(
                         child:

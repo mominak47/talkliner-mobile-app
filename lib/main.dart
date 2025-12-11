@@ -74,7 +74,7 @@ Future<void> main() async {
 
     // Show error screen instead of white screen
     runApp(
-      MaterialApp(
+      GetMaterialApp(
         home: Scaffold(
           body: Center(
             child: Column(

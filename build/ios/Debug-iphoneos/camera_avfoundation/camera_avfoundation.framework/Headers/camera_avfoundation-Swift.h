@@ -284,6 +284,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 @import Flutter;
 @import Foundation;
 @import ObjectiveC;
+@import UIKit;
 #endif
 
 #import <camera_avfoundation/camera_avfoundation.h>
@@ -354,6 +355,14 @@ SWIFT_CLASS("_TtC19camera_avfoundation12CameraPlugin")
 - (void)resumePreviewWithCompletion:(void (^ _Nonnull)(FlutterError * _Nullable))completion;
 - (void)updateDescriptionWhileRecordingCameraName:(NSString * _Nonnull)cameraName completion:(void (^ _Nonnull)(FlutterError * _Nullable))completion;
 - (void)setImageFileFormat:(FCPPlatformImageFileFormat)format completion:(void (^ _Nonnull)(FlutterError * _Nullable))completion;
+@end
+
+/// A default implementation of DeviceOrientationProvider which uses orientation
+/// of the current device from UIDevice.
+SWIFT_CLASS("_TtC19camera_avfoundation32DefaultDeviceOrientationProvider")
+@interface DefaultDeviceOrientationProvider : NSObject
+@property (nonatomic, readonly) UIDeviceOrientation orientation;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 #endif
