@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -41,6 +42,8 @@ class SocketController extends GetxController {
 
   int maximumPings = 100;
 
+  AudioPlayer audioPlayer = AudioPlayer();
+
   void defaultPings() {
     // Loop from 0 to maximumPings
     for (int i = 0; i < maximumPings; i++) {
@@ -67,6 +70,14 @@ class SocketController extends GetxController {
 
     // connect();
     addPingInterval();
+  }
+
+  // Onclose
+  @override
+  void onClose() {
+    audioPlayer.stop();
+    audioPlayer.dispose();
+    super.onClose();
   }
 
   // Interval to add ping
@@ -162,6 +173,8 @@ class SocketController extends GetxController {
     // On any event
     _socket!.onAny((event, data) {
       if (event == 'new_message') {
+        audioPlayer.play(AssetSource('audio/message-received.mp3'));
+
         ChatService.appendMessageToChat(
           data['chat_id'],
           MessageModel.fromJson(data['message']),

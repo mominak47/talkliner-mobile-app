@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
 import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/message_model.dart';
-import 'package:talkliner/app/services/notification_service.dart';
 import 'package:talkliner/app/sql_tables/chat_table.dart';
 import 'package:talkliner/app/sql_tables/messages_table.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';

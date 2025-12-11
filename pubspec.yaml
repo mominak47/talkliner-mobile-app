@@ -119,6 +119,7 @@ flutter:
     - assets/audio/emergency-tick-sound.mp3
     - assets/audio/emergency_sound.mp3
     - assets/audio/ptt-connect.wav
+    - assets/audio/message-received.mp3
     # Signals
     - assets/signals/0.svg
     - assets/signals/1.svg
