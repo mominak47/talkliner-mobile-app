@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -9,6 +8,7 @@ import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/battery_service.dart';
 import 'package:talkliner/app/services/chat_service.dart';
 import 'package:talkliner/app/services/network_service.dart';
+import 'package:talkliner/app/services/sound_service.dart';
 
 enum SocketConnectionQuality {
   excellent, // < 50ms
@@ -42,8 +42,6 @@ class SocketController extends GetxController {
 
   int maximumPings = 100;
 
-  AudioPlayer audioPlayer = AudioPlayer();
-
   void defaultPings() {
     // Loop from 0 to maximumPings
     for (int i = 0; i < maximumPings; i++) {
@@ -75,8 +73,6 @@ class SocketController extends GetxController {
   // Onclose
   @override
   void onClose() {
-    audioPlayer.stop();
-    audioPlayer.dispose();
     super.onClose();
   }
 
@@ -173,7 +169,13 @@ class SocketController extends GetxController {
     // On any event
     _socket!.onAny((event, data) {
       if (event == 'new_message') {
-        audioPlayer.play(AssetSource('audio/message-received.mp3'));
+        var senderId = data['message']['sender_id']['_id'];
+        var loggedInUserId = authController.user.value?.id;
+
+        if (senderId != loggedInUserId) {
+          // Fix: Only play it if the sender of the message is not logged in use
+          SoundService.playMessageReceived();
+        }
 
         ChatService.appendMessageToChat(
           data['chat_id'],

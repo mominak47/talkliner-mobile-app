@@ -21,14 +21,12 @@ class CallController extends GetxController {
 
   static const platform = MethodChannel('com.steigenberg.talkliner/pip');
 
-  Future<void> _updateAutoPip(bool enable) async {
+  Future<void> updateAutoPip(bool enable) async {
     try {
-      if (Platform.isAndroid) {
-        if (enable) {
-          await platform.invokeMethod('enableAutoPip');
-        } else {
-          await platform.invokeMethod('disableAutoPip');
-        }
+      if (enable) {
+        await platform.invokeMethod('enableAutoPip');
+      } else {
+        await platform.invokeMethod('disableAutoPip');
       }
     } catch (e) {
       debugPrint("Failed to update PIP state: $e");
@@ -57,6 +55,7 @@ class CallController extends GetxController {
 
   final RxBool isVideoEnabled = false.obs;
 
+  final RxBool isCallScreenActive = false.obs;
   final RxDouble currentLatency = 0.0.obs;
   final Rx<ConnectionQuality> connectionQuality = ConnectionQuality.unknown.obs;
   Timer? _statsTimer;
@@ -74,7 +73,7 @@ class CallController extends GetxController {
 
   @override
   void onClose() {
-    _updateAutoPip(false);
+    updateAutoPip(false);
     audioPlayer.dispose();
     _callTimer?.cancel();
     stopStatsTimer();
@@ -110,7 +109,7 @@ class CallController extends GetxController {
               }
             } catch (e) {
               // Method might not exist or other error
-              // debugPrint('getSenderStats error: $e');
+              debugPrint('getSenderStats error: $e');
             }
           }
 
@@ -258,7 +257,7 @@ class CallController extends GetxController {
       await room!.localParticipant?.setCameraEnabled(isVideoEnabled.value);
 
       if (isVideoEnabled.value) {
-        _updateAutoPip(true);
+        updateAutoPip(true);
       }
 
       // Start Timer
@@ -280,6 +279,10 @@ class CallController extends GetxController {
     } catch (e) {
       debugPrint('CallController: Failed to connect to room: $e');
       Fluttertoast.showToast(msg: 'Failed to connect to call');
+      // Cleanup on failure
+      disconnectRoom();
+      activeCall.value = null;
+      Get.back(); // Exit CallScreen if open
     }
   }
 
@@ -342,10 +345,15 @@ class CallController extends GetxController {
 
   Future<void> disconnectRoom() async {
     if (room != null) {
-      await room!.disconnect();
-      room = null;
+      try {
+        await room!.disconnect();
+      } catch (e) {
+        debugPrint("Error disconnecting room: $e");
+      } finally {
+        room = null;
+      }
     }
-    _updateAutoPip(false);
+    updateAutoPip(false);
     stopTimer();
     stopRingtone();
   }
@@ -370,7 +378,7 @@ class CallController extends GetxController {
     if (room != null && room!.localParticipant != null) {
       isVideoEnabled.value = !isVideoEnabled.value;
       await room!.localParticipant?.setCameraEnabled(isVideoEnabled.value);
-      _updateAutoPip(isVideoEnabled.value);
+      updateAutoPip(isVideoEnabled.value);
     }
   }
 
@@ -540,7 +548,7 @@ class CallController extends GetxController {
     if (resp['call_id'] != null && calls.isNotEmpty) {
       CallModel call = calls.firstWhere((c) => c.id == resp['call_id']);
 
-      while (Get.isDialogOpen! || Get.isBottomSheetOpen!) {
+      while ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) {
         Get.back();
       }
 
@@ -556,7 +564,7 @@ class CallController extends GetxController {
 
       // If this was the active call, close the screen
       // Assuming CallScreen is the top route or we want to exit it
-      if (Get.currentRoute == '/CallScreen' || !Get.isDialogOpen!) {
+      if (Get.currentRoute == '/CallScreen' || !(Get.isDialogOpen ?? false)) {
         // Identifying if we are on CallScreen is tricky without named routes.
         // But usually we want to pop if the active call ended.
         Get.back();
@@ -568,7 +576,8 @@ class CallController extends GetxController {
   void handleCallRejected(resp) {
     try {
       if (resp['call_id'] != null) {
-        while (Get.isDialogOpen! || Get.isBottomSheetOpen!) {
+        while ((Get.isDialogOpen ?? false) ||
+            (Get.isBottomSheetOpen ?? false)) {
           Get.back();
         }
         if (Get.currentRoute == '/OutgoingCallScreen') {

@@ -7,6 +7,7 @@ import 'package:talkliner/app/config/pages.dart';
 import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/language/app_language.dart';
 import 'package:talkliner/app/themes/app_theme.dart';
+import 'package:talkliner/app/views/calling/widgets/global_call_overlay.dart';
 
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -110,6 +111,9 @@ class MyApp extends StatelessWidget {
       initialRoute: Routes.splash,
       getPages: Pages.pages,
       initialBinding: AppBindings(),
+      builder: (context, child) {
+        return Stack(children: [child!, GlobalCallOverlay()]);
+      },
     );
   }
 }
