@@ -30,30 +30,30 @@ def main():
     
     # Create server
     with socketserver.TCPServer(("", PORT), CustomHTTPRequestHandler) as httpd:
-        print(f"🎙️ Talkliner Web Server")
-        print(f"📁 Serving directory: {www_dir}")
-        print(f"🌐 Server running at: http://localhost:{PORT}")
-        print(f"📄 Available files:")
+        debugPrint(f"🎙️ Talkliner Web Server")
+        debugPrint(f"📁 Serving directory: {www_dir}")
+        debugPrint(f"🌐 Server running at: http://localhost:{PORT}")
+        debugPrint(f"📄 Available files:")
         
         # List available HTML files
         html_files = list(www_dir.glob("*.html"))
         for html_file in html_files:
-            print(f"   • http://localhost:{PORT}/{html_file.name}")
+            debugPrint(f"   • http://localhost:{PORT}/{html_file.name}")
         
-        print(f"\n🚀 Recommended: http://localhost:{PORT}/index-local.html")
-        print(f"💡 Press Ctrl+C to stop the server")
+        debugPrint(f"\n🚀 Recommended: http://localhost:{PORT}/index-local.html")
+        debugPrint(f"💡 Press Ctrl+C to stop the server")
         
         # Try to open browser automatically
         try:
             webbrowser.open(f'http://localhost:{PORT}/index-local.html')
-            print(f"🌍 Opened browser automatically")
+            debugPrint(f"🌍 Opened browser automatically")
         except:
             pass
         
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print(f"\n👋 Server stopped")
+            debugPrint(f"\n👋 Server stopped")
             sys.exit(0)
 
 if __name__ == "__main__":

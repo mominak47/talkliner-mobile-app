@@ -4,20 +4,13 @@ import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/profile/parts/settings_section_container.dart';
 import 'package:talkliner/app/views/utils/checkbox_item.dart';
 
-enum UserStatus {
-  online,
-  busy,
-  solo,
-  offline,
-}
+enum UserStatus { online, busy, solo, offline }
 
 class UserSettingsStatus extends StatelessWidget {
   const UserSettingsStatus({super.key});
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
     return SettingsSectionContainer(
       title: 'Status',
       children: [

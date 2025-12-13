@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/rendering.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:talkliner/app/debugging/ansicolor.dart';
-import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/helpers/database_helper.dart';
 import 'package:talkliner/app/models/chat_model.dart';
@@ -37,14 +33,14 @@ class ChatTable {
   getChatById(String id) async {
     final db = await dbHelper.database;
     // Make a join SQL code for chats and participants
-    final _sql = "SELECT * FROM chats WHERE id = '$id'";
-    var results = await db.rawQuery(_sql);
+    final sqlQuery = "SELECT * FROM chats WHERE id = '$id'";
+    var results = await db.rawQuery(sqlQuery);
     // Create mutable copy
     var chats = results.map((e) => Map<String, dynamic>.from(e)).toList();
 
-    List<ChatModel> _chats = await _processChats(chats);
+    List<ChatModel> processedChats = await _processChats(chats);
 
-    return _chats.isNotEmpty ? _chats.first : null;
+    return processedChats.isNotEmpty ? processedChats.first : null;
   }
 
   Future<List<ChatModel>> _processChats(
@@ -86,8 +82,8 @@ class ChatTable {
   getChats() async {
     final db = await dbHelper.database;
     // Make a join SQL code for chats and participants
-    final _sql = "SELECT * FROM chats";
-    var results = await db.rawQuery(_sql);
+    final sqlQuery = "SELECT * FROM chats";
+    var results = await db.rawQuery(sqlQuery);
     // Create mutable copy
     var chats = results.map((e) => Map<String, dynamic>.from(e)).toList();
 
@@ -97,8 +93,8 @@ class ChatTable {
   getChatParticipants(String chatId) async {
     final db = await dbHelper.database;
     // Make a join SQL code for chats and participants
-    final _sql = "SELECT * FROM participants WHERE chat_id = '$chatId'";
-    var results = await db.rawQuery(_sql);
+    final sqlQuery = "SELECT * FROM participants WHERE chat_id = '$chatId'";
+    var results = await db.rawQuery(sqlQuery);
     // Create mutable copy
     var participants = results.map((e) => e['user_id'] as String).toList();
 
@@ -128,11 +124,11 @@ class ChatTable {
       debugPrint(sql("[SQL] UPDATE Chat : id = ${chat.id}"));
 
       // Insert Users
-      update_users(chat);
+      updateUsers(chat);
       // Insert Participants
-      update_participants(chat);
+      updateParticipants(chat);
       // // Insert Messages
-      update_messages(chat, chat.id);
+      updateMessages(chat, chat.id);
       // // Update Chat
 
       var insertObject = format(chat);
@@ -145,7 +141,7 @@ class ChatTable {
     }
   }
 
-  update_users(ChatModel chat) async {
+  updateUsers(ChatModel chat) async {
     var users = chat.participants.map((p) => p.user);
     // Loop
     for (var user in users) {
@@ -153,17 +149,15 @@ class ChatTable {
     }
   }
 
-  update_participants(ChatModel chat) async {
+  updateParticipants(ChatModel chat) async {
     var participants = chat.participants;
     // Loop
     for (var participant in participants) {
-      if (participant != null) {
-        ParticipantsTable().insert(participant, chat.id);
-      }
+      ParticipantsTable().insert(participant, chat.id);
     }
   }
 
-  update_messages(ChatModel chat, String chatId) async {
+  updateMessages(ChatModel chat, String chatId) async {
     var messages = chat.messages;
     // Loop
     if (messages != null && messages.isNotEmpty) {
@@ -175,7 +169,7 @@ class ChatTable {
 
   insertBatch(List<ChatModel> chats) async {
     List<Map<String, dynamic>> dataList = [];
-    print(warn("[SQL] INSERT Batch Chat : ${chats.length}"));
+    debugPrint(warn("[SQL] INSERT Batch Chat : ${chats.length}"));
     for (var chat in chats) {
       dataList.add(format(chat));
     }

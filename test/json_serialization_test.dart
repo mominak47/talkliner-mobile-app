@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:talkliner/app/models/chat_model.dart';
-import 'package:talkliner/app/models/user_model.dart';
 
 void main() {
   test('ChatModel serialization test', () {
@@ -34,7 +34,7 @@ void main() {
     try {
       final jsonMap = chat.toJson();
       final jsonString = jsonEncode(jsonMap);
-      print('Serialization successful: $jsonString');
+      debugPrint('Serialization successful: $jsonString');
 
       // Verify values
       expect(jsonMap['chat_type'], 'individual');

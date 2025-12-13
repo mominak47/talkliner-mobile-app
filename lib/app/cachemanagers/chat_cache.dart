@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/models/chat_model.dart';
 import 'package:talkliner/app/models/message_model.dart';
@@ -8,7 +9,7 @@ class ChatCache {
 
   saveChat(ChatModel chat) {
     getStorage.write(key + chat.id, chat.toJson());
-    print("Chat saved to cache: ${chat.id}");
+    debugPrint("Chat saved to cache: ${chat.id}");
   }
 
   ChatModel? getChat(String chatId) {

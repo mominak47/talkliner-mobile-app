@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:talkliner/app/controllers/call_controller.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
-import 'package:talkliner/app/views/calling/call_screen.dart';
 import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
 enum CallType {
@@ -94,8 +92,8 @@ class CallModel {
 
   void watchEvents() {}
 
-  void updateStatus(CallStatus _status) {
-    status = _status;
+  void updateStatus(CallStatus newStatus) {
+    status = newStatus;
     updatedAt = DateTime.now().toIso8601String();
   }
 
@@ -195,7 +193,6 @@ class CallModel {
           cb();
         }
       }
-      print("Call Modal Closed");
     });
   }
 

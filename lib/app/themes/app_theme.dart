@@ -69,41 +69,6 @@ class AppTheme {
     color: Colors.white,
   );
 
-  // Common input decoration properties
-  static InputDecorationTheme get _commonInputDecorationTheme =>
-      InputDecorationTheme(
-        labelStyle: const TextStyle(
-          fontFamily: fontFamily,
-          fontSize: 14,
-          fontWeight: regular,
-        ),
-        hintStyle: const TextStyle(
-          fontFamily: fontFamily,
-          fontSize: 14,
-          fontWeight: regular,
-          color: TalklinerThemeColors.gray500,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: TalklinerThemeColors.primary500,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey, width: 1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-      );
-
   // Theme data
   static ThemeData get lightTheme {
     return ThemeData(
@@ -147,7 +112,7 @@ class AppTheme {
           fontWeight: regular,
           color: TalklinerThemeColors.gray800,
         ),
-          enabledBorder: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(width: 2, color: Colors.transparent),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -199,24 +164,12 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.dark,
       primaryTextTheme: const TextTheme(
-        bodyMedium: TextStyle(
-          color: Colors.white,
-        ),
-        bodySmall: TextStyle(
-          color: Colors.white,
-        ),
-        bodyLarge: TextStyle(
-          color: Colors.white,
-        ),
-        headlineMedium: TextStyle(
-          color: Colors.white,
-        ),
-        headlineSmall: TextStyle(
-          color: Colors.white,
-        ),
-        headlineLarge: TextStyle(
-          color: Colors.white,
-        ),
+        bodyMedium: TextStyle(color: Colors.white),
+        bodySmall: TextStyle(color: Colors.white),
+        bodyLarge: TextStyle(color: Colors.white),
+        headlineMedium: TextStyle(color: Colors.white),
+        headlineSmall: TextStyle(color: Colors.white),
+        headlineLarge: TextStyle(color: Colors.white),
       ),
       inputDecorationTheme: InputDecorationTheme(
         fillColor: TalklinerThemeColors.gray800,
@@ -246,7 +199,6 @@ class AppTheme {
           ),
           borderRadius: BorderRadius.circular(8),
         ),
-        
       ),
       useMaterial3: true,
       primarySwatch: Colors.amber,
@@ -280,12 +232,8 @@ class AppTheme {
           color: TalklinerThemeColors.gray020,
         ),
         labelLarge: button,
-        labelSmall: TextStyle(
-          color: TalklinerThemeColors.gray020,
-        ),
-        labelMedium: TextStyle(
-          color: TalklinerThemeColors.gray020,
-        ),
+        labelSmall: TextStyle(color: TalklinerThemeColors.gray020),
+        labelMedium: TextStyle(color: TalklinerThemeColors.gray020),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: TalklinerThemeColors.gray900,

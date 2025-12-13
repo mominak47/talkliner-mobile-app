@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-import 'package:get/get.dart';
 import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 

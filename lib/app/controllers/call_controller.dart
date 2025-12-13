@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -174,6 +173,9 @@ class CallController extends GetxController {
       return;
     }
 
+    // Set initial status
+    outGoingCallStatus.value = 'Calling...';
+
     // Get Call ID
     sendEvent('request', user.id, {'isVideo': isVideo}, (resp) {
       debugPrint('CallController: Response: $resp');
@@ -193,6 +195,7 @@ class CallController extends GetxController {
 
       // Make it the active call
       activeCall.value = call;
+      outGoingCallStatus.value = 'Ringing...';
     });
   }
 
@@ -206,6 +209,7 @@ class CallController extends GetxController {
         call.updateStatus(CallStatus.accepted);
 
         activeCall.refresh();
+        outGoingCallStatus.value = 'Accepted';
 
         // Initiator connects here because they already have the token from request
         if (call.roomToken.isNotEmpty) {
@@ -289,7 +293,7 @@ class CallController extends GetxController {
   Widget getCallInProgressWidget() {
     String title =
         activeCall.value?.type == CallType.individual
-            ? activeCall.value?.participants?.first?.displayName ?? ''
+            ? activeCall.value?.participants.first.displayName ?? ''
             : 'Group Call';
     return GestureDetector(
       onTap: () => Get.to(() => CallScreen()),
@@ -359,27 +363,23 @@ class CallController extends GetxController {
   }
 
   void toggleMute() async {
+    isMuted.value = !isMuted.value;
+
     if (room != null && room!.localParticipant != null) {
-      // livekit_client 2.0+ uses isMicrophoneEnabled as a synchronous check or helper
-      // but commonly we just track state or use value.
-
-      // Correct logic:
-      // current: isMuted=false (mic on). Toggle -> isMuted=true (mic off).
-      // setMicrophoneEnabled(false).
-
-      await room!.localParticipant?.setMicrophoneEnabled(isMuted.value);
-      isMuted.value = !isMuted.value;
+      // If we are now muted (true), we want mic disabled (false).
+      await room!.localParticipant?.setMicrophoneEnabled(!isMuted.value);
     }
   }
 
   CameraPosition cameraPosition = CameraPosition.front;
 
   void toggleVideo() async {
+    isVideoEnabled.value = !isVideoEnabled.value;
+
     if (room != null && room!.localParticipant != null) {
-      isVideoEnabled.value = !isVideoEnabled.value;
       await room!.localParticipant?.setCameraEnabled(isVideoEnabled.value);
-      updateAutoPip(isVideoEnabled.value);
     }
+    updateAutoPip(isVideoEnabled.value);
   }
 
   void flipCamera() async {
@@ -576,6 +576,9 @@ class CallController extends GetxController {
   void handleCallRejected(resp) {
     try {
       if (resp['call_id'] != null) {
+        // Update status for UI
+        outGoingCallStatus.value = 'No Answer';
+
         while ((Get.isDialogOpen ?? false) ||
             (Get.isBottomSheetOpen ?? false)) {
           Get.back();
@@ -586,7 +589,8 @@ class CallController extends GetxController {
           // Get current route in Getx
           debugPrint('CallController: Current route: ${Get.currentRoute}');
 
-          Get.back();
+          // We don't pop immediately so user can see 'No Answer'
+          // Get.back();
 
           Fluttertoast.showToast(
             msg: 'Call rejected by ${call.participants.first.displayName}',

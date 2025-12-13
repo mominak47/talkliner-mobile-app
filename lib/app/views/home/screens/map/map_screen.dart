@@ -91,6 +91,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!mounted) return;
+
     if (!serviceEnabled) {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
@@ -99,8 +101,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
 
     permission = await Geolocator.checkPermission();
+    if (!mounted) return;
+
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
+      if (!mounted) return;
+
       if (permission == LocationPermission.denied) {
         // Permissions are denied, next time you could try
         // requesting permissions again (this is also where
@@ -119,6 +125,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     Position position = await Geolocator.getCurrentPosition();
+    if (!mounted) return;
+
     LatLng newLocation = LatLng(position.latitude, position.longitude);
 
     // Update map view

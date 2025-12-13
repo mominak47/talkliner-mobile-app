@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:talkliner/app/controllers/chat_controller.dart';
-import 'package:talkliner/app/controllers/recents_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/helpers/global_helpers.dart';
 import 'package:talkliner/app/models/chat_model.dart';

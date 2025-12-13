@@ -41,7 +41,7 @@ class _GlobalCallOverlayState extends State<GlobalCallOverlay> {
       if (!shouldShow) return SizedBox.shrink();
 
       livekit.VideoTrack? getRemoteVideoTrack() {
-        if (room != null && room.remoteParticipants.isNotEmpty) {
+        if (room.remoteParticipants.isNotEmpty) {
           final participant = room.remoteParticipants.values.first;
           final track = participant.videoTrackPublications.firstOrNull?.track;
           return track;

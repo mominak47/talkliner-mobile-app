@@ -6,8 +6,6 @@ import 'package:talkliner/app/models/message_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/sql_tables/chat_table.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
-import 'package:talkliner/app/views/messaging/parts/message_date.dart';
-
 import 'package:talkliner/app/views/messaging/parts/date_divider.dart';
 import 'package:talkliner/app/views/messaging/types/call_message.dart';
 import 'package:talkliner/app/views/messaging/types/text_message.dart';
