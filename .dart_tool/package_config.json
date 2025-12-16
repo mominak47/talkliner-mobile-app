@@ -338,6 +338,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "flutter_compass",
+      "rootUri": "file:///Users/mominkhan/.pub-cache/hosted/pub.dev/flutter_compass-0.8.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_launcher_icons",
       "rootUri": "file:///Users/mominkhan/.pub-cache/hosted/pub.dev/flutter_launcher_icons-0.14.4",
       "packageUri": "lib/",

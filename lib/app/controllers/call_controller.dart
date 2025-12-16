@@ -364,6 +364,7 @@ class CallController extends GetxController {
 
   void toggleMute() async {
     isMuted.value = !isMuted.value;
+    debugPrint('CallController: Toggled mute to ${isMuted.value}');
 
     if (room != null && room!.localParticipant != null) {
       // If we are now muted (true), we want mic disabled (false).
@@ -375,6 +376,7 @@ class CallController extends GetxController {
 
   void toggleVideo() async {
     isVideoEnabled.value = !isVideoEnabled.value;
+    debugPrint('CallController: Toggled video to ${isVideoEnabled.value}');
 
     if (room != null && room!.localParticipant != null) {
       await room!.localParticipant?.setCameraEnabled(isVideoEnabled.value);
@@ -403,6 +405,7 @@ class CallController extends GetxController {
 
   void toggleSpeaker() async {
     isSpeakerOn.value = !isSpeakerOn.value;
+    debugPrint('CallController: Toggled speaker to ${isSpeakerOn.value}');
     await Hardware.instance.setSpeakerphoneOn(isSpeakerOn.value);
   }
 

@@ -8,6 +8,7 @@ import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/home/screens/pushtotalk/widgets/push_to_talk_button.dart';
 import 'package:talkliner/app/views/home/screens/pushtotalk/widgets/selected_user.dart';
+import 'package:talkliner/app/controllers/emergency_controller.dart';
 
 class PushToTalkScreen extends StatefulWidget {
   const PushToTalkScreen({super.key});
@@ -21,6 +22,7 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
   final pushToTalkController = Get.find<PushToTalkController>();
   final livekitRoomController = Get.find<LivekitRoomController>();
   final callController = Get.find<CallController>();
+  final emergencyController = Get.put(EmergencyController());
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +77,9 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
                           color: Colors.white,
                           size: 20,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          emergencyController.triggerEmergency();
+                        },
                       ),
                     ],
                   ),

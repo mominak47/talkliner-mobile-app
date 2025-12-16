@@ -221,20 +221,6 @@ class SocketController extends GetxController {
       try {
         Map<String, dynamic> batteryInfo = BatteryService().getBatteryInfoMap();
 
-        // Get location with timeout for iOS TestFlight
-        // Position? location;
-        // try {
-        //   location = await LocationService().getCurrentPosition().timeout(
-        //     Duration(seconds: 5),
-        //     onTimeout: () {
-        //       debugPrint('SocketService: Location timeout, using null');
-        //       return null;
-        //     },
-        //   );
-        // } catch (e) {
-        //   debugPrint('SocketService: Error getting location: $e');
-        // }
-
         // Get network type WIFI or MOBILE
         String networkType = NetworkService().getNetworkType();
 

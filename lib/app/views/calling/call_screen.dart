@@ -210,93 +210,7 @@ class _CallScreenState extends State<CallScreen> {
                     bottom: TalklinerDimens.callControlsBottomMargin,
                     left: 0,
                     right: 0,
-                    child: Obx(
-                      () => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          // Speaker
-                          FloatingActionButton(
-                            heroTag: 'speaker_btn',
-                            backgroundColor:
-                                callController.isSpeakerOn.value
-                                    ? TalklinerThemeColors.primary500
-                                    : isDarkMode
-                                    ? TalklinerThemeColors.gray900
-                                    : Colors.white,
-                            shape: CircleBorder(),
-                            elevation: 0,
-                            onPressed: callController.toggleSpeaker,
-                            child: Icon(
-                              LucideIcons.volume2,
-                              size: TalklinerDimens.iconSizeLarge,
-                              color:
-                                  callController.isSpeakerOn.value
-                                      ? Colors.white
-                                      : (isDarkMode
-                                          ? Colors.white
-                                          : Colors.black),
-                            ),
-                          ),
-
-                          // Video Toggle
-                          FloatingActionButton(
-                            heroTag: 'video_btn',
-                            backgroundColor:
-                                !callController.isVideoEnabled.value
-                                    ? TalklinerThemeColors.red500
-                                    : isDarkMode
-                                    ? TalklinerThemeColors.gray900
-                                    : Colors.white,
-                            shape: CircleBorder(),
-                            elevation: 0,
-                            onPressed: callController.toggleVideo,
-                            child: Icon(
-                              callController.isVideoEnabled.value
-                                  ? LucideIcons.video
-                                  : LucideIcons.videoOff,
-                              size: TalklinerDimens.iconSizeLarge,
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                          ),
-
-                          // Mute
-                          FloatingActionButton(
-                            heroTag: 'mute_btn',
-                            backgroundColor:
-                                callController.isMuted.value
-                                    ? TalklinerThemeColors.red500
-                                    : isDarkMode
-                                    ? TalklinerThemeColors.gray900
-                                    : Colors.white,
-                            shape: CircleBorder(),
-                            elevation: 0,
-                            onPressed: callController.toggleMute,
-                            child: Icon(
-                              callController.isMuted.value
-                                  ? LucideIcons.micOff
-                                  : LucideIcons.mic,
-                              size: TalklinerDimens.iconSizeLarge,
-                              color:
-                                  callController.isMuted.value
-                                      ? Colors.white
-                                      : (isDarkMode
-                                          ? Colors.white
-                                          : Colors.black),
-                            ),
-                          ),
-
-                          // End Call
-                          FloatingActionButton(
-                            heroTag: 'end_btn',
-                            backgroundColor: TalklinerThemeColors.red500,
-                            shape: CircleBorder(),
-                            elevation: 0,
-                            onPressed: () => callController.endCall(call),
-                            child: Icon(LucideIcons.x, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: _buildControls(callController, isDarkMode, call),
                   ),
 
                 if (callController.isVideoEnabled.value && !isPipMode)
@@ -400,6 +314,100 @@ class _CallScreenState extends State<CallScreen> {
           },
         );
       }),
+    );
+  }
+
+  Widget _buildControls(
+    CallController callController,
+    bool isDarkMode,
+    CallModel call,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        // Speaker
+        Obx(
+          () => FloatingActionButton(
+            heroTag: 'speaker_btn',
+            backgroundColor:
+                callController.isSpeakerOn.value
+                    ? TalklinerThemeColors.primary500
+                    : isDarkMode
+                    ? TalklinerThemeColors.gray900
+                    : Colors.white,
+            shape: CircleBorder(),
+            elevation: 0,
+            onPressed: callController.toggleSpeaker,
+            child: Icon(
+              LucideIcons.volume2,
+              size: TalklinerDimens.iconSizeLarge,
+              color:
+                  callController.isSpeakerOn.value
+                      ? Colors.white
+                      : (isDarkMode ? Colors.white : Colors.black),
+            ),
+          ),
+        ),
+
+        // Video Toggle
+        Obx(
+          () => FloatingActionButton(
+            heroTag: 'video_btn',
+            backgroundColor:
+                !callController.isVideoEnabled.value
+                    ? TalklinerThemeColors.red500
+                    : isDarkMode
+                    ? TalklinerThemeColors.gray900
+                    : Colors.white,
+            shape: CircleBorder(),
+            elevation: 0,
+            onPressed: callController.toggleVideo,
+            child: Icon(
+              callController.isVideoEnabled.value
+                  ? LucideIcons.video
+                  : LucideIcons.videoOff,
+              size: TalklinerDimens.iconSizeLarge,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+        ),
+
+        // Mute
+        Obx(
+          () => FloatingActionButton(
+            heroTag: 'mute_btn',
+            backgroundColor:
+                callController.isMuted.value
+                    ? TalklinerThemeColors.red500
+                    : isDarkMode
+                    ? TalklinerThemeColors.gray900
+                    : Colors.white,
+            shape: CircleBorder(),
+            elevation: 0,
+            onPressed: callController.toggleMute,
+            child: Icon(
+              callController.isMuted.value
+                  ? LucideIcons.micOff
+                  : LucideIcons.mic,
+              size: TalklinerDimens.iconSizeLarge,
+              color:
+                  callController.isMuted.value
+                      ? Colors.white
+                      : (isDarkMode ? Colors.white : Colors.black),
+            ),
+          ),
+        ),
+
+        // End Call
+        FloatingActionButton(
+          heroTag: 'end_btn',
+          backgroundColor: TalklinerThemeColors.red500,
+          shape: CircleBorder(),
+          elevation: 0,
+          onPressed: () => callController.endCall(call),
+          child: Icon(LucideIcons.x, color: Colors.white),
+        ),
+      ],
     );
   }
 }

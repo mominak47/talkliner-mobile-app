@@ -17,6 +17,7 @@
         "flutter",
         "flutter_blue_plus",
         "flutter_callkit_incoming",
+        "flutter_compass",
         "flutter_launcher_icons",
         "flutter_local_notifications",
         "flutter_map",
@@ -76,6 +77,13 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_compass",
+      "version": "0.8.1",
+      "dependencies": [
+        "flutter"
       ]
     },
     {

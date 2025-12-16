@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -145,6 +146,115 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     // Add a marker to the map <- Removed hardcoded marker logic from here
 
+    void showMapLayersBottomSheet() {
+      bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+      Get.bottomSheet(
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDarkMode ? TalklinerThemeColors.gray800 : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Map Type',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    onPressed: () => Get.back(),
+                    icon: Icon(LucideIcons.x),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                height: 300, // Fixed height for grid
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.8,
+                  ),
+                  itemCount: mapController2.MapType.values.length,
+                  itemBuilder: (context, index) {
+                    final type = mapController2.MapType.values[index];
+                    final name =
+                        type.name[0].toUpperCase() + type.name.substring(1);
+                    final assetName =
+                        type == mapController2.MapType.cycle
+                            ? 'cyclemap' // Special case for asset name matching
+                            : type.name;
+
+                    return Obx(() {
+                      final isSelected =
+                          mapController.currentMapType.value == type;
+                      return GestureDetector(
+                        onTap: () {
+                          mapController.setMapType(type);
+                          // Get.back(); // Keep open to test different types? User request implies selection. Let's keep it open for quick switching.
+                        },
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color:
+                                        isSelected
+                                            ? TalklinerThemeColors.primary500
+                                            : Colors.transparent,
+                                    width: 4,
+                                  ),
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                      'assets/maptypes/$assetName.png',
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              type == mapController2.MapType.tracestrack
+                                  ? 'Tracestrack'
+                                  : type == mapController2.MapType.cyclosm
+                                  ? 'CyclOSM'
+                                  : name,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight:
+                                    isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                color:
+                                    isSelected
+                                        ? TalklinerThemeColors.primary500
+                                        : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        isScrollControlled: true,
+      );
+    }
+
     Widget showMapControls() {
       bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
       return Positioned(
@@ -190,7 +300,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             SizedBox(height: 30),
             FloatingActionButton(
               heroTag: 'map_layers',
-              onPressed: () {},
+              onPressed: showMapLayersBottomSheet,
               backgroundColor:
                   isDarkMode ? TalklinerThemeColors.gray700 : Colors.white,
               shape: CircleBorder(),
@@ -215,33 +325,47 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       );
     }
 
+    Widget currentUserMarker() {
+      return MarkerLayer(
+        markers:
+            mapController
+                .getMarkers()
+                .map(
+                  (marker) => Marker(
+                    point: marker,
+                    width: 60,
+                    height: 60,
+                    child: Transform.rotate(
+                      angle:
+                          (mapController.currentHeading.value *
+                              (3.14159 / 180)),
+                      child: SvgPicture.asset(
+                        'assets/icons/user-active-pin.svg',
+                        width: 60,
+                        height: 60,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+      );
+    }
+
     return Stack(
       children: [
         FlutterMap(
           mapController: flutterMapController,
           children: [
-            TileLayer(
-              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              subdomains: ['a', 'b', 'c'],
-            ),
-            Obx(
-              () => MarkerLayer(
-                markers:
-                    mapController
-                        .getMarkers()
-                        .map(
-                          (marker) => Marker(
-                            point: marker,
-                            child: Icon(
-                              Icons.location_on,
-                              color: TalklinerThemeColors.primary500,
-                              size: 60,
-                            ),
-                          ),
-                        )
-                        .toList(),
-              ),
-            ),
+            Obx(() {
+              return TileLayer(
+                urlTemplate: mapController.getTileUrl(
+                  mapController.currentMapType.value,
+                ),
+                subdomains: ['a', 'b', 'c'],
+                userAgentPackageName: 'com.talkliner.app',
+              );
+            }),
+            Obx(() => currentUserMarker()),
             showMapControls(),
             Obx(
               () => Positioned(

@@ -288,47 +288,50 @@ class SignalBarsWidget extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // Chart Section
-                                  Text(
-                                    "Latency History",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          isDarkMode
-                                              ? Colors.white
-                                              : Colors.black,
+                                  if (quality !=
+                                      SocketConnectionQuality.disconnected) ...[
+                                    Text(
+                                      "Latency History",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
                                     ),
-                                  ),
 
-                                  const SizedBox(height: 16),
+                                    const SizedBox(height: 16),
 
-                                  // Chart
-                                  if (pings.isEmpty)
-                                    Container(
-                                      height: 200,
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "No data available yet",
-                                        style: TextStyle(
-                                          color:
-                                              isDarkMode
-                                                  ? Colors.white.withOpacity(
-                                                    0.5,
-                                                  )
-                                                  : Colors.black.withOpacity(
-                                                    0.5,
-                                                  ),
+                                    // Chart
+                                    if (pings.isEmpty)
+                                      Container(
+                                        height: 200,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "No data available yet",
+                                          style: TextStyle(
+                                            color:
+                                                isDarkMode
+                                                    ? Colors.white.withOpacity(
+                                                      0.5,
+                                                    )
+                                                    : Colors.black.withOpacity(
+                                                      0.5,
+                                                    ),
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      SizedBox(
+                                        height: 200,
+                                        child: _buildLatencyChart(
+                                          pings,
+                                          isDarkMode,
                                         ),
                                       ),
-                                    )
-                                  else
-                                    SizedBox(
-                                      height: 200,
-                                      child: _buildLatencyChart(
-                                        pings,
-                                        isDarkMode,
-                                      ),
-                                    ),
+                                  ],
 
                                   const SizedBox(height: 24),
 
@@ -356,6 +359,44 @@ class SignalBarsWidget extends StatelessWidget {
                                               : Colors.black.withOpacity(0.5),
                                     ),
                                   ),
+
+                                  // Retry Button
+                                  if (quality ==
+                                      SocketConnectionQuality.disconnected)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 24.0),
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton.icon(
+                                          onPressed: () {
+                                            socketController.connect();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                TalklinerThemeColors.primary500,
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          icon: const Icon(
+                                            LucideIcons.refreshCw,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                          label: const Text(
+                                            "Retry Connection",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               );
                             }),
