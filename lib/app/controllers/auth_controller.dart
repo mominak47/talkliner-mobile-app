@@ -6,6 +6,7 @@ import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/services/auth_service.dart';
 import 'package:talkliner/app/cachemanagers/token_manager.dart';
 import 'package:talkliner/app/helpers/database_helper.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 class AuthController extends GetxController {
   final AuthService authService = Get.find<AuthService>();
@@ -66,6 +67,9 @@ class AuthController extends GetxController {
       isLoggedIn.value = true;
       debugPrint('[AuthController] Login successful');
 
+      // Start Background Service
+      FlutterBackgroundService().startService();
+
       // Clear Database
       // DatabaseHelper().deleteDatabase('talkliner-client.db');
       await DatabaseHelper().emptyAllTables();
@@ -114,6 +118,10 @@ class AuthController extends GetxController {
       user.value = await authService.getUser();
       isLoggedIn.value = true;
       debugPrint('[AuthController] Token login successful');
+
+      // Start Background Service
+      FlutterBackgroundService().startService();
+
       await Get.offAllNamed(Routes.home);
     } on AuthException catch (e) {
       error.value = e.message;
@@ -194,6 +202,12 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     debugPrint('[AuthController] Logging out');
+
+    // Stop Background Service
+    final service = FlutterBackgroundService();
+    if (await service.isRunning()) {
+      service.invoke("stopService");
+    }
 
     await TokenManager.removeToken();
     isLoggedIn.value = false;

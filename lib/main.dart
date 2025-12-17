@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:talkliner/app/config/app_bindings.dart';
 import 'package:talkliner/app/config/pages.dart';
 import 'package:talkliner/app/config/routes.dart';
@@ -13,11 +14,22 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:talkliner/service/background_service.dart';
 
 Future<void> main() async {
   try {
     // Initialize Flutter bindings
     WidgetsFlutterBinding.ensureInitialized();
+
+    // Request Notification Permission for Android 13+
+    await Permission.notification.isDenied.then((value) {
+      if (value) {
+        Permission.notification.request();
+      }
+    });
+
+    // Initialize Background Service
+    await initializeService();
 
     // Initialize database factory for desktop
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {

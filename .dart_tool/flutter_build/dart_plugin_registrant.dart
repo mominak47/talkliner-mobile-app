@@ -7,6 +7,7 @@
 
 import 'dart:io'; // flutter_ignore: dart_io_import.
 import 'package:camera_android_camerax/camera_android_camerax.dart' as camera_android_camerax;
+import 'package:flutter_background_service_android/flutter_background_service_android.dart' as flutter_background_service_android;
 import 'package:flutter_blue_plus_android/flutter_blue_plus_android.dart' as flutter_blue_plus_android;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart' as flutter_local_notifications;
 import 'package:geolocator_android/geolocator_android.dart' as geolocator_android;
@@ -14,6 +15,7 @@ import 'package:path_provider_android/path_provider_android.dart' as path_provid
 import 'package:shared_preferences_android/shared_preferences_android.dart' as shared_preferences_android;
 import 'package:sqflite_android/sqflite_android.dart' as sqflite_android;
 import 'package:camera_avfoundation/camera_avfoundation.dart' as camera_avfoundation;
+import 'package:flutter_background_service_ios/flutter_background_service_ios.dart' as flutter_background_service_ios;
 import 'package:flutter_blue_plus_darwin/flutter_blue_plus_darwin.dart' as flutter_blue_plus_darwin;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart' as flutter_local_notifications;
 import 'package:geolocator_apple/geolocator_apple.dart' as geolocator_apple;
@@ -55,6 +57,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`camera_android_camerax` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        flutter_background_service_android.FlutterBackgroundServiceAndroid.registerWith();
+      } catch (err) {
+        print(
+          '`flutter_background_service_android` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }
@@ -119,6 +130,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`camera_avfoundation` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        flutter_background_service_ios.FlutterBackgroundServiceIOS.registerWith();
+      } catch (err) {
+        print(
+          '`flutter_background_service_ios` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:talkliner/app/config/app_config.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
@@ -168,27 +169,31 @@ class SocketController extends GetxController {
 
     // On any event
     _socket!.onAny((event, data) {
-      if (event == 'new_message') {
-        var senderId = data['message']['sender_id']['_id'];
-        var loggedInUserId = authController.user.value?.id;
+      try {
+        if (event == 'new_message') {
+          var senderId = data['message']['sender_id']['_id'];
+          var loggedInUserId = authController.user.value?.id;
 
-        if (senderId != loggedInUserId) {
-          // Fix: Only play it if the sender of the message is not logged in use
-          SoundService.playMessageReceived();
+          if (senderId != loggedInUserId) {
+            // Fix: Only play it if the sender of the message is not logged in use
+            SoundService.playMessageReceived();
+          }
+
+          ChatService.appendMessageToChat(
+            data['chat_id'],
+            MessageModel.fromJson(data['message']),
+          );
+          eventData.value = data;
         }
 
-        ChatService.appendMessageToChat(
-          data['chat_id'],
-          MessageModel.fromJson(data['message']),
-        );
-        eventData.value = data;
-      }
+        if (event == 'USER_TO_USER_EVENT') {
+          eventData.value = data;
+        }
 
-      if (event == 'USER_TO_USER_EVENT') {
-        eventData.value = data;
+        this.event.value = event;
+      } catch (e) {
+        debugPrint('SocketController: Error on socket: $e');
       }
-
-      this.event.value = event;
     });
 
     _socket!.on('pong', onPong);
@@ -224,10 +229,25 @@ class SocketController extends GetxController {
         // Get network type WIFI or MOBILE
         String networkType = NetworkService().getNetworkType();
 
+        Map<String, dynamic>? locationData;
+        try {
+          LocationPermission permission = await Geolocator.checkPermission();
+          if (permission == LocationPermission.always ||
+              permission == LocationPermission.whileInUse) {
+            Position position = await Geolocator.getCurrentPosition();
+            locationData = {
+              'latitude': position.latitude,
+              'longitude': position.longitude,
+            };
+          }
+        } catch (e) {
+          debugPrint('SocketController: Error getting location: $e');
+        }
+
         Map<String, dynamic> pingData = {
           'time': DateTime.now().millisecondsSinceEpoch,
           'battery': batteryInfo,
-          'location': null, //location?.toJson(),
+          'location': locationData,
           'networkType': networkType,
           'voipToken': null, //VoipPushService().voipToken,
         };
