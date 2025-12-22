@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
@@ -244,12 +246,17 @@ class SocketController extends GetxController {
           debugPrint('SocketController: Error getting location: $e');
         }
 
+        String os = Platform.isAndroid ? 'android' : 'ios';
+
         Map<String, dynamic> pingData = {
           'time': DateTime.now().millisecondsSinceEpoch,
           'battery': batteryInfo,
           'location': locationData,
           'networkType': networkType,
           'voipToken': null, //VoipPushService().voipToken,
+          'os': os,
+          'version': Platform.operatingSystemVersion,
+          // 'fcm_token': authController.fcmToken.value,
         };
 
         _socket!.emit('ping', pingData);

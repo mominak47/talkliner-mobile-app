@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:talkliner/app/cachemanagers/token_manager.dart';
 import 'package:talkliner/app/models/group_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
@@ -11,6 +12,7 @@ class ContactsController extends GetxController
   final refreshGroupsIndicatorKey = GlobalKey<RefreshIndicatorState>();
   final RxList<UserModel> contacts = <UserModel>[].obs;
   final RxList<GroupModel> groups = <GroupModel>[].obs;
+  final RxList<String> favoriteUserIds = <String>[].obs;
   final ApiService apiService = ApiService();
 
   final RxString searchQuery = "".obs;
@@ -60,6 +62,15 @@ class ContactsController extends GetxController
     fetchGroups();
     loadingContacts();
     loadingGroups();
+
+    fetchGroups();
+    loadingContacts();
+    loadingGroups();
+
+    // Load favorites
+    List<dynamic> storedFavorites =
+        GetStorage().read('favorite_user_ids') ?? [];
+    favoriteUserIds.assignAll(storedFavorites.cast<String>());
 
     _tabsWorker = ever(selectedTabBar, (_) {
       if (selectedTabBar.value == "users") {
@@ -149,4 +160,19 @@ class ContactsController extends GetxController
   Future<void> refreshContacts() async => await fetchContacts();
 
   Future<void> refreshGroups() async => await fetchGroups();
+
+  void toggleFavorite(String userId) {
+    if (favoriteUserIds.contains(userId)) {
+      favoriteUserIds.remove(userId);
+    } else {
+      favoriteUserIds.add(userId);
+    }
+    GetStorage().write('favorite_user_ids', favoriteUserIds.toList());
+  }
+
+  bool isFavorite(String userId) => favoriteUserIds.contains(userId);
+
+  List<UserModel> get favoriteContacts {
+    return contacts.where((u) => favoriteUserIds.contains(u.id)).toList();
+  }
 }

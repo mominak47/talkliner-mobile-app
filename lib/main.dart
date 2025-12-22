@@ -15,11 +15,20 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:talkliner/service/background_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:talkliner/app/services/push_notification_service.dart';
 
 Future<void> main() async {
   try {
     // Initialize Flutter bindings
+    // Initialize Flutter bindings
     WidgetsFlutterBinding.ensureInitialized();
+
+    // Initialize Firebase
+    await Firebase.initializeApp();
+
+    // Initialize PushNotificationService
+    await Get.putAsync(() => PushNotificationService().onInitService());
 
     // Request Notification Permission for Android 13+
     await Permission.notification.isDenied.then((value) {

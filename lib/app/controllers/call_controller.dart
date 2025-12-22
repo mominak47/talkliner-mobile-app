@@ -13,6 +13,8 @@ import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/calling/call_screen.dart';
 import 'package:vibration/vibration.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:flutter_callkit_incoming/entities/entities.dart';
 
 class CallController extends GetxController {
   // Calls List
@@ -66,6 +68,94 @@ class CallController extends GetxController {
       if (value && !isWatcherLoaded) {
         watchEvents();
         isWatcherLoaded = true;
+      }
+    });
+
+    // Listen to CallKit events
+    FlutterCallkitIncoming.onEvent.listen((event) async {
+      debugPrint('CallKit Event: ${event?.event}');
+      switch (event!.event) {
+        case Event.actionCallIncoming:
+          // TODO: received an incoming call
+          break;
+        case Event.actionCallStart:
+          // TODO: started an outgoing call
+          // TODO: show screen calling in Flutter
+          break;
+        case Event.actionCallAccept:
+          // TODO: accepted an incoming call
+          // Check call ID and connect
+          String callId = event.body['id'];
+          // Retrieve call model (not easy if call is not in memory, but here we assume it is because we added it on incoming)
+          // Or we might need to fetch data from event.body['extra']
+          if (calls.isNotEmpty) {
+            // Simplified check
+            try {
+              // If we have mapped callId to our format
+              CallModel? call = calls.firstWhereOrNull((c) => c.id == callId);
+              if (call != null) {
+                // Logic to accept
+                // We need to trigger the accept flow which usually involves a socket emit if it's not already done?
+                // But in handleIncomingCall we set it up.
+                // Wait, if user accepts from Lock Screen, we need to trigger 'accept' socket event?
+                // Currently handleIncomingCall shows a custom Popup which has 'Accept' button that emits.
+                // We need to implement logic to emit socket accept here.
+
+                // Since handleIncomingCall stores the call and shows popup,
+                // if user accepts from CallKit, we should emulate the accept action.
+                // Actually, CallKit UI is native. We need to close custom popup if open.
+
+                // Extract room token if available in extra or fetch it?
+                // Our handleIncomingCall flow receives call, waits for user to click Accept, then emits accept.
+                // The current implementation of handleIncomingCall shows a popup with callbacks.
+
+                // We'll need refactoring to separate "Accept Logic" to be callable from here.
+                // For now, let's assume we can proceed if we have connectivity.
+              }
+            } catch (e) {}
+          }
+          break;
+        case Event.actionCallDecline:
+          // TODO: declined an incoming call
+          // String callId = event.body['id'];
+          // Emit reject
+          break;
+        case Event.actionCallEnded:
+          // TODO: ended an incoming/outgoing call
+          break;
+        case Event.actionCallTimeout:
+          // TODO: missed an incoming call
+          break;
+        case Event.actionCallCallback:
+          // TODO: only Android - click action `Call back` from notification
+          break;
+        case Event.actionCallToggleHold:
+          // TODO: toggled hold
+          break;
+        case Event.actionCallToggleMute:
+          // TODO: toggled mute
+          isMuted.value = !isMuted.value;
+          if (room != null && room!.localParticipant != null) {
+            await room!.localParticipant?.setMicrophoneEnabled(!isMuted.value);
+          }
+          break;
+        case Event.actionCallToggleDmtf:
+          // TODO: toggled Dmtf
+          break;
+        case Event.actionCallToggleGroup:
+          // TODO: toggled group
+          break;
+        case Event.actionCallToggleAudioSession:
+          // TODO: toggled audio session
+          break;
+        case Event.actionDidUpdateDevicePushTokenVoip:
+          // TODO: only iOS
+          break;
+        case Event.actionCallCustom:
+          // TODO: for custom action
+          break;
+        default:
+          break;
       }
     });
   }
@@ -196,6 +286,39 @@ class CallController extends GetxController {
       // Make it the active call
       activeCall.value = call;
       outGoingCallStatus.value = 'Ringing...';
+      outGoingCallStatus.value = 'Ringing...';
+
+      // Start CallKit Outgoing
+      var params = CallKitParams(
+        id: call.id,
+        nameCaller: user.displayName,
+        handle: user.username,
+        type: 0,
+        android: const AndroidParams(
+          isCustomNotification: true,
+          isShowLogo: false,
+          ringtonePath: 'system_ringtone_default',
+          backgroundColor: '#0955fa',
+          backgroundUrl: 'assets/test.png',
+          actionColor: '#4CAF50',
+        ),
+        ios: const IOSParams(
+          handleType: 'generic',
+          supportsVideo: true,
+          maximumCallGroups: 2,
+          maximumCallsPerCallGroup: 1,
+          audioSessionMode: 'default',
+          audioSessionActive: true,
+          audioSessionPreferredSampleRate: 44100.0,
+          audioSessionPreferredIOBufferDuration: 0.005,
+          supportsDTMF: true,
+          supportsHolding: true,
+          supportsGrouping: false,
+          supportsUngrouping: false,
+          ringtonePath: 'system_ringtone_default',
+        ),
+      );
+      FlutterCallkitIncoming.startCall(params);
     });
   }
 
@@ -442,6 +565,7 @@ class CallController extends GetxController {
 
       // Remove from active call
       activeCall.value = null;
+      FlutterCallkitIncoming.endCall(call.id);
     });
     // Close Call Screen
     Get.back();
@@ -487,6 +611,9 @@ class CallController extends GetxController {
         },
         (response) {
           stopRingtone();
+          FlutterCallkitIncoming.endCall(
+            call.id,
+          ); // End CallKit screen as we move to App UI
           if (response != null && response['roomAccessToken'] != null) {
             String? token = response['roomAccessToken']['token'];
             if (token != null) {
@@ -502,6 +629,51 @@ class CallController extends GetxController {
           }
         },
       );
+
+      // SHOW CallKit
+      var params = CallKitParams(
+        id: call.id,
+        nameCaller: call.participants.first.displayName,
+        appName: 'Talkliner',
+        avatar: call.participants.first.profilePicture,
+        handle: call.participants.first.username,
+        type: 0,
+        textAccept: 'Accept',
+        textDecline: 'Decline',
+        missedCallNotification: const NotificationParams(
+          showNotification: true,
+          isShowCallback: true,
+          subtitle: 'Missed call',
+          callbackText: 'Call back',
+        ),
+        duration: 30000,
+        extra: {'call_id': call.id},
+        android: const AndroidParams(
+          isCustomNotification: true,
+          isShowLogo: false,
+          ringtonePath: 'system_ringtone_default',
+          backgroundColor: '#0955fa',
+          backgroundUrl: 'assets/test.png',
+          actionColor: '#4CAF50',
+        ),
+        ios: const IOSParams(
+          iconName: 'CallKitLogo',
+          handleType: 'generic',
+          supportsVideo: true,
+          maximumCallGroups: 2,
+          maximumCallsPerCallGroup: 1,
+          audioSessionMode: 'default',
+          audioSessionActive: true,
+          audioSessionPreferredSampleRate: 44100.0,
+          audioSessionPreferredIOBufferDuration: 0.005,
+          supportsDTMF: true,
+          supportsHolding: true,
+          supportsGrouping: false,
+          supportsUngrouping: false,
+          ringtonePath: 'system_ringtone_default',
+        ),
+      );
+      FlutterCallkitIncoming.showCallkitIncoming(params);
 
       // debugPrint('CallController: Incoming call: $call');
     }
@@ -564,6 +736,7 @@ class CallController extends GetxController {
       // Remove from calls list
       removeCall(call);
       disconnectRoom();
+      FlutterCallkitIncoming.endCall(call.id);
 
       // If this was the active call, close the screen
       // Assuming CallScreen is the top route or we want to exit it

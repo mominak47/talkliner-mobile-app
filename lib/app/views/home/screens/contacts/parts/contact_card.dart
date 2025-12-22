@@ -5,13 +5,16 @@ import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
 // Replace 'User' with your actual user model class
 class ContactCard extends StatelessWidget {
-  final dynamic user; // Use your actual UserModel type here
+  final dynamic user;
   final IconData onTapIcon;
   final Color onTapIconColor;
   final VoidCallback onTap;
   final VoidCallback onTapCard;
   final bool isSelected;
   final VoidCallback onLongPress;
+  final bool isFavorite;
+  final VoidCallback? onFavoriteTap;
+
   const ContactCard({
     super.key,
     required this.user,
@@ -21,16 +24,15 @@ class ContactCard extends StatelessWidget {
     required this.onTapCard,
     required this.isSelected,
     required this.onLongPress,
+    this.isFavorite = false,
+    this.onFavoriteTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    // final livekitRoomController = Get.find<LivekitRoomController>();
-
-    // Replace with your actual theme and avatar logic as needed
     final theme = Theme.of(context);
-
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return ElevatedButton(
       onPressed: onTapCard,
       onLongPress: onLongPress,
@@ -93,6 +95,24 @@ class ContactCard extends StatelessWidget {
               ],
             ),
           ),
+          if (onFavoriteTap != null)
+            IconButton(
+              onPressed: onFavoriteTap,
+              icon: Icon(
+                isFavorite ? Icons.star : LucideIcons.star,
+                color:
+                    isFavorite
+                        ? (isDarkMode ? Colors.black : Colors.white)
+                        : TalklinerThemeColors.gray080,
+                size: 20,
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor:
+                    isFavorite
+                        ? TalklinerThemeColors.primary500
+                        : TalklinerThemeColors.gray040,
+              ),
+            ),
           IconButton(
             onPressed: onTap,
             icon: Icon(

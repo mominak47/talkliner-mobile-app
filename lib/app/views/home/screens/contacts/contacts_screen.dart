@@ -101,6 +101,9 @@ class ContactsScreen extends StatelessWidget {
                           pushToTalkController.selectedUser.value.id ==
                               user.id &&
                           !livekitRoomController.isRoomConnecting.value,
+                      isFavorite: contactsController.isFavorite(user.id),
+                      onFavoriteTap:
+                          () => contactsController.toggleFavorite(user.id),
                     ),
                   ),
                   Divider(height: 1),

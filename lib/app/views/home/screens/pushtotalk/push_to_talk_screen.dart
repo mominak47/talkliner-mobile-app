@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:talkliner/app/controllers/call_controller.dart';
+import 'package:talkliner/app/controllers/contacts_controller.dart';
+import 'package:talkliner/app/controllers/emergency_controller.dart';
 import 'package:talkliner/app/controllers/livekit_room_controller.dart';
 import 'package:talkliner/app/controllers/push_to_talk_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
+import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/home/screens/pushtotalk/widgets/push_to_talk_button.dart';
 import 'package:talkliner/app/views/home/screens/pushtotalk/widgets/selected_user.dart';
-import 'package:talkliner/app/controllers/emergency_controller.dart';
+import 'package:talkliner/app/views/others/components/user_avatar.dart';
 
 class PushToTalkScreen extends StatefulWidget {
   const PushToTalkScreen({super.key});
@@ -23,6 +26,7 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
   final livekitRoomController = Get.find<LivekitRoomController>();
   final callController = Get.find<CallController>();
   final emergencyController = Get.put(EmergencyController());
+  final contactsController = Get.find<ContactsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -84,14 +88,11 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
                     ],
                   ),
                 ),
+                _buildFavoritesList(context),
               ],
             ),
             Column(
               children: [
-                // Text("Room Name: ${livekitRoomController.roomName.value}"),
-                // Text("Is Room Connecting: ${livekitRoomController.isRoomConnecting.value.toString()}"),
-                // Text("Is Connected: ${livekitRoomController.isConnected.value.toString()}"),
-                // Text("Is Room Connecting: ${livekitRoomController.isRoomConnecting.value.toString()}"),
                 SizedBox(
                   child: PushToTalkButton(
                     isDarkMode: Theme.of(context).brightness == Brightness.dark,
@@ -114,5 +115,89 @@ class _PushToTalkScreenState extends State<PushToTalkScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildFavoritesList(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Obx(() {
+      final favorites = contactsController.favoriteContacts;
+      if (favorites.isEmpty) return SizedBox();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              "Favorites",
+              style: TextStyle(
+                color: isDarkMode ? Colors.white70 : Colors.black54,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 90,
+            child: ListView.separated(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection: Axis.horizontal,
+              itemCount: favorites.length,
+              separatorBuilder: (context, index) => SizedBox(width: 16),
+              itemBuilder: (context, index) {
+                UserModel user = favorites[index];
+                bool isSelected =
+                    pushToTalkController.selectedUser.value.id == user.id;
+
+                return GestureDetector(
+                  onTap: () => pushToTalkController.setUser(user),
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border:
+                              isSelected
+                                  ? Border.all(
+                                    color: TalklinerThemeColors.primary500,
+                                    width: 2,
+                                  )
+                                  : null,
+                        ),
+                        padding: EdgeInsets.all(2),
+                        child: UserAvatar(user: user, size: 48),
+                      ),
+                      SizedBox(height: 4),
+                      SizedBox(
+                        width: 60,
+                        child: Text(
+                          user.displayName.split(' ')[0],
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                isSelected
+                                    ? TalklinerThemeColors.primary500
+                                    : (isDarkMode
+                                        ? Colors.white
+                                        : Colors.black),
+                            fontWeight:
+                                isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    });
   }
 }
