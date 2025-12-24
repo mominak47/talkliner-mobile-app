@@ -84,6 +84,20 @@ class CallController extends GetxController {
       switch (event!.event) {
         case Event.actionCallIncoming:
           // TODO: received an incoming call
+          var resp = prepareCallResponse(event.body);
+          CallModel call = CallModel.make(
+            callId: resp['call_id'],
+            roomID: resp['room']?['roomName'] ?? '',
+            roomToken: resp['room']?['token'] ?? '',
+            direction: CallDirection.incoming,
+            type: CallType.individual,
+            status: CallStatus.pending,
+            participants: [
+              UserModel.fromJson(Map<String, dynamic>.from(resp['from'])),
+            ],
+            sendEvent: sendEvent,
+          );
+          addCall(call);
 
           break;
         case Event.actionCallStart:
@@ -93,29 +107,19 @@ class CallController extends GetxController {
         case Event.actionCallAccept:
           // TODO: accepted an incoming call
           try {
-            FlutterCallkitIncoming.endCall(event.body['id']);
-            var resp = prepareCallResponse(event.body);
-            CallModel call = CallModel.make(
-              callId: resp['call_id'],
-              roomID: resp['room']?['roomName'] ?? '',
-              roomToken: resp['room']?['token'] ?? '',
-              direction: CallDirection.incoming,
-              type: CallType.individual,
-              status: CallStatus.pending,
-              participants: [
-                UserModel.fromJson(Map<String, dynamic>.from(resp['from'])),
-              ],
-              sendEvent: sendEvent,
-            );
+            var call =
+                calls.where((element) => element.id == event.body['id']).first;
 
-            // Add to calls list
-            call.updateStatus(CallStatus.accepted);
-            addCall(call);
-            activeCall.value = call;
-            activeCall.refresh();
-            // print(object)
-            connectToRoom(resp['room']['token']);
-            // Get.to(() => CallScreen());
+            if (call != null) {
+              call.updateStatus(CallStatus.accepted);
+              activeCall.value = call;
+              activeCall.refresh();
+              connectToRoom(call.roomToken);
+              call.acceptCall((response) {
+                print("OUR CALL IS ACCEPTED");
+                // Get.to(() => CallScreen());
+              });
+            }
           } catch (e) {
             debugPrint("Failed to accept call: $e");
           }
@@ -127,6 +131,17 @@ class CallController extends GetxController {
           break;
         case Event.actionCallEnded:
           // TODO: ended an incoming/outgoing call
+          try {
+            var call =
+                calls.where((element) => element.id == event.body['id']).first;
+            if (call != null) {
+              call.rejectCall((response) {
+                removeCall(call);
+              });
+            }
+          } catch (e) {
+            debugPrint("Failed to end call: $e");
+          }
           break;
         case Event.actionCallTimeout:
           // TODO: missed an incoming call

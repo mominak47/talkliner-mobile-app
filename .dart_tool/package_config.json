@@ -1227,8 +1227,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.10.4",
+  "generatorVersion": "3.10.1",
   "flutterRoot": "file:///Users/mominkhan/flutter",
-  "flutterVersion": "3.38.5",
+  "flutterVersion": "3.38.3",
   "pubCache": "file:///Users/mominkhan/.pub-cache"
 }
