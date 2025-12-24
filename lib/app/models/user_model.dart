@@ -83,7 +83,9 @@ class UserModel {
       domainId: json['domain_id'] ?? '',
       username: json['username'] ?? '',
       displayName: json['display_name'] ?? '',
-      settings: UserSettings.fromJson(json['settings'] ?? {}),
+      settings: UserSettings.fromJson(
+        Map<String, dynamic>.from(json['settings'] ?? {}),
+      ),
       isOnline: json['is_online'] ?? '',
       status: json['status'] ?? '',
       fcmToken: json['fcm_token'] ?? '',

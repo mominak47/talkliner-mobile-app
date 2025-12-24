@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -233,14 +236,17 @@ class SocketController extends GetxController {
 
         Map<String, dynamic>? locationData;
         try {
-          LocationPermission permission = await Geolocator.checkPermission();
-          if (permission == LocationPermission.always ||
-              permission == LocationPermission.whileInUse) {
-            Position position = await Geolocator.getCurrentPosition();
-            locationData = {
-              'latitude': position.latitude,
-              'longitude': position.longitude,
-            };
+          if (WidgetsBinding.instance.lifecycleState ==
+              AppLifecycleState.resumed) {
+            LocationPermission permission = await Geolocator.checkPermission();
+            if (permission == LocationPermission.always ||
+                permission == LocationPermission.whileInUse) {
+              Position position = await Geolocator.getCurrentPosition();
+              locationData = {
+                'latitude': position.latitude,
+                'longitude': position.longitude,
+              };
+            }
           }
         } catch (e) {
           debugPrint('SocketController: Error getting location: $e');
@@ -248,15 +254,20 @@ class SocketController extends GetxController {
 
         String os = Platform.isAndroid ? 'android' : 'ios';
 
+        //GET FCM Token
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
+        String voipToken =
+            await FlutterCallkitIncoming.getDevicePushTokenVoIP();
+
         Map<String, dynamic> pingData = {
           'time': DateTime.now().millisecondsSinceEpoch,
           'battery': batteryInfo,
           'location': locationData,
           'networkType': networkType,
-          'voipToken': null, //VoipPushService().voipToken,
+          'voipToken': voipToken,
           'os': os,
           'version': Platform.operatingSystemVersion,
-          // 'fcm_token': authController.fcmToken.value,
+          'fcm_token': fcmToken,
         };
 
         _socket!.emit('ping', pingData);

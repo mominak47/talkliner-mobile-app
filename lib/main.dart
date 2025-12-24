@@ -9,26 +9,29 @@ import 'package:talkliner/app/config/routes.dart';
 import 'package:talkliner/app/language/app_language.dart';
 import 'package:talkliner/app/themes/app_theme.dart';
 import 'package:talkliner/app/views/calling/widgets/global_call_overlay.dart';
-
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite/sqflite.dart';
+
 import 'package:talkliner/service/background_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:talkliner/app/services/push_notification_service.dart';
+import 'package:talkliner/app/services/fcm/fcm_service.dart';
+import 'firebase_options.dart';
+import 'app_lifecycle_controller.dart';
 
 Future<void> main() async {
+  Get.put(AppLifecycleController(), permanent: true);
+
   try {
-    // Initialize Flutter bindings
     // Initialize Flutter bindings
     WidgetsFlutterBinding.ensureInitialized();
 
     // Initialize Firebase
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
     // Initialize PushNotificationService
-    await Get.putAsync(() => PushNotificationService().onInitService());
+    await Get.putAsync(() => FcmService().onInitService());
 
     // Request Notification Permission for Android 13+
     await Permission.notification.isDenied.then((value) {
@@ -39,12 +42,6 @@ Future<void> main() async {
 
     // Initialize Background Service
     await initializeService();
-
-    // Initialize database factory for desktop
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
-    }
 
     // Initialize GetStorage with auto-recovery
     try {

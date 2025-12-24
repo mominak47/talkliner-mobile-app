@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,11 +8,15 @@ import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:talkliner/app/config/app_config.dart';
 import 'package:talkliner/app/controllers/auth_controller.dart';
+import 'package:talkliner/app/config/routes.dart';
+
+import 'package:talkliner/app/controllers/home_controller.dart';
 import 'package:talkliner/app/controllers/socket_controller.dart';
 import 'package:talkliner/app/models/call_model.dart';
 import 'package:talkliner/app/models/user_model.dart';
 import 'package:talkliner/app/themes/talkliner_theme_colors.dart';
 import 'package:talkliner/app/views/calling/call_screen.dart';
+import 'package:talkliner/app/views/home/screens/pushtotalk/emergency_active_screen.dart';
 import 'package:vibration/vibration.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_callkit_incoming/entities/entities.dart';
@@ -21,6 +26,7 @@ class CallController extends GetxController {
   final RxList<CallModel> calls = <CallModel>[].obs;
 
   static const platform = MethodChannel('com.steigenberg.talkliner/pip');
+  static const callIntentChannel = MethodChannel('com.yourapp/call_intent');
 
   Future<void> updateAutoPip(bool enable) async {
     try {
@@ -72,11 +78,13 @@ class CallController extends GetxController {
     });
 
     // Listen to CallKit events
+    callIntentChannel.setMethodCallHandler(_handleCallIntent);
     FlutterCallkitIncoming.onEvent.listen((event) async {
       debugPrint('CallKit Event: ${event?.event}');
       switch (event!.event) {
         case Event.actionCallIncoming:
           // TODO: received an incoming call
+
           break;
         case Event.actionCallStart:
           // TODO: started an outgoing call
@@ -84,35 +92,32 @@ class CallController extends GetxController {
           break;
         case Event.actionCallAccept:
           // TODO: accepted an incoming call
-          // Check call ID and connect
-          String callId = event.body['id'];
-          // Retrieve call model (not easy if call is not in memory, but here we assume it is because we added it on incoming)
-          // Or we might need to fetch data from event.body['extra']
-          if (calls.isNotEmpty) {
-            // Simplified check
-            try {
-              // If we have mapped callId to our format
-              CallModel? call = calls.firstWhereOrNull((c) => c.id == callId);
-              if (call != null) {
-                // Logic to accept
-                // We need to trigger the accept flow which usually involves a socket emit if it's not already done?
-                // But in handleIncomingCall we set it up.
-                // Wait, if user accepts from Lock Screen, we need to trigger 'accept' socket event?
-                // Currently handleIncomingCall shows a custom Popup which has 'Accept' button that emits.
-                // We need to implement logic to emit socket accept here.
+          try {
+            FlutterCallkitIncoming.endCall(event.body['id']);
+            var resp = prepareCallResponse(event.body);
+            CallModel call = CallModel.make(
+              callId: resp['call_id'],
+              roomID: resp['room']?['roomName'] ?? '',
+              roomToken: resp['room']?['token'] ?? '',
+              direction: CallDirection.incoming,
+              type: CallType.individual,
+              status: CallStatus.pending,
+              participants: [
+                UserModel.fromJson(Map<String, dynamic>.from(resp['from'])),
+              ],
+              sendEvent: sendEvent,
+            );
 
-                // Since handleIncomingCall stores the call and shows popup,
-                // if user accepts from CallKit, we should emulate the accept action.
-                // Actually, CallKit UI is native. We need to close custom popup if open.
-
-                // Extract room token if available in extra or fetch it?
-                // Our handleIncomingCall flow receives call, waits for user to click Accept, then emits accept.
-                // The current implementation of handleIncomingCall shows a popup with callbacks.
-
-                // We'll need refactoring to separate "Accept Logic" to be callable from here.
-                // For now, let's assume we can proceed if we have connectivity.
-              }
-            } catch (e) {}
+            // Add to calls list
+            call.updateStatus(CallStatus.accepted);
+            addCall(call);
+            activeCall.value = call;
+            activeCall.refresh();
+            // print(object)
+            connectToRoom(resp['room']['token']);
+            // Get.to(() => CallScreen());
+          } catch (e) {
+            debugPrint("Failed to accept call: $e");
           }
           break;
         case Event.actionCallDecline:
@@ -158,6 +163,16 @@ class CallController extends GetxController {
           break;
       }
     });
+  }
+
+  prepareCallResponse(Map<String, dynamic> data) {
+    var map = {
+      "call_id": data['id'],
+      "room": data['extra'],
+      "from": data['extra']['from'],
+    };
+
+    return map;
   }
 
   @override
@@ -591,7 +606,9 @@ class CallController extends GetxController {
         direction: CallDirection.incoming,
         type: CallType.individual,
         status: CallStatus.pending,
-        participants: [UserModel.fromJson(resp['from'])],
+        participants: [
+          UserModel.fromJson(Map<String, dynamic>.from(resp['from'])),
+        ],
         sendEvent: sendEvent,
       );
 
@@ -720,31 +737,36 @@ class CallController extends GetxController {
   // Handle Call Ended
   void handleCallEnded(resp) {
     debugPrint('CallController: Call ended: $resp');
-    if (resp['call_id'] != null && calls.isNotEmpty) {
-      CallModel call = calls.firstWhere((c) => c.id == resp['call_id']);
+    try {
+      if (resp['call_id'] != null && calls.isNotEmpty) {
+        CallModel call = calls.firstWhere((c) => c.id == resp['call_id']);
 
-      while ((Get.isDialogOpen ?? false) || (Get.isBottomSheetOpen ?? false)) {
-        Get.back();
+        while ((Get.isDialogOpen ?? false) ||
+            (Get.isBottomSheetOpen ?? false)) {
+          Get.back();
+        }
+
+        if (resp['initiator_id'] != Get.find<AuthController>().user.value!.id) {
+          Fluttertoast.showToast(
+            msg: 'Call ended by ${call.participants.first.displayName}',
+          );
+        }
+
+        // Remove from calls list
+        removeCall(call);
+        disconnectRoom();
+        FlutterCallkitIncoming.endCall(call.id);
+
+        // If this was the active call, close the screen
+        // Assuming CallScreen is the top route or we want to exit it
+        if (Get.currentRoute == '/CallScreen' || !(Get.isDialogOpen ?? false)) {
+          // Identifying if we are on CallScreen is tricky without named routes.
+          // But usually we want to pop if the active call ended.
+          Get.back();
+        }
       }
-
-      if (resp['initiator_id'] != Get.find<AuthController>().user.value!.id) {
-        Fluttertoast.showToast(
-          msg: 'Call ended by ${call.participants.first.displayName}',
-        );
-      }
-
-      // Remove from calls list
-      removeCall(call);
-      disconnectRoom();
-      FlutterCallkitIncoming.endCall(call.id);
-
-      // If this was the active call, close the screen
-      // Assuming CallScreen is the top route or we want to exit it
-      if (Get.currentRoute == '/CallScreen' || !(Get.isDialogOpen ?? false)) {
-        // Identifying if we are on CallScreen is tricky without named routes.
-        // But usually we want to pop if the active call ended.
-        Get.back();
-      }
+    } catch (e) {
+      debugPrint("Failed to handle call ended: $e");
     }
   }
 
@@ -780,11 +802,28 @@ class CallController extends GetxController {
     }
   }
 
-  // Remove Call
   removeCall(CallModel call) {
     calls.remove(call);
     if (activeCall.value?.id == call.id) {
       activeCall.value = null;
+    }
+  }
+
+  Future<dynamic> _handleCallIntent(MethodCall call) async {
+    if (call.method == 'openCallPage') {
+      debugPrint('CallController: Received openCallPage intent');
+      try {
+        // Ensure we are on the Home View
+        // We might need to pop headers if we are deep in navigation
+        Get.offAllNamed(Routes.home);
+
+        // Select RecentScreen (Update index to 0)
+        if (Get.isRegistered<HomeController>()) {
+          Get.find<HomeController>().currentIndex.value = 0;
+        }
+      } catch (e) {
+        debugPrint('Error handling call intent: $e');
+      }
     }
   }
 }
